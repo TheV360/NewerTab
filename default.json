@@ -1,0 +1,59 @@
+{
+	"version": "beta or something",
+	"theme": "dark",
+										"_type-comment_": "image, gradient",
+	"backgrounds": [
+		{
+			"type": "image",
+			"src": "background-new1.jpg"
+		},
+		{
+			"type": "gradient",
+			"from": "#1f2f3f",
+			"to": "#000f1f",
+			"angle": 0
+		}
+	],
+	"clock": {
+		"military": false,
+		"seconds": false
+	},
+	"search": {
+		"date": "none",
+										"_date-comment_": "none, short, long",
+		"focus": false,
+		"provider": "https://encrypted.google.com/search?q=%s",
+	},
+	"icons": [
+		{
+			"icon": "fa-brands.svg#youtube",
+			"link": "https://www.youtube.com/feed/subscriptions",
+			"highlight": "#ff0000"
+		},
+		{
+			"icon": "fa-brands.svg#twitter",
+			"link": "https://www.twitter.com/",
+			"highlight": "#1da1f2"
+		},
+		{
+			"icon": "fa-brands.svg#tumblr",
+			"link": "https://www.tumblr.com",
+			"highlight": "#36465d"
+		},
+		{
+			"icon": "fa-brands.svg#reddit-alien",
+			"link": "https://www.reddit.com",
+			"highlight": "#ff4500"
+		},
+		{
+			"icon": "fa-brands.svg#smilebasic-source",
+			"link": "https://smilebasicsource.com/activity",
+			"highlight": "#009688"
+		},
+		{
+			"icon": "fa-brands.svg#github",
+			"link": "https://www.github.com",
+			"highlight": "#191717"
+		}
+	]
+}
