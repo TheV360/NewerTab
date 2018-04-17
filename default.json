@@ -19,7 +19,7 @@
 		"seconds": false
 	},
 	"search": {
-		"date": "none",
+		"date": "long",
 										"_date-comment_": "none, short, long",
 		"focus": false,
 		"provider": "https://encrypted.google.com/search?q=%s",

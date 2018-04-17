@@ -22,7 +22,7 @@ const settingsBlank = JSON.stringify({
 		"seconds": false
 	},
 	"search": {
-		"date": "none",
+		"date": "long",
 		"focus": false,
 		"provider": "https://encrypted.google.com/search?q=%s",
 	},
@@ -91,6 +91,11 @@ function init() {
 		box: document.getElementById("searchbox")
 	};
 	
+	date = {
+		day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+		month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+	};
+	
 	icons = document.getElementsByClassName("icon");
 	
 	search.parent.addEventListener("submit", doSearch);
@@ -148,6 +153,22 @@ function updateClock() {
 		clock.suffix.innerHTML = " AM";
 	else
 		clock.suffix.innerHTML = " PM";
+	
+	// Date
+	if (settings.search.date != "none") {
+		search.box.className = "date";
+		search.box.title = "Click to Search";
+		
+		if (settings.search.date == "long") {
+			search.box.placeholder = date.day[now.getDay()] + ", " + date.month[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear();
+		} else {
+			search.box.placeholder = now.getFullYear() + "/" + (now.getMonth() + 1) + "/" + now.getDate();
+		}
+	} else {
+		search.box.className = "";
+		search.box.title = "";
+		search.box.placeholder = "Search";
+	}
 	
 	window.setTimeout(updateClock, 100);
 }

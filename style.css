@@ -150,6 +150,9 @@ input#searchbox {
 	
 	font-weight: 400;
 }
+input#searchbox.date {
+	background: transparent;
+}
 input#searchbox:focus {
 	
 	color: var(--alt-color);
@@ -162,6 +165,7 @@ input#searchbox::placeholder {
 input#searchbox:focus::placeholder {
 	color: var(--alt-color);
 }
+
 
 /* Icon grid */
 /* FoldThis */
