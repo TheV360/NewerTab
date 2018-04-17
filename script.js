@@ -85,22 +85,24 @@ function init() {
 		suffix: document.getElementById("suffix")
 	};
 	
+	date = {
+		day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+		month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+	};
 	
 	search = {
 		parent: document.getElementById("search"),
 		box: document.getElementById("searchbox")
 	};
 	
-	date = {
-		day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-		month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-	};
+	// Clock
+	clock.blink.innerHTML = ":";
 	
-	icons = document.getElementsByClassName("icon");
-	
+	// Search
 	search.parent.addEventListener("submit", doSearch);
 	
-	clock.blink.innerHTML = ":";
+	// Icons
+	icons = document.getElementsByClassName("icon");
 	
 	updateClock();
 	updateIcons();
@@ -109,6 +111,8 @@ function init() {
 function updateIcons() {
 	var style;
 	
+	document.styleSheets[0].innerHTML = "";
+	
 	for (var i = 0; i < icons.length; i++) {
 		// Set link
 		console.log(settings.icons[i].link);
@@ -116,7 +120,8 @@ function updateIcons() {
 		
 		// Get icon color working
 		icons[i].className = "icon icon" + i;
-		style = "a.icon.icon" + i + ":hover { background-color: " + settings.icons[i].highlight + "; fill: " + settings.icons[i].highlight + "; }"
+		//icons[i].dataset.highlight = settings.icons[i].highlight;
+		style = "a.icon.icon" + i + ":hover { background-color: " + settings.icons[i].highlight + "; fill: " + settings.icons[i].highlight + "; }";
 		document.styleSheets[0].insertRule(style);
 		
 		// Set icon

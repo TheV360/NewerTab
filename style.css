@@ -166,7 +166,6 @@ input#searchbox:focus::placeholder {
 	color: var(--alt-color);
 }
 
-
 /* Icon grid */
 /* FoldThis */
 div#icons, div.iconbox {
@@ -193,7 +192,11 @@ a.icon {
 a.icon:hover {
 	padding: 0;
 	
-	background: #1f1f1f7f;
+	background-color: #1f1f1f7f;
+	fill: #1f1f1f7f;
+	
+	/*background-color: attr(data-highlight color);
+	fill: attr(data-highlight color);*/
 }
 /* FoldThat */
 
