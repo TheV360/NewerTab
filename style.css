@@ -19,6 +19,11 @@ html, body {
 	
 	font-family: "Roboto", sans-serif;
 	font-weight: 300;
+	
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 ::placeholder {
@@ -116,11 +121,6 @@ div#clock {
 	font-size: 3.5rem;
 	line-height: 4rem;
 	text-align: center;
-	
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 }
 span#blink.on {
 	opacity: 1;
@@ -149,12 +149,19 @@ input#searchbox {
 	background-color: rgba(255, 255, 255, .25);
 	
 	font-weight: 400;
+	
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
 }
 input#searchbox.date {
-	background: transparent;
+	background-color: transparent;
+}
+input#searchbox:hover {
+	background-color: rgba(255, 255, 255, .25);
 }
 input#searchbox:focus {
-	
 	color: var(--alt-color);
 	background-color: white;
 	text-align: left;
@@ -164,6 +171,9 @@ input#searchbox::placeholder {
 }
 input#searchbox:focus::placeholder {
 	color: var(--alt-color);
+}
+input#searchbox.date:focus::placeholder {
+	color: transparent;
 }
 
 /* Icon grid */

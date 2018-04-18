@@ -64,14 +64,14 @@ if (storage.getItem("settings"))
 	try {
 		settings = JSON.parse(storage.getItem("settings"));
 	} catch(error) {
-		console.log("Settings item is missing or corrupt. " + error);
+		console.log("Settings item is missing or corrupt.\n" + error);
 		settings = JSON.parse(settingsBlank);
-		storage.setItem("settings", settingsBlank);
+		saveSettings();
 	}
 else {
 	console.log("No settings, making a new one");
 	settings = JSON.parse(settingsBlank);
-	storage.setItem("settings", settingsBlank);
+	saveSettings();
 }
 
 function init() {
@@ -180,6 +180,10 @@ function updateClock() {
 
 function doSearch(event) {
 	window.open(settings.search.provider.replace("%s", encodeURIComponent(search.box.value)));
+}
+
+function saveSettings() {
+	storage.setItem("settings", JSON.stringify(settings));
 }
 
 // From sitepoint.com/removing-useless-nodes-from-the-dom/
