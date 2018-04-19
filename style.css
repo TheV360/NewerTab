@@ -162,7 +162,7 @@ input#searchbox.date {
 input#searchbox:hover {
 	background-color: rgba(255, 255, 255, .25);
 }
-input#searchbox:focus {
+input#searchbox:focus, input#searchbox.contextopen {
 	color: var(--alt-color);
 	background-color: white;
 	text-align: left;
@@ -195,33 +195,38 @@ div.iconbox, a.icon {
 a.icon {
 	padding: .5rem;
 }
-a.icon:hover {
+a.icon:hover, a.icon.contextopen {
 	padding: 0;
 	
 	background-color: #1f1f1f7f;
 	fill: #1f1f1f7f;
-	
-	/*background-color: attr(data-highlight color);
-	fill: attr(data-highlight color);*/
 }
 /* FoldThat */
 
-/* Possible Right Click Menu? */
-button.contextbutton {
+/* Right Click Menu */
+ul.contextlist {
+	list-style-type: none;
+	
 	position: absolute;
+	color: black;
 	background-color: white;
 	
-	padding: .5rem;
+	padding: .25rem 0;
+	border: 1px solid black;
 	border-radius: var(--border-radius);
 	
 	font-size: 1rem;
-	
-	animation: fadeIn .2s;
-	transition: background-color .2s;
 }
-
-button.contextbutton:hover {
+ul.contextlist li {
+	padding: .5rem;
+	
+	background-color: white;
+}
+ul.contextlist li:hover {
 	background-color: #cfcfcf;
+}
+ul.contextlist li:not(:last-child) {
+	border-bottom: 1px solid #efefef;
 }
 
 @keyframes fadeIn {

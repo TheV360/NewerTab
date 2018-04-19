@@ -99,7 +99,32 @@ function init() {
 	clock.blink.innerHTML = ":";
 	
 	// Search
-	search.parent.addEventListener("submit", doSearch);
+	search.parent.addEventListener("submit", function() {doSearch(false);});
+	search.box.addEventListener("contextmenu", function(event) {
+		context(event.clientX, event.clientY, [
+			{
+				name: "Search",
+				callback: function(event, origin) {
+					doSearch(false);
+				}
+			},
+			{
+				name: "Search in new tab",
+				callback: function(event, origin) {
+					doSearch(true);
+				}
+			},
+			{
+				name: "Edit search provider...",
+				callback: function(event, origin) {
+					settings.search.provider = prompt("What's the provider URL?\n\nUse %s as a substitute for the actual search.", settings.search.provider);
+				}
+			}
+		], search.box);
+		
+		event.preventDefault();
+		return false;
+	});
 	
 	if (settings.search.focus) {
 		search.box.focus();
@@ -111,33 +136,62 @@ function init() {
 		parent: document.getElementById("icons"),
 		elements: document.getElementsByClassName("icon")
 	};
+	icons.parent.addEventListener("contextmenu", function(event) {
+		var source = getParentWithTagName(event.target, "a");
+		
+		context(event.clientX, event.clientY, [
+			{
+				name: "Open link",
+				callback: function(event, origin) {
+					// Massive hack
+					var iconIndex = Array.from(icons.elements).indexOf(origin);
+					
+					document.navigate(settings.icons[iconIndex].link);
+				}
+			},
+			{
+				name: "Open link in new tab",
+				callback: function(event, origin) {
+					// Massive hack
+					var iconIndex = Array.from(icons.elements).indexOf(origin);
+					
+					window.open(settings.icons[iconIndex].link);
+				}
+			},
+			{
+				name: "Edit icon",
+				callback: function(event, origin) {
+					// Massive hack
+					var iconIndex = Array.from(icons.elements).indexOf(origin);
+					
+					settings.icons[iconIndex].link = prompt("What's the website link?", settings.icons[iconIndex].link);
+					settings.icons[iconIndex].icon = prompt("What's the SVG?\n\nYou can use font awesome as fa-solid.svg, fa-regular.svg, and fa-brands.svg!", settings.icons[iconIndex].icon);
+					settings.icons[iconIndex].highlight = prompt("What's the website color?", settings.icons[iconIndex].highlight);
+					
+					updateIcons();
+					saveSettings();
+				}
+			}
+		], source);
+		
+		event.preventDefault();
+		return false;
+	});
 	
 	// Context Menu
-	document.body.addEventListener("contextmenu", function(event) {
-		if (event.target === search.box) {
-			return true;
-		} else if (icons.parent.contains(event.target)) {
-			var source = getParentWithTagName(event.target, "a");
-			
-			popup(event.clientX, event.clientY, "Edit icon", function(event, origin) {
-				// Massive hack
-				var iconIndex = Array.from(icons.elements).indexOf(origin);
-				
-				settings.icons[iconIndex].link = prompt("What's the website link?");
-				settings.icons[iconIndex].icon = prompt("What's the SVG?\n\nYou can use font awesome as fa-solid.svg, fa-regular.svg, and fa-brands.svg!");
-				settings.icons[iconIndex].highlight = prompt("What's the website color?");
-				
-				updateIcons();
-				saveSettings();
-			}, source);
-			
-			event.preventDefault();
-			return false;
-		} else {
-			event.preventDefault();
-			return false;
-		}
-	});
+	/*document.body.addEventListener("contextmenu", function(event) {
+		context(event.clientX, event.clientY, [
+			{
+				name: "beep",
+				callback: function(event, origin) {
+					alert("beep");
+				}
+			}
+		], document.body);
+		
+		event.preventDefault();
+		return false;
+	});*/
 	
 	updateClock();
 	updateIcons();
@@ -156,7 +210,7 @@ function updateIcons() {
 		// Get icon color working
 		icons.elements[i].className = "icon icon" + i;
 		//icons.elements[i].dataset.highlight = settings.icons[i].highlight;
-		style = "a.icon.icon" + i + ":hover { background-color: " + settings.icons[i].highlight + "; fill: " + settings.icons[i].highlight + "; }";
+		style = "a.icon.icon" + i + ":hover, a.icon.icon" + i + ".contextopen { background-color: " + settings.icons[i].highlight + "; fill: " + settings.icons[i].highlight + "; }";
 		document.styleSheets[0].insertRule(style);
 		
 		// Set icon
@@ -196,7 +250,8 @@ function updateClock() {
 	
 	// Date
 	if (settings.search.date != "none") {
-		search.box.className = "date";
+		if (!search.box.classList.contains("date"))
+			search.box.classList.add("date");
 		search.box.title = "Click to Search";
 		
 		if (settings.search.date == "long") {
@@ -205,7 +260,8 @@ function updateClock() {
 			search.box.placeholder = now.getFullYear() + "/" + (now.getMonth() + 1) + "/" + now.getDate();
 		}
 	} else {
-		search.box.className = "";
+		if (search.box.classList.contains("date"))
+			search.box.classList.remove("date");
 		search.box.title = "";
 		search.box.placeholder = "Search";
 	}
@@ -213,28 +269,50 @@ function updateClock() {
 	window.setTimeout(updateClock, 100);
 }
 
-function doSearch(event) {
-	window.open(settings.search.provider.replace("%s", encodeURIComponent(search.box.value)));
+function doSearch(newtab = false) {
+	if (search.box.value.length)
+		if (newtab)
+			window.open(settings.search.provider.replace("%s", encodeURIComponent(search.box.value)));
+		else
+			document.navigate(settings.search.provider.replace("%s", encodeURIComponent(search.box.value)));
 }
 
 function saveSettings() {
 	storage.setItem("settings", JSON.stringify(settings));
 }
 
-function popup(x, y, name = "Forgetting something?", callback = function() {}, origin) {
-	var popup = document.createElement("button");
+function context(x, y, options = [{name: "No options?", callback: function() {}}], origin) {
+	origin.classList.add("contextopen");
 	
-	popup.className = "contextbutton";
-	popup.style.left = (x - 4) + "px";
-	popup.style.top = (y - 4) + "px";
-	popup.style.zIndex = 100;
-	popup.innerHTML = name;
+	var contextlist = document.createElement("ul");
 	
-	popup.addEventListener("blur", function(event) {event.target.remove();});
-	popup.addEventListener("click", function(event) {callback(event, origin); event.target.remove();});
+	contextlist.className = "contextlist";
+	contextlist.style.left = (x - 4) + "px";
+	contextlist.style.top = (y - 4) + "px";
+	contextlist.style.zIndex = 100;
+	contextlist.tabIndex = 100;
 	
-	popup = document.body.appendChild(popup);
-	popup.focus();
+	for (var i = 0; i < options.length; i++) {
+		var contextoption = contextOption(options[i], origin);
+		
+		contextlist.appendChild(contextoption);
+	}
+	
+	contextlist.addEventListener("blur", function(event) {origin.classList.remove("contextopen"); event.target.remove();});
+	
+	contextlist = document.body.appendChild(contextlist);
+	contextlist.focus();
+}
+
+// Small hack fixing a variable scope problem
+function contextOption(option, origin) {
+	var contextoption = document.createElement("li");
+	var callback = option.callback;
+	
+	contextoption.innerHTML = option.name;
+	contextoption.addEventListener("click", function(event) {callback(event, origin);});
+	
+	return contextoption;
 }
 
 function getParentWithTagName(element, name) {
