@@ -293,11 +293,14 @@ function context(x, y, options = [{name: "No options?", callback: function() {}}
 	
 	for (var i = 0; i < options.length; i++) {
 		var contextoption = contextOption(options[i], origin);
-		contextoption.tabIndex = 101 + i;
+		
 		contextlist.appendChild(contextoption);
 	}
 	
-	contextlist.addEventListener("blur", function(event) {origin.classList.remove("contextopen"); event.target.remove();});
+	contextlist.addEventListener("blur", function(event) {
+		origin.classList.remove("contextopen");
+		event.target.remove();
+	});
 	
 	contextlist = document.body.appendChild(contextlist);
 	contextlist.style.setProperty("--tmp-size-width", contextlist.offsetWidth + "px");

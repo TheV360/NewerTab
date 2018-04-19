@@ -209,10 +209,12 @@ ul.contextlist {
 	position: absolute;
 	list-style-type: none;
 	
+	padding: 6px 0;
+	border: 1px solid rgb(191, 191, 191, .5);
+	
 	color: black;
 	background-color: white;
 	
-	padding: 6px 0;
 	border-radius: var(--border-radius);
 	
 	font-size: 1rem;
@@ -223,6 +225,8 @@ ul.contextlist li {
 	padding: .5rem;
 	
 	background-color: transparent;
+	
+	z-index: 101;
 }
 ul.contextlist li:hover {
 	background-color: #cfcfcf;
