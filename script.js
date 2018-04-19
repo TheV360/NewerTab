@@ -101,8 +101,43 @@ function init() {
 	// Search
 	search.parent.addEventListener("submit", doSearch);
 	
+	if (settings.search.focus) {
+		search.box.focus();
+		search.box.select();
+	}
+	
 	// Icons
-	icons = document.getElementsByClassName("icon");
+	icons = {
+		parent: document.getElementById("icons"),
+		elements: document.getElementsByClassName("icon")
+	};
+	
+	// Context Menu
+	document.body.addEventListener("contextmenu", function(event) {
+		if (event.target === search.box) {
+			return true;
+		} else if (icons.parent.contains(event.target)) {
+			var source = getParentWithTagName(event.target, "a");
+			
+			popup(event.clientX, event.clientY, "Edit icon", function(event, origin) {
+				// Massive hack
+				var iconIndex = Array.from(icons.elements).indexOf(origin);
+				
+				settings.icons[iconIndex].link = prompt("What's the website link?");
+				settings.icons[iconIndex].icon = prompt("What's the SVG?\n\nYou can use font awesome as fa-solid.svg, fa-regular.svg, and fa-brands.svg!");
+				settings.icons[iconIndex].highlight = prompt("What's the website color?");
+				
+				updateIcons();
+				saveSettings();
+			}, source);
+			
+			event.preventDefault();
+			return false;
+		} else {
+			event.preventDefault();
+			return false;
+		}
+	});
 	
 	updateClock();
 	updateIcons();
@@ -113,19 +148,19 @@ function updateIcons() {
 	
 	document.styleSheets[0].innerHTML = "";
 	
-	for (var i = 0; i < icons.length; i++) {
+	for (var i = 0; i < icons.elements.length; i++) {
 		// Set link
 		console.log(settings.icons[i].link);
-		icons[i].href = settings.icons[i].link;
+		icons.elements[i].href = settings.icons[i].link;
 		
 		// Get icon color working
-		icons[i].className = "icon icon" + i;
-		//icons[i].dataset.highlight = settings.icons[i].highlight;
+		icons.elements[i].className = "icon icon" + i;
+		//icons.elements[i].dataset.highlight = settings.icons[i].highlight;
 		style = "a.icon.icon" + i + ":hover { background-color: " + settings.icons[i].highlight + "; fill: " + settings.icons[i].highlight + "; }";
 		document.styleSheets[0].insertRule(style);
 		
 		// Set icon
-		icons[i].childNodes[0].childNodes[0].setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", settings.icons[i].icon);
+		icons.elements[i].childNodes[0].childNodes[0].setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", settings.icons[i].icon);
 	}
 }
 
@@ -184,6 +219,34 @@ function doSearch(event) {
 
 function saveSettings() {
 	storage.setItem("settings", JSON.stringify(settings));
+}
+
+function popup(x, y, name = "Forgetting something?", callback = function() {}, origin) {
+	var popup = document.createElement("button");
+	
+	popup.className = "contextbutton";
+	popup.style.left = (x - 4) + "px";
+	popup.style.top = (y - 4) + "px";
+	popup.style.zIndex = 100;
+	popup.innerHTML = name;
+	
+	popup.addEventListener("blur", function(event) {event.target.remove();});
+	popup.addEventListener("click", function(event) {callback(event, origin); event.target.remove();});
+	
+	popup = document.body.appendChild(popup);
+	popup.focus();
+}
+
+function getParentWithTagName(element, name) {
+	var node = element;
+	name = name.toUpperCase();
+	while (node.parentNode != null) {
+		if (node.tagName === name)
+			return node;
+		node = node.parentNode;
+	}
+	console.log("Couldn't find parent with name " + name + "!");
+	return element;
 }
 
 // From sitepoint.com/removing-useless-nodes-from-the-dom/

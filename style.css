@@ -64,7 +64,11 @@ body {
 	width: 100%;
 	height: 100%;
 	
-	background: url("background-new1.jpg") no-repeat center center fixed;
+	background: url("background-new1.jpg");
+	
+	background-repeat: no-repeat;
+	background-position: center;
+	background-attachment: fixed;
 	background-size: cover;
 }
 
@@ -96,7 +100,7 @@ div.glass {
 }
 
 /* Content style */
-div.content {
+div#content {
 	padding: 1rem;
 	
 	position: absolute;
@@ -109,7 +113,7 @@ div.content {
 	
 	z-index: 1;
 }
-div.content > :not(:last-child) {
+div#content > :not(:last-child) {
 	margin-bottom: 1rem;
 }
 
@@ -130,25 +134,22 @@ span#blink.off {
 }
 
 /* Search style */
-div#search {
+div#search, input#searchbox {
 	width: 100%;
 	height: 2rem;
 	
 	font-size: 1rem;
 }
 input#searchbox {
-	width: 100%;
-	height: 2rem;
 	padding: .5rem;
 	
 	border-radius: var(--border-radius);
 	
+	font-weight: 400;
 	text-align: center;
 	
 	color: var(--text-color);
 	background-color: rgba(255, 255, 255, .25);
-	
-	font-weight: 400;
 	
 	-webkit-user-select: text;
 	-moz-user-select: text;
@@ -180,11 +181,6 @@ input#searchbox.date:focus::placeholder {
 /* FoldThis */
 div#icons, div.iconbox {
 	display: grid;
-	
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 }
 div#icons {
 	grid-template-columns: repeat(6, 1fr);
@@ -209,6 +205,42 @@ a.icon:hover {
 	fill: attr(data-highlight color);*/
 }
 /* FoldThat */
+
+/* Possible Right Click Menu? */
+button.contextbutton {
+	position: absolute;
+	background-color: white;
+	
+	padding: .5rem;
+	border-radius: var(--border-radius);
+	
+	font-size: 1rem;
+	
+	animation: fadeIn .2s;
+	transition: background-color .2s;
+}
+
+button.contextbutton:hover {
+	background-color: #cfcfcf;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes whee {
+	from {
+		transform: rotate(-360deg);
+	}
+	to {
+		transform: rotate(0deg);
+	}
+}
 
 /* SVG trash */
 a.icon svg {
@@ -235,3 +267,38 @@ a.icon svg {
 	.icon.smilebasic-source:hover { background-color: #009688; fill: #009688; }
 	.icon.github:hover { background-color: #191717; fill: #191717; }
 /* FoldThat */
+
+/* Old responsive design code */
+@media (orientation: portrait) {
+	@media (max-width: 384px), (max-height: 384px) {
+		html {
+			font-size: calc(100vmin / 24);
+		}
+	}
+	
+	:root {
+		--content-size-width: 23rem;
+		--content-size-height: 24rem;
+	}
+	
+	div#icons {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+@media (orientation: landscape) {
+	@media (max-width: 704px), (max-height: 704px) {
+		html {
+			font-size: calc(100vmin / 44);
+		}
+	}
+	
+	:root {
+		--content-size-width: 44rem;
+		--content-size-height: 17rem;
+	}
+	
+	div#icons {
+		grid-template-columns: repeat(6, 1fr);
+	}
+}
