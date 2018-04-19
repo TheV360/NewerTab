@@ -170,10 +170,10 @@ input#searchbox:focus, input#searchbox.contextopen {
 input#searchbox::placeholder {
 	color: var(--text-color);
 }
-input#searchbox:focus::placeholder {
+input#searchbox:focus::placeholder, input#searchbox.contextopen::placeholder {
 	color: var(--alt-color);
 }
-input#searchbox.date:focus::placeholder {
+input#searchbox.date:focus::placeholder, input#searchbox.date.contextopen::placeholder {
 	color: transparent;
 }
 
@@ -205,22 +205,24 @@ a.icon:hover, a.icon.contextopen {
 
 /* Right Click Menu */
 ul.contextlist {
+	display: block;
+	position: absolute;
 	list-style-type: none;
 	
-	position: absolute;
 	color: black;
 	background-color: white;
 	
-	padding: .25rem 0;
-	border: 1px solid black;
+	padding: 6px 0;
 	border-radius: var(--border-radius);
 	
 	font-size: 1rem;
+	
+	z-index: 100;
 }
 ul.contextlist li {
 	padding: .5rem;
 	
-	background-color: white;
+	background-color: transparent;
 }
 ul.contextlist li:hover {
 	background-color: #cfcfcf;
@@ -275,7 +277,7 @@ a.icon svg {
 
 /* Old responsive design code */
 @media (orientation: portrait) {
-	@media (max-width: 384px), (max-height: 384px) {
+	@media (max-width: 368px), (max-height: 384px) {
 		html {
 			font-size: calc(100vmin / 24);
 		}
@@ -292,7 +294,7 @@ a.icon svg {
 }
 
 @media (orientation: landscape) {
-	@media (max-width: 704px), (max-height: 704px) {
+	@media (max-width: 704px), (max-height: 272px) {
 		html {
 			font-size: calc(100vmin / 44);
 		}

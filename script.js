@@ -115,7 +115,7 @@ function init() {
 				}
 			},
 			{
-				name: "Edit search provider...",
+				name: "Properties",
 				callback: function(event, origin) {
 					settings.search.provider = prompt("What's the provider URL?\n\nUse %s as a substitute for the actual search.", settings.search.provider);
 				}
@@ -289,18 +289,19 @@ function context(x, y, options = [{name: "No options?", callback: function() {}}
 	contextlist.className = "contextlist";
 	contextlist.style.left = (x - 4) + "px";
 	contextlist.style.top = (y - 4) + "px";
-	contextlist.style.zIndex = 100;
 	contextlist.tabIndex = 100;
 	
 	for (var i = 0; i < options.length; i++) {
 		var contextoption = contextOption(options[i], origin);
-		
+		contextoption.tabIndex = 101 + i;
 		contextlist.appendChild(contextoption);
 	}
 	
 	contextlist.addEventListener("blur", function(event) {origin.classList.remove("contextopen"); event.target.remove();});
 	
 	contextlist = document.body.appendChild(contextlist);
+	contextlist.style.setProperty("--tmp-size-width", contextlist.offsetWidth + "px");
+	contextlist.style.setProperty("--tmp-size-height", contextlist.offsetHeight + "px");
 	contextlist.focus();
 }
 
