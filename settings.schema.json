@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+	"title": "Newer Tab Settings",
+	"description": "Settings for Newer Tab, to be stored as a string in LocalStorage",
+	"type": "object",
+	"required": ["version", "theme", "backgrounds", "clock", "search", "icons"],
+	
+	"theme": {
+		"enum": ["light", "dark"]
+	},
+	"backgrounds": {
+		"type": "object",
+	}
+}

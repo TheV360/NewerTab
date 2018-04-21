@@ -30,6 +30,16 @@ html, body {
 	opacity: 1;
 }
 
+::-moz-selection {
+	color: var(--text-color);
+	background-color: var(--alt-color);
+}
+
+::selection {
+	color: var(--text-color);
+	background-color: var(--alt-color);
+}
+
 /* Variables, oh man! */
 :root {
 	--content-size-width: 44rem;

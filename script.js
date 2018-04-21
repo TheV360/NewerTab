@@ -85,7 +85,7 @@ function init() {
 	clean(document.body);
 	
 	background = {
-		current: Math.floor(Math.random() * settings.backgrounds.length),
+		current: null,
 		element: document.body //hmm
 	}
 	
@@ -169,7 +169,27 @@ function init() {
 							}
 						}
 						
+						updateBackground();
 						saveSettings();
+					}
+				},
+				{
+					name: "Toggle theme",
+					callback: function(event, origin) {
+						var optionList = ["dark", "light"];
+						
+						document.body.parentNode.classList.remove(settings.theme);
+						
+						settings.theme = optionList[mod(optionList.indexOf(settings.theme) + 1, optionList.length)];
+						
+						document.body.parentNode.classList.add(settings.theme);
+						saveSettings();
+					}
+				},
+				{
+					name: "About NewerTab",
+					callback: function(event, origin) {
+						location.assign("https://github.com/TheV360/NewerTab#newertab");
 					}
 				}
 			], background.element);
@@ -296,31 +316,36 @@ function init() {
 		return false;
 	});
 	
+	// CSS Rule map:
+	// 0 - 5: icons
+	// 6: background
+	for (i = 0; i < 6; i++)
+		document.styleSheets[0].insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ".contextopen {}", i);
+	document.styleSheets[0].insertRule("body {}", 6);
+	
 	updateBackground();
 	updateClock();
 	updateIcons();
 }
 
 function updateBackground() {
+	background.current = Math.floor(Math.random() * settings.backgrounds.length);
+	
 	var currentBackground = settings.backgrounds[background.current];
-	var style = "body { background-image: ";
+	var style;
 	
 	if (currentBackground.type === "image") {
-		style += "url(" + currentBackground.src + ")";
+		style = "url(" + currentBackground.src + ")";
 	} else if (currentBackground.type === "gradient") {
-		style += "linear-gradient(" + currentBackground.angle + ", " + currentBackground.from +", " + currentBackground.to + ")";
+		style = "linear-gradient(" + currentBackground.angle + ", " + currentBackground.from +", " + currentBackground.to + ")";
 	} else {
-		style += "black";
+		style = "black";
 	}
-	
-	style += "; }"; // ;}
-	document.styleSheets[0].insertRule(style);
+	document.styleSheets[0].cssRules[6].style.backgroundImage = style;
 }
 
 function updateIcons() {
 	var style;
-	
-	document.styleSheets[0].innerHTML = "";
 	
 	for (var i = 0; i < icons.elements.length; i++) {
 		// Set link
@@ -329,9 +354,8 @@ function updateIcons() {
 		
 		// Get icon color working
 		icons.elements[i].className = "icon icon" + i;
-		//icons.elements[i].dataset.highlight = settings.icons[i].highlight;
-		style = "a.icon.icon" + i + ":hover, a.icon.icon" + i + ".contextopen { background-color: " + settings.icons[i].highlight + "; fill: " + settings.icons[i].highlight + "; }";
-		document.styleSheets[0].insertRule(style);
+		document.styleSheets[0].cssRules[i].style.backgroundColor = settings.icons[i].highlight;
+		document.styleSheets[0].cssRules[i].style.fill = settings.icons[i].highlight;
 		
 		// Set icon
 		icons.elements[i].childNodes[0].childNodes[0].setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", settings.icons[i].icon);
