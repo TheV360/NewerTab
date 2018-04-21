@@ -112,7 +112,34 @@ function init() {
 		box: document.getElementById("searchbox")
 	};
 	
-	// Background
+	icons = {
+		parent: document.getElementById("icons"),
+		elements: document.getElementsByClassName("icon")
+	};
+	
+	// Clock
+	clock.blink.innerHTML = ":";
+	
+	// Search
+	search.parent.addEventListener("submit", function() {doSearch(false);});
+	
+	if (settings.search.focus) {
+		search.box.focus();
+		search.box.select();
+	}
+	
+	// CSS Rule map:
+	// 0 - 5: icons
+	// 6: background
+	for (i = 0; i < 6; i++)
+		document.styleSheets[0].insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ".contextopen {}", i);
+	document.styleSheets[0].insertRule("body {}", 6);
+	
+	updateBackground();
+	updateClock();
+	updateIcons();
+	
+	// Context menu fun
 	background.element.addEventListener("contextmenu", function(event) {
 		if (event.target === background.element) {
 			context(event.clientX, event.clientY, [
@@ -183,17 +210,82 @@ function init() {
 		}
 		return false;
 	});
-	
-	// Secret menu
 	secret.addEventListener("contextmenu", function(event) {
+		sinemode = false;
+		sinetime = 0;
+		cosinemode = false;
+		
 		if (event.target === secret) {
+			if (settings.secret)
+				settings.secret.score = 0;
+			else
+				settings.secret = {
+					"score": 0,
+					"high": 10
+				};
+			
 			fun = function(event, origin) {
-				context(Math.floor(Math.random() * window.innerWidth), Math.floor(Math.random() * window.innerHeight), [
+				var itemList = [
 					{
 						"name": "Create another",
 						"callback": fun
 					}
-				], origin);
+				];
+				
+				settings.secret.score += 1;
+				
+				if (settings.secret.score > 10) {
+					if (settings.secret.score > settings.secret.high)
+						settings.secret.high = settings.secret.score;
+					
+					itemList.push({
+						"name": "Score: " + settings.secret.score
+					});
+					itemList.push({
+						"name": "Highscore: " + settings.secret.high
+					});
+				}
+				
+				if (settings.secret.score === 69) itemList.push({"name": "Nice"});
+				if (settings.secret.score === 70) itemList.push({"name": "Wait, why are you still making new context menus?"});
+				if (settings.secret.score === 71) itemList.push({"name": "There's nothing but a single number going up. How is this entertaining to you?"});
+				if (settings.secret.score === 72) itemList.push({"name": "Sigh... how about this?"});
+				if (settings.secret.score === 73) {itemList.push({"name": "There, now it's harder to click the context menus."}); sinemode = true; sinetime = 0;}
+				if (settings.secret.score === 74) itemList.push({"name": "One single misclick and you start from the beginning."});
+				if (settings.secret.score >= 75 && settings.secret.score <= 85) itemList.push({"name": "Don't mess up."});
+				if (settings.secret.score === 86) itemList.push({"name": "If you even click away to another window, you will lose this."});
+				if (settings.secret.score === 87) itemList.push({"name": "Also, don't click any other options! You'll probably lose your progress."});
+				if (settings.secret.score === 88) itemList.push({"name": "Please be careful. See you at 100 clicks."});
+				if (settings.secret.score === 101) itemList.push({"name": "Sorry, I'm late."});
+				if (settings.secret.score === 102) itemList.push({"name": "Congrats on wasting a few minutes of your life on my New Tab page."});
+				if (settings.secret.score === 103) {itemList.push({"name": "Here's a worse sine thing."}); cosinemode = true;}
+				if (settings.secret.score === 104) itemList.push({"name": "Good luck! I'll be right back."});
+				if (settings.secret.score === 120) itemList.push({"name": "I'm back! How's it going? Hopefully you didn't restart that much trying to get here."});
+				if (settings.secret.score === 121) itemList.push({"name": "This entire part of NewerTab is inspired by one XKCD comic."});
+				if (settings.secret.score === 122) itemList.push({"name": "I forget what number the comic is. Can you search that for me?"});
+				if (settings.secret.score === 124) itemList.push({"name": "...Nevermind, I found it. It's XKCD #1975."});
+				if (settings.secret.score === 125) itemList.push({"name": "Here's a link to it.", "callback": function() {location.navigate("https://xkcd.com/1975/");}});
+				if (settings.secret.score === 126) itemList.push({"name": "That was a really cool April Fools joke."});
+				if (settings.secret.score === 127) itemList.push({"name": "I especially liked all the secrets and easter eggs."});
+				if (settings.secret.score === 128) {itemList.push({"name": "Oh yeah, it's been a while without another awful sine effect."})};
+				if (settings.secret.score === 129) itemList.push({"name": "Oh wait, I have to go. Sorry, this page will update with more lore tomorrow."});
+				
+				var contextElement = context(Math.floor(Math.random() * window.innerWidth), Math.floor(Math.random() * window.innerHeight), itemList, origin);
+				
+				var contextFit = contextElement.getBoundingClientRect();
+				
+				if (contextFit.x + contextFit.width > window.innerWidth)
+					contextElement.style.left = (window.innerWidth - contextFit.width) + "px";
+				if (contextFit.y + contextFit.height > window.innerHeight)
+					contextElement.style.top = (window.innerHeight - contextFit.height) + "px";
+				
+				if (cosinemode) {
+					contextSine(contextElement, parseInt(contextElement.style.left), parseInt(contextElement.style.top));
+				} else if (sinemode) {
+					contextSine(contextElement, parseInt(contextElement.style.left));
+				}
+				
+				saveSettings();
 			}
 			context(event.clientX, event.clientY, [
 				{
@@ -241,9 +333,6 @@ function init() {
 			return false;
 		}
 	});
-	
-	// Clock
-	clock.blink.innerHTML = ":";
 	clock.parent.addEventListener("contextmenu", function(event) {
 		context(event.clientX, event.clientY, [
 			{
@@ -276,9 +365,6 @@ function init() {
 		event.preventDefault();
 		return false;
 	});
-	
-	// Search
-	search.parent.addEventListener("submit", function() {doSearch(false);});
 	search.box.addEventListener("contextmenu", function(event) {
 		context(event.clientX, event.clientY, [
 			{
@@ -306,18 +392,6 @@ function init() {
 		event.preventDefault();
 		return false;
 	});
-	
-	if (settings.search.focus) {
-		search.box.focus();
-		search.box.select();
-	}
-	
-	// Icons
-	icons = {
-		parent: document.getElementById("icons"),
-		elements: document.getElementsByClassName("icon")
-	};
-	
 	icons.parent.addEventListener("contextmenu", function(event) {
 		var source = getParentWithTagName(event.target, "a");
 		
@@ -359,17 +433,6 @@ function init() {
 		event.preventDefault();
 		return false;
 	});
-	
-	// CSS Rule map:
-	// 0 - 5: icons
-	// 6: background
-	for (i = 0; i < 6; i++)
-		document.styleSheets[0].insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ".contextopen {}", i);
-	document.styleSheets[0].insertRule("body {}", 6);
-	
-	updateBackground();
-	updateClock();
-	updateIcons();
 }
 
 function updateBackground() {
@@ -497,6 +560,8 @@ function context(x, y, options = [{name: "No options?", callback: function() {}}
 	contextlist.style.setProperty("--tmp-size-width", contextlist.offsetWidth + "px");
 	contextlist.style.setProperty("--tmp-size-height", contextlist.offsetHeight + "px");
 	contextlist.focus();
+	
+	return contextlist;
 }
 
 // Small hack fixing a variable scope problem
@@ -514,6 +579,18 @@ function contextOption(option, origin) {
 	}
 	
 	return contextoption;
+}
+
+function contextSine(element, centerX, centerY) {
+	sinetime += 1;
+	
+	element.style.left = Math.floor(centerX + (Math.sin(2 * Math.PI * (sinetime / 60)) * 16)) + "px";
+	
+	if (centerY)
+		element.style.top = Math.floor(centerY + (Math.cos(2 * Math.PI * (sinetime / 50)) * 8)) + "px";
+	
+	if (document.contains(element))
+		window.requestAnimationFrame(function() {contextSine(element, centerX, centerY);});
 }
 
 function getParentWithTagName(element, name) {
