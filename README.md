@@ -1,26 +1,33 @@
 # NewerTab
 
+[Go to NewerTab](https://thev360.github.io/NewerTab)
+
 It's my new tab page, but it isn't held together with duct tape!
 
 # Features
 
-Currently, the only way to customize it is to edit the settings object and save it.
+You can customize most settings by right clicking them. Some features may require you to edit JSON, but I'm going to change that soon.
 
+* Pretty interface
 * Customizable icons
 * Customizable clock
 * Backgrounds support (gradients & images)
-* Search bar with date!
+* Nice selection of default images.
+* Search bar with date
 
 # To-do
 
 * Customization UI, but not trash
+* Little bit more polish
 
 # Credits
 
 * That one frosted glass tutorial and the codepen of one person who did it
 * Me for the CSS
 * Pexels and Unsplash for the default backgrounds, specifically...
-	* background1.jpg, background2.jpg, and background3.jpg are from Pexels.
+	* background1.jpg by Joey Kyber, via Pexels.
+	* background2.jpg by Nodar Chernishev, via Snapwire, via Pexels.
+	* background3.jpg by Karol D., via Pexels.
 	* background-new1.jpg is by JOHN TOWNER, via Unsplash.
 	* background-new2.jpg is by Alexander Slattery, via Unsplash.
 	* background-new3.jpg is by Marcelo Quinan, via Unsplash.

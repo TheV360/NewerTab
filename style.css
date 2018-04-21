@@ -232,9 +232,17 @@ ul.contextlist {
 ul.contextlist li {
 	padding: .5rem;
 	
+	color: black;
 	background-color: transparent;
 	
+	font-weight: 300;
+	
 	z-index: 101;
+}
+ul.contextlist li.contextdisabled {
+	color: #9f9f9f;
+	
+	font-weight: 400;
 }
 ul.contextlist li:hover {
 	background-color: #cfcfcf;

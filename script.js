@@ -2,8 +2,9 @@ window.addEventListener("DOMContentLoaded", init);
 
 storage = window.localStorage;
 
+const version = "0.5";
 const settingsBlank = JSON.stringify({
-	"version": "beta or something",
+	"version": version,
 	"theme": "dark",
 	"backgrounds": [
 		{
@@ -70,6 +71,12 @@ const date = {
 if (storage.getItem("settings"))
 	try {
 		settings = JSON.parse(storage.getItem("settings"));
+		if (settings.version != version) {
+			console.log("Settings is out of date. Here's old settings, just so you can copy it:\n");
+			console.log(JSON.stringify(settings));
+			settings = JSON.parse(settingsBlank);
+			saveSettings();
+		}
 	} catch(error) {
 		console.log("Settings item is missing or corrupt.\n" + error);
 		settings = JSON.parse(settingsBlank);
@@ -88,6 +95,8 @@ function init() {
 		current: null,
 		element: document.body //hmm
 	}
+	
+	secret = document.getElementById("content");
 	
 	clock = {
 		parent: document.getElementById("clock"),
@@ -108,57 +117,24 @@ function init() {
 		if (event.target === background.element) {
 			context(event.clientX, event.clientY, [
 				{
-					name: "Toggle background set",
+					name: "Change background set",
 					callback: function(event, origin) {
 						var i;
 						var optionList = [
 							[
-								{
-									"type": "image",
-									"src": "background-new1.jpg"
-								},
-								{
-									"type": "image",
-									"src": "background-new2.jpg"
-								},
-								{
-									"type": "image",
-									"src": "background-new3.jpg"
-								}
+								{"type": "image", "src": "background-new1.jpg"},
+								{"type": "image", "src": "background-new2.jpg"},
+								{"type": "image", "src": "background-new3.jpg"}
 							],
 							[
-								{
-									"type": "image",
-									"src": "background1.jpg"
-								},
-								{
-									"type": "image",
-									"src": "background2.jpg"
-								},
-								{
-									"type": "image",
-									"src": "background3.jpg"
-								}
+								{"type": "image", "src": "background1.jpg"},
+								{"type": "image", "src": "background2.jpg"},
+								{"type": "image", "src": "background3.jpg"}
 							],
 							[
-								{
-									"type": "gradient",
-									"from": "#283c86",
-									"to": "#45a247",
-									"angle": "100deg"
-								},
-								{
-									"type": "gradient",
-									"from": "#c21500",
-									"to": "#ffc500",
-									"angle": "200deg"
-								},
-								{
-									"type": "gradient",
-									"from": "#5c258d",
-									"to": "#4389a2",
-									"angle": "300deg"
-								},
+								{"type": "gradient", "from": "#283c86", "to": "#45a247", "angle": "100deg"},
+								{"type": "gradient", "from": "#c21500", "to": "#ffc500", "angle": "200deg"},
+								{"type": "gradient", "from": "#5c258d", "to": "#4389a2", "angle": "300deg"}
 							]
 						];
 						
@@ -169,12 +145,15 @@ function init() {
 							}
 						}
 						
+						if (i === optionList.length)
+							settings.backgrounds = optionList[0];
+						
 						updateBackground();
 						saveSettings();
 					}
 				},
 				{
-					name: "Toggle theme",
+					name: "Change theme",
 					callback: function(event, origin) {
 						var optionList = ["dark", "light"];
 						
@@ -191,12 +170,76 @@ function init() {
 					callback: function(event, origin) {
 						location.assign("https://github.com/TheV360/NewerTab#newertab");
 					}
+				},
+				{
+					name: "NewerTab v" + version
+				},
+				{
+					name: "By V360"
 				}
 			], background.element);
 			
 			event.preventDefault();
 		}
 		return false;
+	});
+	
+	// Secret menu
+	secret.addEventListener("contextmenu", function(event) {
+		if (event.target === secret) {
+			fun = function(event, origin) {
+				context(Math.floor(Math.random() * window.innerWidth), Math.floor(Math.random() * window.innerHeight), [
+					{
+						"name": "Create another",
+						"callback": fun
+					}
+				], origin);
+			}
+			context(event.clientX, event.clientY, [
+				{
+					"name": "Secret Bonus Menu!"
+				},
+				{
+					"name": "Hax0rz only!" // why
+				},
+				{
+					"name": "Directly edit JSON settings",
+					"callback": function(event, origin) {
+						var old = JSON.stringify(settings);
+						var tmp = old;
+						
+						tmp = prompt("JSON data here, I'mJustGoingToMakeThisDialogReallyLongForDesktopUsersMobileUsersAreOutOfLuck", tmp);
+						
+						if (tmp === "") tmp = old;
+						
+						console.log("old version");
+						console.log(old);
+						console.log("\nnew version");
+						console.log(tmp);
+					}
+				},
+				{
+					"name": "Create another context menu",
+					"callback": fun
+				},
+				{
+					"name": "Delete everything",
+					"callback": function(event, origin) {
+						if (confirm("Are you sure?"))
+							if (confirm("Really sure?"))
+								if (!confirm("Are you not sure?")) {
+									console.log("Backup:");
+									console.log(JSON.stringify(settings));
+									localStorage.removeItem("settings");
+									alert("deleted");
+								}
+					}
+				}
+			], secret);
+			
+			event.preventDefault();
+			return false;
+		}
 	});
 	
 	// Clock
@@ -251,7 +294,7 @@ function init() {
 				}
 			},
 			{
-				name: "Properties",
+				name: "Edit provider URL",
 				callback: function(event, origin) {
 					settings.search.provider = prompt("What's the provider URL?\n\nUse %s as a substitute for the actual search.", settings.search.provider);
 					
@@ -274,6 +317,7 @@ function init() {
 		parent: document.getElementById("icons"),
 		elements: document.getElementsByClassName("icon")
 	};
+	
 	icons.parent.addEventListener("contextmenu", function(event) {
 		var source = getParentWithTagName(event.target, "a");
 		
@@ -461,8 +505,13 @@ function contextOption(option, origin) {
 	var callback = option.callback;
 	
 	contextoption.innerHTML = option.name;
-	contextoption.addEventListener("click", function(event) {callback(event, origin);});
-	contextoption.addEventListener("contextmenu", function(event) {callback(event, origin); event.preventDefault(); return false;});
+	
+	if (callback) {
+		contextoption.addEventListener("click", function(event) {callback(event, origin);});
+		contextoption.addEventListener("contextmenu", function(event) {callback(event, origin); event.preventDefault(); return false;});
+	} else {
+		contextoption.classList.add("contextdisabled");
+	}
 	
 	return contextoption;
 }
