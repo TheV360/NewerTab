@@ -146,7 +146,7 @@ function init() {
 					// Massive hack
 					var iconIndex = Array.from(icons.elements).indexOf(origin);
 					
-					document.assign(settings.icons[iconIndex].link);
+					location.assign(settings.icons[iconIndex].link);
 				}
 			},
 			{
@@ -274,7 +274,7 @@ function doSearch(newtab = false) {
 		if (newtab)
 			window.open(settings.search.provider.replace("%s", encodeURIComponent(search.box.value)));
 		else
-			document.assign(settings.search.provider.replace("%s", encodeURIComponent(search.box.value)));
+			location.assign(settings.search.provider.replace("%s", encodeURIComponent(search.box.value)));
 }
 
 function saveSettings() {
