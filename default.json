@@ -1,11 +1,18 @@
 {
 	"version": "beta or something",
 	"theme": "dark",
-										"_type-comment_": "image, gradient",
 	"backgrounds": [
 		{
 			"type": "image",
 			"src": "background-new1.jpg"
+		},
+		{
+			"type": "image",
+			"src": "background-new2.jpg"
+		},
+		{
+			"type": "image",
+			"src": "background-new3.jpg"
 		},
 		{
 			"type": "gradient",
@@ -20,7 +27,6 @@
 	},
 	"search": {
 		"date": "long",
-										"_date-comment_": "none, short, long",
 		"focus": false,
 		"provider": "https://encrypted.google.com/search?q=%s",
 	},

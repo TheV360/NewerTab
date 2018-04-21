@@ -11,10 +11,12 @@ const settingsBlank = JSON.stringify({
 			"src": "background-new1.jpg"
 		},
 		{
-			"type": "gradient",
-			"from": "#1f2f3f",
-			"to": "#000f1f",
-			"angle": 0
+			"type": "image",
+			"src": "background-new2.jpg"
+		},
+		{
+			"type": "image",
+			"src": "background-new3.jpg"
 		}
 	],
 	"clock": {
@@ -60,6 +62,11 @@ const settingsBlank = JSON.stringify({
 	]
 });
 
+const date = {
+	day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+	month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+};
+
 if (storage.getItem("settings"))
 	try {
 		settings = JSON.parse(storage.getItem("settings"));
@@ -77,7 +84,13 @@ else {
 function init() {
 	clean(document.body);
 	
+	background = {
+		current: Math.floor(Math.random() * settings.backgrounds.length),
+		element: document.body //hmm
+	}
+	
 	clock = {
+		parent: document.getElementById("clock"),
 		hour: document.getElementById("hour"),
 		blink: document.getElementById("blink"),
 		minute: document.getElementById("minute"),
@@ -85,18 +98,121 @@ function init() {
 		suffix: document.getElementById("suffix")
 	};
 	
-	date = {
-		day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-		month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-	};
-	
 	search = {
 		parent: document.getElementById("search"),
 		box: document.getElementById("searchbox")
 	};
 	
+	// Background
+	background.element.addEventListener("contextmenu", function(event) {
+		if (event.target === background.element) {
+			context(event.clientX, event.clientY, [
+				{
+					name: "Toggle background set",
+					callback: function(event, origin) {
+						var i;
+						var optionList = [
+							[
+								{
+									"type": "image",
+									"src": "background-new1.jpg"
+								},
+								{
+									"type": "image",
+									"src": "background-new2.jpg"
+								},
+								{
+									"type": "image",
+									"src": "background-new3.jpg"
+								}
+							],
+							[
+								{
+									"type": "image",
+									"src": "background1.jpg"
+								},
+								{
+									"type": "image",
+									"src": "background2.jpg"
+								},
+								{
+									"type": "image",
+									"src": "background3.jpg"
+								}
+							],
+							[
+								{
+									"type": "gradient",
+									"from": "#283c86",
+									"to": "#45a247",
+									"angle": "100deg"
+								},
+								{
+									"type": "gradient",
+									"from": "#c21500",
+									"to": "#ffc500",
+									"angle": "200deg"
+								},
+								{
+									"type": "gradient",
+									"from": "#5c258d",
+									"to": "#4389a2",
+									"angle": "300deg"
+								},
+							]
+						];
+						
+						for (i = 0; i < optionList.length; i++) {
+							if (JSON.stringify(settings.backgrounds) === JSON.stringify(optionList[i])) {
+								settings.backgrounds = optionList[mod(i + 1, optionList.length)];
+								break;
+							}
+						}
+						
+						saveSettings();
+					}
+				}
+			], background.element);
+			
+			event.preventDefault();
+		}
+		return false;
+	});
+	
 	// Clock
 	clock.blink.innerHTML = ":";
+	clock.parent.addEventListener("contextmenu", function(event) {
+		context(event.clientX, event.clientY, [
+			{
+				name: "Toggle seconds",
+				callback: function(event, origin) {
+					settings.clock.seconds = !settings.clock.seconds;
+					
+					saveSettings();
+				}
+			},
+			{
+				name: "Toggle military time",
+				callback: function(event, origin) {
+					settings.clock.military = !settings.clock.military;
+					
+					saveSettings();
+				}
+			},
+			{
+				name: "Change date in search bar",
+				callback: function(event, origin) {
+					var optionList = ["none", "short", "long"];
+					settings.search.date = optionList[mod(optionList.indexOf(settings.search.date) + 1, optionList.length)];
+					
+					saveSettings();
+				}
+			}
+		], clock.parent);
+		
+		event.preventDefault();
+		return false;
+	});
 	
 	// Search
 	search.parent.addEventListener("submit", function() {doSearch(false);});
@@ -118,6 +234,8 @@ function init() {
 				name: "Properties",
 				callback: function(event, origin) {
 					settings.search.provider = prompt("What's the provider URL?\n\nUse %s as a substitute for the actual search.", settings.search.provider);
+					
+					saveSettings();
 				}
 			}
 		], search.box);
@@ -178,23 +296,25 @@ function init() {
 		return false;
 	});
 	
-	// Context Menu
-	/*document.body.addEventListener("contextmenu", function(event) {
-		context(event.clientX, event.clientY, [
-			{
-				name: "beep",
-				callback: function(event, origin) {
-					alert("beep");
-				}
-			}
-		], document.body);
-		
-		event.preventDefault();
-		return false;
-	});*/
-	
+	updateBackground();
 	updateClock();
 	updateIcons();
+}
+
+function updateBackground() {
+	var currentBackground = settings.backgrounds[background.current];
+	var style = "body { background-image: ";
+	
+	if (currentBackground.type === "image") {
+		style += "url(" + currentBackground.src + ")";
+	} else if (currentBackground.type === "gradient") {
+		style += "linear-gradient(" + currentBackground.angle + ", " + currentBackground.from +", " + currentBackground.to + ")";
+	} else {
+		style += "black";
+	}
+	
+	style += "; }"; // ;}
+	document.styleSheets[0].insertRule(style);
 }
 
 function updateIcons() {
@@ -225,7 +345,7 @@ function updateClock() {
 	if (settings.clock.military)
 		clock.hour.innerHTML = now.getHours();
 	else
-		clock.hour.innerHTML = ((now.getHours() - 1) % 12) + 1;
+		clock.hour.innerHTML = mod((now.getHours() - 1), 12) + 1;
 	
 	// Blinking colon
 	if (now.getSeconds() % 2 > 0 && !settings.clock.seconds)
@@ -243,10 +363,13 @@ function updateClock() {
 		clock.second.innerHTML = "";
 	
 	// Suffix
-	if (now.getHours() < 12)
-		clock.suffix.innerHTML = " AM";
+	if (settings.clock.military)
+		clock.suffix.innerHTML = "";
 	else
-		clock.suffix.innerHTML = " PM";
+		if (now.getHours() < 12)
+			clock.suffix.innerHTML = " AM";
+		else
+			clock.suffix.innerHTML = " PM";
 	
 	// Date
 	if (settings.search.date != "none") {
@@ -330,6 +453,10 @@ function getParentWithTagName(element, name) {
 	}
 	console.log("Couldn't find parent with name " + name + "!");
 	return element;
+}
+
+function mod(n, m) {
+	return ((n % m) + m) % m;
 }
 
 // From sitepoint.com/removing-useless-nodes-from-the-dom/
