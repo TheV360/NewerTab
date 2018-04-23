@@ -88,7 +88,7 @@ function startSecret(event, origin) {
 	
 	// Setup stuff
 	if (settings.secret)
-		settings.secret.score = 0;
+		settings.secret.score = 127;
 	else
 		settings.secret = {
 			"score": 0,
@@ -148,9 +148,9 @@ function doSecret(event, origin) {
 	if (settings.secret.score >= 75 && settings.secret.score <= 85) itemList.push({"name": "Don't mess up."});
 	
 	// Sine effects
-	if (settings.secret.score === 73) sine = {"cycle": 90, "height": 16}
-	if (settings.secret.score === 103) cosine = {"cycle": 80, "height": 8}
-	if (settings.secret.score === 128) wavy = {"cycle": 90, "height": 15};
+	if (settings.secret.score === 73) sine = {"cycle": 90, "height": 16};
+	if (settings.secret.score === 103) cosine = {"cycle": 80, "height": 8};
+	if (settings.secret.score === 128) {sine = {"cycle": 90, "height": 16};cosine = {"cycle": 80, "height": 8};wavy = {"cycle": 90, "height": 15};}
 	
 	// Clickable links
 	if (settings.secret.score === 125) itemList.push({"name": "Here's a link to it.", "callback": goToLink("https://xkcd.com/1975/")});
@@ -166,13 +166,6 @@ function doSecret(event, origin) {
 	if (settings.secret.score === 131) contextElement.appendChild(contextElement.childNodes[0]);
 	
 	// Do the wavy things
-	/*if (wavy) {
-		contextSine(contextElement, parseInt(contextElement.style.left), parseInt(contextElement.style.top), true);
-	} else if (cosine) {
-		contextSine(contextElement, parseInt(contextElement.style.left), parseInt(contextElement.style.top));
-	} else if (sine) {
-		contextSine(contextElement, parseInt(contextElement.style.left));
-	}*/
 	applyEffects(contextElement);
 	
 	// Save the settings again
@@ -181,30 +174,39 @@ function doSecret(event, origin) {
 
 function applyEffects(element) {
 	// Better version of contextSine
-	var effects = [];
-	element.style.animation = "";
+	elementFit = element.getBoundingClientRect();
 	
-	if (sine) {
-		element.style.setProperty("--anim-sine", sine.height + "px");
-		effects.push("sine " + (sine.cycle / 120) + "s " + (-1 * Math.random() * (sine.cycle / 60)) + "s ease-in-out alternate infinite");
-	}
+	if (sine) element.style.setProperty("--anim-sine", sine.height + "px");
+	if (cosine) element.style.setProperty("--anim-cosine", cosine.height + "px");
+	if (wavy) element.style.setProperty("--anim-wavy", wavy.height + "deg");
 	
-	if (cosine) {
-		element.style.setProperty("--anim-cosine", cosine.height + "px");
-		effects.push("cosine " + (cosine.cycle / 120) + "s " + (-1 * Math.random() * (cosine.cycle / 60)) + "s ease-in-out alternate infinite");
-	}
+	if (sine) element = applyEffect(element, "sine " + (sine.cycle / 120) + "s " + (-1 * Math.random() * (sine.cycle / 60)) + "s ease-in-out alternate infinite");
+	if (cosine) element = applyEffect(element, "cosine " + (cosine.cycle / 120) + "s " + (-1 * Math.random() * (cosine.cycle / 60)) + "s ease-in-out alternate infinite");
+	if (wavy) element = applyEffect(element, "wavy " + (wavy.cycle / 120) + "s " + (-1 * Math.random() * (wavy.cycle / 60)) + "s ease-in-out alternate infinite");
+}
+
+function applyEffect(element, effectName) {
+	var newChild = element;
+	var newParent = document.createElement("div");
+	newParent.className = "dummy";
 	
-	if (wavy) {
-		element.style.setProperty("--anim-wavy", wavy.height + "deg");
-		effects.push("wavy " + (wavy.cycle / 120) + "s " + (-1 * Math.random() * (wavy.cycle / 60)) + "s ease-in-out alternate infinite");
-	}
+	// Steal CSS properties
+	newParent.style.cssText = element.style.cssText;
+	newChild.style.cssText = "";
 	
-	while (effects.length) {
-		if (element.style.animation)
-			element.style.animation += ", " + effects.pop();
-		else
-			element.style.animation = effects.pop();
-	}
+	// Awful hack to fix width and height
+	newParent.style.setProperty("width", elementFit.width);
+	newParent.style.setProperty("height", elementFit.height);
+	
+	// Add new Animations
+	newParent.style.setProperty("animation", effectName);
+	
+	// Steal child (yikes)
+	newParent = newChild.parentNode.appendChild(newParent);
+	newParent.appendChild(newChild);
+	
+	// Return new child
+	return newParent;
 }
 
 function contextSine(element, centerX, centerY, hell) {
