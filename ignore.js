@@ -195,8 +195,8 @@ function applyEffect(element, effectName) {
 	newChild.style.cssText = "";
 	
 	// Awful hack to fix width and height
-	newParent.style.setProperty("width", elementFit.width);
-	newParent.style.setProperty("height", elementFit.height);
+	newParent.style.setProperty("width", elementFit.width + "px");
+	newParent.style.setProperty("height", elementFit.height + "px");
 	
 	// Add new Animations
 	newParent.style.setProperty("animation", effectName);
