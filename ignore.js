@@ -88,7 +88,7 @@ function startSecret(event, origin) {
 	
 	// Setup stuff
 	if (settings.secret)
-		settings.secret.score = 127;
+		settings.secret.score = 0;
 	else
 		settings.secret = {
 			"score": 0,
@@ -100,6 +100,10 @@ function startSecret(event, origin) {
 				"hp": 10,
 			}
 		};
+	
+	alert("Due to crazy bugs, this script has been deleted until further notice. thank");
+	
+	return;
 	
 	// Start the dang thing
 	doSecret(event, origin);
