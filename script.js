@@ -1,8 +1,6 @@
 window.addEventListener("DOMContentLoaded", init);
 
-storage = window.localStorage;
-
-const version = "0.5";
+const version = "0.6";
 const settingsBlank = JSON.stringify({
 	"version": version,
 	"theme": "dark",
@@ -67,6 +65,10 @@ const date = {
 	day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 	month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 };
+
+var secretLoad = false;
+
+var storage = window.localStorage;
 
 if (storage.getItem("settings"))
 	try {
@@ -211,83 +213,8 @@ function init() {
 		return false;
 	});
 	secret.addEventListener("contextmenu", function(event) {
-		sinemode = false;
-		sinetime = 0;
-		cosinemode = false;
-		
 		if (event.target === secret) {
-			if (settings.secret)
-				settings.secret.score = 0;
-			else
-				settings.secret = {
-					"score": 0,
-					"high": 10
-				};
-			
-			fun = function(event, origin) {
-				var itemList = [
-					{
-						"name": "Create another",
-						"callback": fun
-					}
-				];
-				
-				settings.secret.score += 1;
-				
-				if (settings.secret.score > 10) {
-					if (settings.secret.score > settings.secret.high)
-						settings.secret.high = settings.secret.score;
-					
-					itemList.push({
-						"name": "Score: " + settings.secret.score
-					});
-					itemList.push({
-						"name": "Highscore: " + settings.secret.high
-					});
-				}
-				
-				if (settings.secret.score === 69) itemList.push({"name": "Nice"});
-				if (settings.secret.score === 70) itemList.push({"name": "Wait, why are you still making new context menus?"});
-				if (settings.secret.score === 71) itemList.push({"name": "There's nothing but a single number going up. How is this entertaining to you?"});
-				if (settings.secret.score === 72) itemList.push({"name": "Sigh... how about this?"});
-				if (settings.secret.score === 73) {itemList.push({"name": "There, now it's harder to click the context menus."}); sinemode = true; sinetime = 0;}
-				if (settings.secret.score === 74) itemList.push({"name": "One single misclick and you start from the beginning."});
-				if (settings.secret.score >= 75 && settings.secret.score <= 85) itemList.push({"name": "Don't mess up."});
-				if (settings.secret.score === 86) itemList.push({"name": "If you even click away to another window, you will lose this."});
-				if (settings.secret.score === 87) itemList.push({"name": "Also, don't click any other options! You'll probably lose your progress."});
-				if (settings.secret.score === 88) itemList.push({"name": "Please be careful. See you at 100 clicks."});
-				if (settings.secret.score === 101) itemList.push({"name": "Sorry, I'm late."});
-				if (settings.secret.score === 102) itemList.push({"name": "Congrats on wasting a few minutes of your life on my New Tab page."});
-				if (settings.secret.score === 103) {itemList.push({"name": "Here's a worse sine thing."}); cosinemode = true;}
-				if (settings.secret.score === 104) itemList.push({"name": "Good luck! I'll be right back."});
-				if (settings.secret.score === 120) itemList.push({"name": "I'm back! How's it going? Hopefully you didn't restart that much trying to get here."});
-				if (settings.secret.score === 121) itemList.push({"name": "This entire part of NewerTab is inspired by one XKCD comic."});
-				if (settings.secret.score === 122) itemList.push({"name": "I forget what number the comic is. Can you search that for me?"});
-				if (settings.secret.score === 124) itemList.push({"name": "...Nevermind, I found it. It's XKCD #1975."});
-				if (settings.secret.score === 125) itemList.push({"name": "Here's a link to it.", "callback": function() {location.navigate("https://xkcd.com/1975/");}});
-				if (settings.secret.score === 126) itemList.push({"name": "That was a really cool April Fools joke."});
-				if (settings.secret.score === 127) itemList.push({"name": "I especially liked all the secrets and easter eggs."});
-				if (settings.secret.score === 128) {itemList.push({"name": "Oh yeah, it's been a while without another awful sine effect."})};
-				if (settings.secret.score === 129) itemList.push({"name": "Oh wait, I have to go. Sorry, this page will update with more lore tomorrow."});
-				
-				var contextElement = context(Math.floor(Math.random() * window.innerWidth), Math.floor(Math.random() * window.innerHeight), itemList, origin);
-				
-				var contextFit = contextElement.getBoundingClientRect();
-				
-				if (contextFit.x + contextFit.width > window.innerWidth)
-					contextElement.style.left = (window.innerWidth - contextFit.width) + "px";
-				if (contextFit.y + contextFit.height > window.innerHeight)
-					contextElement.style.top = (window.innerHeight - contextFit.height) + "px";
-				
-				if (cosinemode) {
-					contextSine(contextElement, parseInt(contextElement.style.left), parseInt(contextElement.style.top));
-				} else if (sinemode) {
-					contextSine(contextElement, parseInt(contextElement.style.left));
-				}
-				
-				saveSettings();
-			}
-			context(event.clientX, event.clientY, [
+			var itemList = [
 				{
 					"name": "Secret Bonus Menu!"
 				},
@@ -312,7 +239,7 @@ function init() {
 				},
 				{
 					"name": "Create another context menu",
-					"callback": fun
+					"callback": loadSecret
 				},
 				{
 					"name": "Delete everything",
@@ -327,7 +254,12 @@ function init() {
 								}
 					}
 				}
-			], secret);
+			];
+			
+			if (secretLoad)
+				itemList[3].callback = startSecret;
+			
+			context(event.clientX, event.clientY, itemList, secret);
 			
 			event.preventDefault();
 			return false;
@@ -520,7 +452,7 @@ function updateClock() {
 		search.box.placeholder = "Search";
 	}
 	
-	window.setTimeout(updateClock, 100);
+	window.requestAnimationFrame(updateClock);
 }
 
 function doSearch(newtab = false) {
@@ -557,8 +489,14 @@ function context(x, y, options = [{name: "No options?", callback: function() {}}
 	});
 	
 	contextlist = document.body.appendChild(contextlist);
-	contextlist.style.setProperty("--tmp-size-width", contextlist.offsetWidth + "px");
-	contextlist.style.setProperty("--tmp-size-height", contextlist.offsetHeight + "px");
+	
+	var contextfit = contextlist.getBoundingClientRect();
+	
+	if (contextfit.x + contextfit.width > window.innerWidth)
+		contextlist.style.left = (window.innerWidth - contextfit.width) + "px";
+	if (contextfit.y + contextfit.height > window.innerHeight)
+		contextlist.style.top = (window.innerHeight - contextfit.height) + "px";
+	
 	contextlist.focus();
 	
 	return contextlist;
@@ -581,16 +519,20 @@ function contextOption(option, origin) {
 	return contextoption;
 }
 
-function contextSine(element, centerX, centerY) {
-	sinetime += 1;
+function loadSecret(event, origin) {
+	if (!secretLoad) {
+		var secretScript = document.createElement("script");
+		
+		secretScript.type = "text/ecmascript";
+		secretScript.addEventListener("load", function(event) {startSecret(event, origin);});
+		secretScript.src = "ignore.js";
+		
+		document.body.appendChild(secretScript);
+		secretLoad = true;
+	}
 	
-	element.style.left = Math.floor(centerX + (Math.sin(2 * Math.PI * (sinetime / 60)) * 16)) + "px";
-	
-	if (centerY)
-		element.style.top = Math.floor(centerY + (Math.cos(2 * Math.PI * (sinetime / 50)) * 8)) + "px";
-	
-	if (document.contains(element))
-		window.requestAnimationFrame(function() {contextSine(element, centerX, centerY);});
+	event.preventDefault();
+	return false;
 }
 
 function getParentWithTagName(element, name) {

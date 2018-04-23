@@ -218,6 +218,7 @@ ul.contextlist {
 	list-style-type: none;
 	
 	max-width: 20rem;
+	max-height: 100vh;
 	
 	padding: 6px 0;
 	border: 1px solid rgb(191, 191, 191, .5);
@@ -230,6 +231,8 @@ ul.contextlist {
 	font-size: 1rem;
 	
 	z-index: 100;
+	
+	overflow: auto;
 }
 ul.contextlist li {
 	padding: .5rem;
@@ -251,6 +254,9 @@ ul.contextlist li:hover {
 }
 ul.contextlist li:not(:last-child) {
 	border-bottom: 1px solid #efefef;
+}
+ul.contextlist img {
+	width: 100%;
 }
 
 @keyframes fadeIn {
