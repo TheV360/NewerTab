@@ -268,12 +268,54 @@ ul.contextlist img {
 	}
 }
 
-@keyframes whee {
+.dummy {
+	display: block;
+	position: fixed;
+	
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	
+	z-index: 99;
+}
+
+.sine {
+	animation: sine 1.5s alternate infinite ease-in-out;
+}
+
+.cosine {
+	animation: cosine 1.333s alternate infinite ease-in-out;
+}
+
+.wavy {
+	animation: wavy 1.5s alternate infinite ease-in-out;
+}
+
+@keyframes sine {
 	from {
-		transform: rotate(-360deg);
+		transform: translateX(calc(-1 * var(--anim-sine)));
 	}
 	to {
-		transform: rotate(0deg);
+		transform: translateX(var(--anim-sine));
+	}
+}
+
+@keyframes cosine {
+	from {
+		transform: translateY(calc(-1 * var(--anim-cosine)));
+	}
+	to {
+		transform: translateY(var(--anim-cosine));
+	}
+}
+
+@keyframes wavy {
+	from {
+		transform: rotate(calc(-1 * var(--anim-wavy)));
+	}
+	to {
+		transform: rotate(var(--anim-wavy));
 	}
 }
 

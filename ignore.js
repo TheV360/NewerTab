@@ -26,7 +26,7 @@ const dialogue = {
 	131: "Yep, you can finally 100% a new tab page. Thank god.",
 	132: "Oh, I forgot this is actually fully-featured HTML.",
 	133: "<pre style=\"font-family: monospace;\">█ █\n█ █\n███\n█ █\n█ █\n\n███\n█\n██\n█\n███\n\n█\n█\n█\n█\n███\n\n█\n█\n█\n█\n███\n\n███\n█ █\n█ █\n█ █\n███\n\n\n\n █</pre>",
-	134: "Alright, here's the best level of this thing.<br /><br /><br />Have fun!",
+	134: "Alright, here's the best level of this thing.<br />I've turned off the wave so it's a bit easier, on both you and your device.<br />Have fun!",
 	135: "more levels tomorrow"
 };
 
@@ -61,14 +61,15 @@ const randomDialogue = [
 	"Life is short. Quit now and do something more interesting than searching for a button.",
 	"Create a bunch of anger",
 	"🐝",
-	"I really need to write shorter options",
+	"Write shorter options",
 	"Shoutouts to the great people who made these backgrounds",
 	"Create another one",
 	"Remember, exact words",
 	"TVTropes is good",
 	"Wikipedia's featured article is amazing today!",
 	"[Fakeout option here]",
-	"Delay REALLY GREAT RPG 2" // Ouch
+	"Delay REALLY GREAT RPG 2", // Ouch
+	"Click wrong option"
 ]
 
 var tmpBag = [];
@@ -114,7 +115,7 @@ function doSecret(event, origin) {
 	];
 	
 	// Increment score
-	settings.secret.score += 1;
+	settings.secret.score++;
 	
 	// Things that will most likely try to fake you out
 	if (settings.secret.score === 131) itemList.push({"name": "Create another <span style=\"color: white;\">context menu from the beginning</span>", "callback": fail});
@@ -129,8 +130,6 @@ function doSecret(event, origin) {
 		itemList = [];
 		
 		tmpBag = shuffle(tmpBag);
-		
-		console.log(tmpBag);
 	}
 	
 	// Show score
@@ -149,16 +148,16 @@ function doSecret(event, origin) {
 	if (settings.secret.score >= 75 && settings.secret.score <= 85) itemList.push({"name": "Don't mess up."});
 	
 	// Sine effects
-	if (settings.secret.score === 73) sine = {"cycle": 90, "height": 16};
-	if (settings.secret.score === 103) cosine = {"cycle": 80, "height": 8};
-	if (settings.secret.score === 128) wavy = true;
+	if (settings.secret.score === 73) sine = {"cycle": 90, "height": 16}
+	if (settings.secret.score === 103) cosine = {"cycle": 80, "height": 8}
+	if (settings.secret.score === 128) wavy = {"cycle": 90, "height": 15};
 	
 	// Clickable links
 	if (settings.secret.score === 125) itemList.push({"name": "Here's a link to it.", "callback": goToLink("https://xkcd.com/1975/")});
 	if (settings.secret.score === 130) itemList.unshift({"name": "Create an otter", "callback": goToLink("https://commons.wikimedia.org/wiki/File:Fischotter,_Lutra_Lutra.JPG")});
 	
 	// Add shuffled list
-	if (settings.secret.score === 134) {itemList = itemList.concat(tmpBag);}
+	if (settings.secret.score === 134) itemList = itemList.concat(tmpBag);
 	
 	// Make the menu
 	var contextElement = context(Math.floor(Math.random() * window.innerWidth), Math.floor(Math.random() * window.innerHeight), itemList, origin);
@@ -167,16 +166,45 @@ function doSecret(event, origin) {
 	if (settings.secret.score === 131) contextElement.appendChild(contextElement.childNodes[0]);
 	
 	// Do the wavy things
-	if (wavy) {
+	/*if (wavy) {
 		contextSine(contextElement, parseInt(contextElement.style.left), parseInt(contextElement.style.top), true);
 	} else if (cosine) {
 		contextSine(contextElement, parseInt(contextElement.style.left), parseInt(contextElement.style.top));
 	} else if (sine) {
 		contextSine(contextElement, parseInt(contextElement.style.left));
-	}
+	}*/
+	applyEffects(contextElement);
 	
 	// Save the settings again
 	saveSettings();
+}
+
+function applyEffects(element) {
+	// Better version of contextSine
+	var effects = [];
+	element.style.animation = "";
+	
+	if (sine) {
+		element.style.setProperty("--anim-sine", sine.height + "px");
+		effects.push("sine " + (sine.cycle / 120) + "s " + (-1 * Math.random() * (sine.cycle / 60)) + "s ease-in-out alternate infinite");
+	}
+	
+	if (cosine) {
+		element.style.setProperty("--anim-cosine", cosine.height + "px");
+		effects.push("cosine " + (cosine.cycle / 120) + "s " + (-1 * Math.random() * (cosine.cycle / 60)) + "s ease-in-out alternate infinite");
+	}
+	
+	if (wavy) {
+		element.style.setProperty("--anim-wavy", wavy.height + "deg");
+		effects.push("wavy " + (wavy.cycle / 120) + "s " + (-1 * Math.random() * (wavy.cycle / 60)) + "s ease-in-out alternate infinite");
+	}
+	
+	while (effects.length) {
+		if (element.style.animation)
+			element.style.animation += ", " + effects.pop();
+		else
+			element.style.animation = effects.pop();
+	}
 }
 
 function contextSine(element, centerX, centerY, hell) {
