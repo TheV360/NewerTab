@@ -1,5 +1,63 @@
 // This is lore. Don't look at this
 
+const maps = [
+	{
+		map: [
+			"#######",
+			"#\\__*_/#",
+			"#.....#",
+			"#.....>",
+			"#.@...#",
+			"#bed.T#",
+			"#######"
+		],
+		dialogue: [
+			{
+				x: 4,
+				y: 1,
+				text: "It's a small flower in a pot. You water it daily. You already watered it today..."
+			},
+			{
+				x: 1,
+				y: 6,
+				width: 3,
+				text: "It's your bed! It's a bit of a mess..."
+			},
+			{
+				check: -1,
+				x: 5,
+				y: 6,
+				text: "It's a bedside table. It has a small lantern and an empty drawer."
+			},
+			{
+				check: 0,
+				switch: 0,
+				x: 5,
+				y: 6,
+				give: {
+					type: "gold",
+					amount: 3
+				}
+				text: "It's a bedside table. It has a small lantern and... oh! There's some gold in a drawer."
+			}
+		]
+	}
+];
+
+// Event specs:
+//	Check: checks if flag x is set (may change to have two different events that happen, like check: {flag: 0, yep: {}, nope: {}})
+//  Switch: after event is done, switch flag x
+//  X, Y: coordinates
+//  Width: width of object. If not defined, assumed to be 1.
+//  Height: like width, but height.
+//  Give:
+//   Type:
+//    if gold, increment gold by amount
+//    otherwise, make item in inventory and give amount.
+//  Text: text to show when looking at item
+
+// TODO: move settings.secret to secret, make new secret localStorage entry, make saveSecret(); a function.
+
 const dialogue = {
 	69: "Nice",
 	70: "Wait, why are you still making new context menus?",
@@ -172,6 +230,43 @@ function doSecret(event, origin) {
 	// Save the settings again
 	saveSettings();
 }
+
+/*function loadSecret2(map) {
+	settings.secret.bonus.map = map;
+	loadedMap = maps[map];
+	
+	for (var j = 0; j < loadedMap.length; j++)
+		for (var i = 0; i < loadedMap[j]; i++) {
+			if (loadedMap[j][i] === "@")
+				loadedMap[j][i] = ".";
+		}
+}
+
+function playSecret2(event, origin, control) {
+	// Game controls
+	var itemList = [
+		{
+			"name": "Up",
+			"callback": doSecret
+		},
+		{
+			"name": "Down",
+			"callback": doSecret
+		},
+		{
+			"name": "Left",
+			"callback": doSecret
+		},
+		{
+			"name": "Right",
+			"callback": doSecret
+		}
+	];
+	
+	for (var i = 0; i < map[i].length; i++) {
+		
+	}
+}*/
 
 function applyEffects(element) {
 	// Better version of contextSine
