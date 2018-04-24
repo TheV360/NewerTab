@@ -486,11 +486,15 @@ function context(x, y, options = [{name: "No options?", callback: function() {}}
 	contextlist.addEventListener("blur", function(event) {
 		var deletThis = event.target;
 		
-		while (deletThis.parentNode != document.body)
-			deletThis = deletThis.parentNode;
-		
-		origin.classList.remove("contextopen");
-		deletThis.remove();
+		if (window.activeElement === deletThis.parentNode && deletThis.parentNode != document.body) {
+			deletThis.focus();
+		} else {
+			while (deletThis.parentNode != document.body)
+				deletThis = deletThis.parentNode;
+			
+			origin.classList.remove("contextopen");
+			deletThis.remove();
+		}
 	});
 	
 	contextlist = document.body.appendChild(contextlist);
