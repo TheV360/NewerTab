@@ -26,7 +26,7 @@ const dialogue = {
 	131: "Yep, you can finally 100% a new tab page. Thank god.",
 	132: "Oh, I forgot this is actually fully-featured HTML.",
 	133: "<pre style=\"font-family: monospace;\">█ █\n█ █\n███\n█ █\n█ █\n\n███\n█\n██\n█\n███\n\n█\n█\n█\n█\n███\n\n█\n█\n█\n█\n███\n\n███\n█ █\n█ █\n█ █\n███\n\n\n\n █</pre>",
-	134: "Alright, here's the best level of this thing.<br />I've turned off the wave so it's a bit easier, on both you and your device.<br />Have fun!",
+	134: "Alright, here's the best level of this thing.<br />Thanks, and have fun!",
 	135: "more levels tomorrow"
 };
 
@@ -150,7 +150,7 @@ function doSecret(event, origin) {
 	// Sine effects
 	if (settings.secret.score === 73) sine = {"cycle": 90, "height": 16};
 	if (settings.secret.score === 103) cosine = {"cycle": 80, "height": 8};
-	if (settings.secret.score === 128) {sine = {"cycle": 90, "height": 16};cosine = {"cycle": 80, "height": 8};wavy = {"cycle": 90, "height": 15};}
+	if (settings.secret.score === 128) wavy = {"cycle": 90, "height": 15};
 	
 	// Clickable links
 	if (settings.secret.score === 125) itemList.push({"name": "Here's a link to it.", "callback": goToLink("https://xkcd.com/1975/")});
