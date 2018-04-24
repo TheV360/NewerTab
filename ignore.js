@@ -37,7 +37,7 @@ const maps = [
 				give: {
 					type: "gold",
 					amount: 3
-				}
+				},
 				text: "It's a bedside table. It has a small lantern and... oh! There's some gold in a drawer."
 			}
 		]
@@ -46,15 +46,15 @@ const maps = [
 
 // Event specs:
 //	Check: checks if flag x is set (may change to have two different events that happen, like check: {flag: 0, yep: {}, nope: {}})
-//  Switch: after event is done, switch flag x
-//  X, Y: coordinates
-//  Width: width of object. If not defined, assumed to be 1.
-//  Height: like width, but height.
-//  Give:
-//   Type:
-//    if gold, increment gold by amount
-//    otherwise, make item in inventory and give amount.
-//  Text: text to show when looking at item
+//	Switch: after event is done, switch flag x
+//	X, Y: coordinates
+//	Width: width of object. If not defined, assumed to be 1.
+//	Height: like width, but height.
+//	Give:
+//	  Type:
+//	    if gold, increment gold by amount
+//	    otherwise, make item in inventory and give amount.
+//	Text: text to show when looking at item
 
 // TODO: move settings.secret to secret, make new secret localStorage entry, make saveSecret(); a function.
 
