@@ -488,9 +488,9 @@ function context(x, y, options = [{name: "No options?", callback: function() {}}
 		
 		console.log(event.target);
 		console.log(event.target.parentNode);
-		console.log(window.activeElement);
+		console.log(document.activeElement);
 		
-		if (window.activeElement === deletThis.parentNode && deletThis.parentNode != document.body) {
+		if (document.activeElement === deletThis.parentNode && deletThis.parentNode != document.body) {
 			deletThis.focus();
 		} else {
 			while (deletThis.parentNode != document.body)
