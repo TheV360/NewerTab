@@ -101,10 +101,6 @@ function startSecret(event, origin) {
 			}
 		};
 	
-	alert("Due to crazy bugs, this script has been deleted until further notice. thank");
-	
-	return;
-	
 	// Start the dang thing
 	doSecret(event, origin);
 }
@@ -170,7 +166,8 @@ function doSecret(event, origin) {
 	if (settings.secret.score === 131) contextElement.appendChild(contextElement.childNodes[0]);
 	
 	// Do the wavy things
-	applyEffects(contextElement);
+	if (sine || cosine || wavy)
+		applyEffects(contextElement);
 	
 	// Save the settings again
 	saveSettings();
@@ -187,6 +184,8 @@ function applyEffects(element) {
 	if (sine) element = applyEffect(element, "sine " + (sine.cycle / 120) + "s " + (-1 * Math.random() * (sine.cycle / 60)) + "s ease-in-out alternate infinite");
 	if (cosine) element = applyEffect(element, "cosine " + (cosine.cycle / 120) + "s " + (-1 * Math.random() * (cosine.cycle / 60)) + "s ease-in-out alternate infinite");
 	if (wavy) element = applyEffect(element, "wavy " + (wavy.cycle / 120) + "s " + (-1 * Math.random() * (wavy.cycle / 60)) + "s ease-in-out alternate infinite");
+	
+	element.focus();
 }
 
 function applyEffect(element, effectName) {
@@ -210,7 +209,7 @@ function applyEffect(element, effectName) {
 	newParent.appendChild(newChild);
 	
 	// Return new child
-	return newParent;
+	return newChild;
 }
 
 function contextSine(element, centerX, centerY, hell) {
