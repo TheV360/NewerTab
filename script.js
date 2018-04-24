@@ -486,6 +486,10 @@ function context(x, y, options = [{name: "No options?", callback: function() {}}
 	contextlist.addEventListener("blur", function(event) {
 		var deletThis = event.target;
 		
+		console.log(event.target);
+		console.log(event.target.parentNode);
+		console.log(window.activeElement);
+		
 		if (window.activeElement === deletThis.parentNode && deletThis.parentNode != document.body) {
 			deletThis.focus();
 		} else {
