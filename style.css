@@ -288,31 +288,29 @@ ul.contextlist img {
 }
 
 @keyframes sine {
-	from {
-		transform: translateX(calc(-1 * var(--anim-sine)));
-	}
-	to {
-		transform: translateX(var(--anim-sine));
-	}
+	from {transform: translateX(calc(-1 * var(--anim-sine)));}
+	to {transform: translateX(var(--anim-sine));}
 }
-
 @keyframes cosine {
-	from {
-		transform: translateY(calc(-1 * var(--anim-cosine)));
-	}
-	to {
-		transform: translateY(var(--anim-cosine));
-	}
+	from {transform: translateY(calc(-1 * var(--anim-cosine)));}
+	to {transform: translateY(var(--anim-cosine));}
 }
-
 @keyframes wavy {
-	from {
-		transform: rotate(calc(-1 * var(--anim-wavy)));
-	}
-	to {
-		transform: rotate(var(--anim-wavy));
-	}
+	from {transform: rotate(calc(-1 * var(--anim-wavy)));}
+	to {transform: rotate(var(--anim-wavy));}
 }
+@keyframes pulse {
+	from {transform: scale(calc(1 + calc(-1 * var(--anim-pulse))));}
+	to {transform: scale(calc(1 + var(--anim-pulse)));}
+}
+@keyframes pulse {
+	from {transform: scale(calc(1 + calc(-1 * var(--anim-pulse))));}
+	to {transform: scale(calc(1 + var(--anim-pulse)));}
+}
+/*@keyframes mess {
+	from {transform: rotateX(calc(-1 * var(--anim-mess))) rotateY(calc(.1 * var(--anim-mess)));}
+	to {transform: rotateX(calc(.1 * var(--anim-mess))) rotateY(calc(-1 * var(--anim-mess)));}
+}*/
 
 /* SVG trash */
 a.icon svg {

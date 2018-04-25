@@ -143,7 +143,7 @@ const maps = [
 var secret = {};
 var tmpBag = [];
 
-var sine, cosine, wavy;
+var sine, cosine, wavy, pulse;
 
 // Setup stuff
 if (storage.getItem("secret")) {
@@ -172,6 +172,7 @@ function startSecret(event, options) {
 	sine = null;
 	cosine = null;
 	wavy = null;
+	pulse = null;
 	
 	secret.score = 0;
 	
@@ -288,6 +289,7 @@ function debug_everyEffect() {
 	sine = {"cycle": 90, "height": 16};
 	cosine = {"cycle": 80, "height": 8};
 	wavy = {"cycle": 90, "height": 15};
+	pulse = {"cycle": 180, "height": .5};
 }
 
 function debug_skipAFew() {
@@ -304,10 +306,12 @@ function applyEffects(element) {
 	if (sine) element.style.setProperty("--anim-sine", sine.height + "px");
 	if (cosine) element.style.setProperty("--anim-cosine", cosine.height + "px");
 	if (wavy) element.style.setProperty("--anim-wavy", wavy.height + "deg");
+	if (pulse) element.style.setProperty("--anim-pulse", pulse.height);
 	
 	if (sine) element = applyEffect(element, "sine " + (sine.cycle / 120) + "s " + (-1 * Math.random() * (sine.cycle / 60)) + "s ease-in-out alternate infinite");
 	if (cosine) element = applyEffect(element, "cosine " + (cosine.cycle / 120) + "s " + (-1 * Math.random() * (cosine.cycle / 60)) + "s ease-in-out alternate infinite");
 	if (wavy) element = applyEffect(element, "wavy " + (wavy.cycle / 120) + "s " + (-1 * Math.random() * (wavy.cycle / 60)) + "s ease-in-out alternate infinite");
+	if (pulse) element = applyEffect(element, "pulse " + (pulse.cycle / 120) + "s " + (-1 * Math.random() * (pulse.cycle / 60)) + "s ease-in-out alternate infinite");
 	
 	// Good.
 	element.focus();
