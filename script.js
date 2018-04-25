@@ -399,7 +399,6 @@ function updateIcons() {
 	
 	for (var i = 0; i < icons.elements.length; i++) {
 		// Set link
-		console.log(settings.icons[i].link);
 		icons.elements[i].href = settings.icons[i].link;
 		
 		// Get icon color working
@@ -479,8 +478,6 @@ function saveSettings() {
 }
 
 function context(items = [{name: "No options?", callback: function() {}}], options) {
-	console.log(options);
-	
 	if (options.origin)
 		options.origin.classList.add("contextopen");
 	
@@ -497,7 +494,7 @@ function context(items = [{name: "No options?", callback: function() {}}], optio
 	for (var i = 0; i < items.length; i++) {
 		var contextoption = contextOption(items[i], options);
 		
-		contextlist.appendChild(contextoption);
+		contextoption = contextlist.appendChild(contextoption);
 	}
 	
 	contextlist.addEventListener("blur", function(event) {
@@ -536,9 +533,11 @@ function context(items = [{name: "No options?", callback: function() {}}], optio
 // Small hack fixing a variable scope problem
 function contextOption(item, options) {
 	var contextoption;
-	var callback = item.callback;
+	var callback;
 	
-	if (callback) {
+	if (item.callback) {
+		callback = item.callback;
+		
 		contextoption = document.createElement("li");
 		contextoption.innerHTML = item.name;
 		

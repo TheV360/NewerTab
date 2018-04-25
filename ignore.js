@@ -166,8 +166,6 @@ if (storage.getItem("secret")) {
 	saveSecret();
 }
 
-console.log("!");
-
 function startSecret(event, options) {
 	// Sine objects, will use later.
 	// For now, reset them
@@ -285,6 +283,16 @@ function playSecret2(event, options, control) {
 		
 	}
 }*/
+
+function debug_everyEffect() {
+	sine = {"cycle": 90, "height": 16};
+	cosine = {"cycle": 80, "height": 8};
+	wavy = {"cycle": 90, "height": 15};
+}
+
+function debug_skipAFew() {
+	window.setTimeout(function(){debug_everyEffect(); secret.score = 120; console.log("!");}, 2500);
+}
 
 function applyEffects(element) {
 	// Better version of contextSine
