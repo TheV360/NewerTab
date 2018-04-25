@@ -5,9 +5,12 @@ const secretBlank = JSON.stringify({
 	"high": 0,
 	"bonus": {
 		"map": 0,
-		"x": 0,
-		"y": 0,
+		"x": 2,
+		"y": 4,
 		"hp": 10,
+		"hpmax": 10,
+		"inventory": {},
+		"flags": []
 	}
 });
 
@@ -88,18 +91,27 @@ const maps = [
 	{
 		map: [
 			"#######",
-			"#\\__*_/#",
+			"#\\_*_/#",
 			"#.....#",
 			"#.....>",
-			"#.@...#",
+			"#.....#",
 			"#bed.T#",
 			"#######"
 		],
 		events: [
 			{
-				x: 4,
+				x: 3,
 				y: 1,
-				text: "It's a small flower in a pot. You water it daily. You already watered it today..."
+				check: {
+					flag: 0,
+					off: {
+						switch: 0,
+						text: "It's a small flower in a pot. You water it."
+					},
+					on: {
+						text: "It's a small flower in a pot. You water it daily. You already watered it today..."
+					}
+				}
 			},
 			{
 				x: 1,
@@ -108,36 +120,36 @@ const maps = [
 				text: "It's your bed! It's a bit of a mess..."
 			},
 			{
-				check: -1,
 				x: 5,
 				y: 6,
-				text: "It's a bedside table. It has a small lantern and an empty drawer."
-			},
-			{
-				check: 0,
-				switch: 0,
-				x: 5,
-				y: 6,
-				give: {
-					type: "gold",
-					amount: 3
+				check: {
+					flag: 1,
+					off: {
+						switch: 1,
+						give: {
+							name: "gold",
+							amount: 3
+						},
+						text: "It's a bedside table. It has a small lantern and... oh! There's some gold in a drawer."
+					},
+					on: {
+						text: "It's a bedside table. It has a small lantern and an empty drawer."
+					}
 				},
-				text: "It's a bedside table. It has a small lantern and... oh! There's some gold in a drawer."
 			}
 		]
 	}
 ];
 
 // Event specs:
-//	Check: checks if flag x is set (may change to have two different events that happen, like check: {flag: 0, yep: {}, nope: {}})
+//	Check: checks if flag x is set, does on/off event based on flag status
 //	Switch: after event is done, switch flag x
-//	X, Y: coordinates
-//	Width: width of object. If not defined, assumed to be 1.
-//	Height: like width, but height.
+//	X, Y: coordinates, if not given, will immediately
+//	Width: width of object. If not defined, assumed to be 1. If negative, it spans the entire map.
+//	Height: like width, but height. If not defined, assumed to be 1. If negative, it spans the entire map.
 //	Give:
-//	  Type:
-//	    if gold, increment gold by amount
-//	    otherwise, make item in inventory and give amount.
+//	  Name:
+//	    make item in inventory and give amount.
 //	Text: text to show when looking at item
 
 var secret = {};
@@ -241,21 +253,19 @@ function doSecret(event, options) {
 	if (secret.score === 131) contextElement.appendChild(contextElement.childNodes[0]);
 	
 	// Do the wavy things
-	if (sine || cosine || wavy)
+	if (sine || cosine || wavy || pulse)
 		applyEffects(contextElement);
 	
 	// Save the settings again
 	saveSecret();
 }
 
-/*function loadSecret2(map) {
+function loadSecret2(map) {
 	secret.bonus.map = map;
-	loadedMap = maps[map];
+	loadedMap = maps[map].map;
 	
 	for (var j = 0; j < loadedMap.length; j++)
 		for (var i = 0; i < loadedMap[j]; i++) {
-			if (loadedMap[j][i] === "@")
-				loadedMap[j][i] = ".";
 		}
 }
 
@@ -264,26 +274,49 @@ function playSecret2(event, options, control) {
 	var itemList = [
 		{
 			"name": "Up",
-			"callback": doSecret
+			"callback": goUp
 		},
 		{
 			"name": "Down",
-			"callback": doSecret
+			"callback": goDown
 		},
 		{
 			"name": "Left",
-			"callback": doSecret
+			"callback": goLeft
 		},
 		{
 			"name": "Right",
-			"callback": doSecret
+			"callback": goRight
 		}
 	];
 	
-	for (var i = 0; i < map[i].length; i++) {
+	var mapItem = "<pre style=\"font-family: monospace;\">";
+	for (var i = 0; i < loadedMap.length; i++) {
+		if (i) mapItem += "\n";
 		
+		if (i === secret.bonus.y) {
+			for (var j = 0; j < loadedMap[i].length; j++) {
+				if (j === secret.bonus.x) {
+					mapItem += "@";
+				} else {
+					mapItem += loadedMap[i][j];
+				}
+			}
+		} else {
+			mapItem += loadedMap[i];
+		}
 	}
-}*/
+	mapItem += "</pre>";
+	
+	itemList.push({"name": mapItem});
+	
+	context(itemList, {});
+}
+
+function goUp() {}
+function goDown() {}
+function goLeft() {}
+function goRight() {}
 
 function debug_everyEffect() {
 	sine = {"cycle": 90, "height": 16};
@@ -340,25 +373,6 @@ function applyEffect(element, effectName) {
 	
 	// Return new child
 	return newChild;
-}
-
-function contextSine(element, centerX, centerY, hell) {
-	time += 1;
-	
-	// Wave around <->
-	if (centerX && sine)
-		element.style.left = Math.floor(centerX + (Math.sin(2 * Math.PI * (time / sine.cycle)) * sine.height)) + "px";
-	
-	// Wave around ^ v
-	if (centerY && cosine)
-		element.style.top = Math.floor(centerY + (Math.cos(2 * Math.PI * (time / cosine.cycle)) * cosine.height)) + "px";
-	
-	// Wave around ⤹ ⤸
-	if (hell && wavy)
-		element.style.transform = "rotate(" + (Math.cos(2 * Math.PI * (time / sine.cycle)) * 15) + "deg)";
-	
-	if (document.contains(element))
-		window.requestAnimationFrame(function() {contextSine(element, centerX, centerY, hell);});
 }
 
 function saveSecret() {

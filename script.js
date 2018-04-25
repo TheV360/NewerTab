@@ -588,8 +588,6 @@ function mod(n, m) {
 }
 
 // From sitepoint.com/removing-useless-nodes-from-the-dom/
-// I just fixed their awful formatting
-// and made it not mess with syntax highlighting
 function clean(node) {
 	for (var n = 0; n < node.childNodes.length; n++) {
 		var child = node.childNodes[n];
