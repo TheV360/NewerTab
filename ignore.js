@@ -1,62 +1,15 @@
 // This is lore. Don't look at this
-
-const maps = [
-	{
-		map: [
-			"#######",
-			"#\\__*_/#",
-			"#.....#",
-			"#.....>",
-			"#.@...#",
-			"#bed.T#",
-			"#######"
-		],
-		dialogue: [
-			{
-				x: 4,
-				y: 1,
-				text: "It's a small flower in a pot. You water it daily. You already watered it today..."
-			},
-			{
-				x: 1,
-				y: 6,
-				width: 3,
-				text: "It's your bed! It's a bit of a mess..."
-			},
-			{
-				check: -1,
-				x: 5,
-				y: 6,
-				text: "It's a bedside table. It has a small lantern and an empty drawer."
-			},
-			{
-				check: 0,
-				switch: 0,
-				x: 5,
-				y: 6,
-				give: {
-					type: "gold",
-					amount: 3
-				},
-				text: "It's a bedside table. It has a small lantern and... oh! There's some gold in a drawer."
-			}
-		]
+const secretBlank = JSON.stringify({
+	"version": version,
+	"score": 0,
+	"high": 0,
+	"bonus": {
+		"map": 0,
+		"x": 0,
+		"y": 0,
+		"hp": 10,
 	}
-];
-
-// Event specs:
-//	Check: checks if flag x is set (may change to have two different events that happen, like check: {flag: 0, yep: {}, nope: {}})
-//	Switch: after event is done, switch flag x
-//	X, Y: coordinates
-//	Width: width of object. If not defined, assumed to be 1.
-//	Height: like width, but height.
-//	Give:
-//	  Type:
-//	    if gold, increment gold by amount
-//	    otherwise, make item in inventory and give amount.
-//	Text: text to show when looking at item
-
-// TODO: move settings.secret to secret, make new secret localStorage entry, make saveSecret(); a function.
+});
 
 const dialogue = {
 	69: "Nice",
@@ -127,43 +80,108 @@ const randomDialogue = [
 	"Wikipedia's featured article is amazing today!",
 	"[Fakeout option here]",
 	"Delay REALLY GREAT RPG 2", // Ouch
-	"Click wrong option"
-]
+	"Click wrong option",
+	"Push another broken commit"
+];
 
+const maps = [
+	{
+		map: [
+			"#######",
+			"#\\__*_/#",
+			"#.....#",
+			"#.....>",
+			"#.@...#",
+			"#bed.T#",
+			"#######"
+		],
+		events: [
+			{
+				x: 4,
+				y: 1,
+				text: "It's a small flower in a pot. You water it daily. You already watered it today..."
+			},
+			{
+				x: 1,
+				y: 6,
+				width: 3,
+				text: "It's your bed! It's a bit of a mess..."
+			},
+			{
+				check: -1,
+				x: 5,
+				y: 6,
+				text: "It's a bedside table. It has a small lantern and an empty drawer."
+			},
+			{
+				check: 0,
+				switch: 0,
+				x: 5,
+				y: 6,
+				give: {
+					type: "gold",
+					amount: 3
+				},
+				text: "It's a bedside table. It has a small lantern and... oh! There's some gold in a drawer."
+			}
+		]
+	}
+];
+
+// Event specs:
+//	Check: checks if flag x is set (may change to have two different events that happen, like check: {flag: 0, yep: {}, nope: {}})
+//	Switch: after event is done, switch flag x
+//	X, Y: coordinates
+//	Width: width of object. If not defined, assumed to be 1.
+//	Height: like width, but height.
+//	Give:
+//	  Type:
+//	    if gold, increment gold by amount
+//	    otherwise, make item in inventory and give amount.
+//	Text: text to show when looking at item
+
+var secret = {};
 var tmpBag = [];
 
-var sine, cosine, wavy, time;
+var sine, cosine, wavy;
 
-function startSecret(event, origin) {
+// Setup stuff
+if (storage.getItem("secret")) {
+	try {
+		secret = JSON.parse(storage.getItem("secret"));
+		if (secret.version != version) {
+			console.log("Secret is out of date. Here's old secret, just so you can copy it:\n");
+			console.log(JSON.stringify(secret));
+			secret = JSON.parse(secretBlank);
+			saveSecret();
+		}
+	} catch(error) {
+		console.log("Secret item is missing or corrupt.\n" + error);
+		secret = JSON.parse(secretBlank);
+		saveSecret();
+	}
+} else {
+	console.log("No secret, making a new one");
+	secret = JSON.parse(secretBlank);
+	saveSecret();
+}
+
+console.log("!");
+
+function startSecret(event, options) {
 	// Sine objects, will use later.
 	// For now, reset them
 	sine = null;
 	cosine = null;
 	wavy = null;
 	
-	// Reset sine time
-	time = 0;
-	
-	// Setup stuff
-	if (settings.secret)
-		settings.secret.score = 0;
-	else
-		settings.secret = {
-			"score": 0,
-			"high": 10,
-			"bonus": {
-				"map": 0,
-				"x": 0,
-				"y": 0,
-				"hp": 10,
-			}
-		};
+	secret.score = 0;
 	
 	// Start the dang thing
-	doSecret(event, origin);
+	doSecret(event, options);
 }
 
-function doSecret(event, origin) {
+function doSecret(event, options) {
 	// The first option
 	var itemList = [
 		{
@@ -173,11 +191,11 @@ function doSecret(event, origin) {
 	];
 	
 	// Increment score
-	settings.secret.score++;
+	secret.score++;
 	
 	// Things that will most likely try to fake you out
-	if (settings.secret.score === 131) itemList.push({"name": "Create another <span style=\"color: white;\">context menu from the beginning</span>", "callback": fail});
-	if (settings.secret.score === 134) {
+	if (secret.score === 131) itemList.push({"name": "Create another <span style=\"color: white;\">context menu from the beginning</span>", "callback": fail});
+	if (secret.score === 134) {
 		tmpBag = randomDialogue;
 		
 		for (var i = 0; i < tmpBag.length; i++) {
@@ -191,48 +209,48 @@ function doSecret(event, origin) {
 	}
 	
 	// Show score
-	if (settings.secret.score > 10) {
-		if (settings.secret.score > settings.secret.high)
-			settings.secret.high = settings.secret.score;
+	if (secret.score > 10) {
+		if (secret.score > secret.high)
+			secret.high = secret.score;
 		
-		itemList.push({"name": "Score: " + settings.secret.score});
-		itemList.push({"name": "High Score: " + settings.secret.high});
+		itemList.push({"name": "Score: " + secret.score});
+		itemList.push({"name": "High Score: " + secret.high});
 	}
 	
 	// If there's dialogue for this, please show it
-	if (dialogue[settings.secret.score]) itemList.push({"name": dialogue[settings.secret.score]});
+	if (dialogue[secret.score]) itemList.push({"name": dialogue[secret.score]});
 	
 	// Don't mess up
-	if (settings.secret.score >= 75 && settings.secret.score <= 85) itemList.push({"name": "Don't mess up."});
+	if (secret.score >= 75 && secret.score <= 85) itemList.push({"name": "Don't mess up."});
 	
 	// Sine effects
-	if (settings.secret.score === 73) sine = {"cycle": 90, "height": 16};
-	if (settings.secret.score === 103) cosine = {"cycle": 80, "height": 8};
-	if (settings.secret.score === 128) wavy = {"cycle": 90, "height": 15};
+	if (secret.score === 73) sine = {"cycle": 90, "height": 16};
+	if (secret.score === 103) cosine = {"cycle": 80, "height": 8};
+	if (secret.score === 128) wavy = {"cycle": 90, "height": 15};
 	
 	// Clickable links
-	if (settings.secret.score === 125) itemList.push({"name": "Here's a link to it.", "callback": goToLink("https://xkcd.com/1975/")});
-	if (settings.secret.score === 130) itemList.unshift({"name": "Create an otter", "callback": goToLink("https://commons.wikimedia.org/wiki/File:Fischotter,_Lutra_Lutra.JPG")});
+	if (secret.score === 125) itemList.push({"name": "Here's a link to it.", "callback": goToLink("https://xkcd.com/1975/")});
+	if (secret.score === 130) itemList.unshift({"name": "Create an otter", "callback": goToLink("https://commons.wikimedia.org/wiki/File:Fischotter,_Lutra_Lutra.JPG")});
 	
 	// Add shuffled list
-	if (settings.secret.score === 134) itemList = itemList.concat(tmpBag);
+	if (secret.score === 134) itemList = itemList.concat(tmpBag);
 	
 	// Make the menu
-	var contextElement = context(Math.floor(Math.random() * window.innerWidth), Math.floor(Math.random() * window.innerHeight), itemList, origin);
+	var contextElement = context(itemList, {x: Math.floor(Math.random() * window.innerWidth), y: Math.floor(Math.random() * window.innerHeight)});
 	
 	// Move the first node to the last spot
-	if (settings.secret.score === 131) contextElement.appendChild(contextElement.childNodes[0]);
+	if (secret.score === 131) contextElement.appendChild(contextElement.childNodes[0]);
 	
 	// Do the wavy things
 	if (sine || cosine || wavy)
 		applyEffects(contextElement);
 	
 	// Save the settings again
-	saveSettings();
+	saveSecret();
 }
 
 /*function loadSecret2(map) {
-	settings.secret.bonus.map = map;
+	secret.bonus.map = map;
 	loadedMap = maps[map];
 	
 	for (var j = 0; j < loadedMap.length; j++)
@@ -242,7 +260,7 @@ function doSecret(event, origin) {
 		}
 }
 
-function playSecret2(event, origin, control) {
+function playSecret2(event, options, control) {
 	// Game controls
 	var itemList = [
 		{
@@ -272,6 +290,9 @@ function applyEffects(element) {
 	// Better version of contextSine
 	elementFit = element.getBoundingClientRect();
 	
+	// Disarm blur event
+	blurOverride = true;
+	
 	if (sine) element.style.setProperty("--anim-sine", sine.height + "px");
 	if (cosine) element.style.setProperty("--anim-cosine", cosine.height + "px");
 	if (wavy) element.style.setProperty("--anim-wavy", wavy.height + "deg");
@@ -280,7 +301,9 @@ function applyEffects(element) {
 	if (cosine) element = applyEffect(element, "cosine " + (cosine.cycle / 120) + "s " + (-1 * Math.random() * (cosine.cycle / 60)) + "s ease-in-out alternate infinite");
 	if (wavy) element = applyEffect(element, "wavy " + (wavy.cycle / 120) + "s " + (-1 * Math.random() * (wavy.cycle / 60)) + "s ease-in-out alternate infinite");
 	
+	// Good.
 	element.focus();
+	blurOverride = false;
 }
 
 function applyEffect(element, effectName) {
@@ -299,7 +322,7 @@ function applyEffect(element, effectName) {
 	// Add new Animations
 	newParent.style.setProperty("animation", effectName);
 	
-	// Steal child (yikes)
+	// Move child into new parent
 	newParent = newChild.parentNode.appendChild(newParent);
 	newParent.appendChild(newChild);
 	
@@ -324,6 +347,10 @@ function contextSine(element, centerX, centerY, hell) {
 	
 	if (document.contains(element))
 		window.requestAnimationFrame(function() {contextSine(element, centerX, centerY, hell);});
+}
+
+function saveSecret() {
+	storage.setItem("secret", JSON.stringify(secret));
 }
 
 // Evil

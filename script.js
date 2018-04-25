@@ -66,11 +66,10 @@ const date = {
 	month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 };
 
+var storage = window.localStorage;
 var secretLoad = false;
 
-var storage = window.localStorage;
-
-if (storage.getItem("settings"))
+if (storage.getItem("settings")) {
 	try {
 		settings = JSON.parse(storage.getItem("settings"));
 		if (settings.version != version) {
@@ -84,11 +83,13 @@ if (storage.getItem("settings"))
 		settings = JSON.parse(settingsBlank);
 		saveSettings();
 	}
-else {
+} else {
 	console.log("No settings, making a new one");
 	settings = JSON.parse(settingsBlank);
 	saveSettings();
 }
+
+var blurOverride = false;
 
 function init() {
 	clean(document.body);
@@ -98,7 +99,7 @@ function init() {
 		element: document.body //hmm
 	}
 	
-	secret = document.getElementById("content");
+	secretContent = document.getElementById("content");
 	
 	clock = {
 		parent: document.getElementById("clock"),
@@ -144,10 +145,10 @@ function init() {
 	// Context menu fun
 	background.element.addEventListener("contextmenu", function(event) {
 		if (event.target === background.element) {
-			context(event.clientX, event.clientY, [
+			context([
 				{
 					name: "Change background set",
-					callback: function(event, origin) {
+					callback: function(event, options) {
 						var i;
 						var optionList = [
 							[
@@ -183,7 +184,7 @@ function init() {
 				},
 				{
 					name: "Change theme",
-					callback: function(event, origin) {
+					callback: function(event, options) {
 						var optionList = ["dark", "light"];
 						
 						document.body.parentNode.classList.remove(settings.theme);
@@ -194,36 +195,35 @@ function init() {
 						saveSettings();
 					}
 				},
+				{},
 				{
-					name: "About NewerTab",
-					callback: function(event, origin) {
+					name: "NewerTab v" + version,
+					callback: function(event, options) {
 						location.assign("https://github.com/TheV360/NewerTab#newertab");
 					}
 				},
 				{
-					name: "NewerTab v" + version
-				},
-				{
-					name: "By V360"
+					name: "By V360",
+					callback: function(event, options) {
+						location.assign("https://thev360.github.io");
+					}
 				}
-			], background.element);
+			], {x: event.clientX, y: event.clientY, origin: background.element});
 			
 			event.preventDefault();
 		}
 		return false;
 	});
-	secret.addEventListener("contextmenu", function(event) {
-		if (event.target === secret) {
+	secretContent.addEventListener("contextmenu", function(event) {
+		if (event.target === secretContent) {
 			var itemList = [
 				{
 					"name": "Secret Bonus Menu!"
 				},
-				{
-					"name": "Hax0rz only!" // why
-				},
+				{},
 				{
 					"name": "Directly edit JSON settings",
-					"callback": function(event, origin) {
+					"callback": function(event, options) {
 						var old = JSON.stringify(settings);
 						var tmp = old;
 						
@@ -241,9 +241,10 @@ function init() {
 					"name": "Create another context menu",
 					"callback": loadSecret
 				},
+				{},
 				{
 					"name": "Delete everything",
-					"callback": function(event, origin) {
+					"callback": function(event, options) {
 						if (confirm("Are you sure?"))
 							if (confirm("Really sure?"))
 								if (!confirm("Are you not sure?")) {
@@ -259,17 +260,17 @@ function init() {
 			if (secretLoad)
 				itemList[3].callback = startSecret;
 			
-			context(event.clientX, event.clientY, itemList, secret);
+			context(itemList, {x: event.clientX, y: event.clientY, origin: secretContent});
 			
 			event.preventDefault();
 			return false;
 		}
 	});
 	clock.parent.addEventListener("contextmenu", function(event) {
-		context(event.clientX, event.clientY, [
+		context([
 			{
 				name: "Toggle seconds",
-				callback: function(event, origin) {
+				callback: function(event, options) {
 					settings.clock.seconds = !settings.clock.seconds;
 					
 					saveSettings();
@@ -277,7 +278,7 @@ function init() {
 			},
 			{
 				name: "Toggle military time",
-				callback: function(event, origin) {
+				callback: function(event, options) {
 					settings.clock.military = !settings.clock.military;
 					
 					saveSettings();
@@ -285,41 +286,50 @@ function init() {
 			},
 			{
 				name: "Change date in search bar",
-				callback: function(event, origin) {
+				callback: function(event, options) {
 					var optionList = ["none", "short", "long"];
 					settings.search.date = optionList[mod(optionList.indexOf(settings.search.date) + 1, optionList.length)];
 					
 					saveSettings();
 				}
 			}
-		], clock.parent);
+		], {x: event.clientX, y: event.clientY, origin: clock.parent});
 		
 		event.preventDefault();
 		return false;
 	});
 	search.box.addEventListener("contextmenu", function(event) {
-		context(event.clientX, event.clientY, [
+		context([
 			{
 				name: "Search",
-				callback: function(event, origin) {
+				callback: function(event, options) {
 					doSearch(false);
 				}
 			},
 			{
 				name: "Search in new tab",
-				callback: function(event, origin) {
+				callback: function(event, options) {
 					doSearch(true);
+				}
+			},
+			{},
+			{
+				name: "Toggle focus on open",
+				callback: function(event, options) {
+					settings.search.focus = !settings.search.focus;
+					
+					saveSettings();
 				}
 			},
 			{
 				name: "Edit provider URL",
-				callback: function(event, origin) {
+				callback: function(event, options) {
 					settings.search.provider = prompt("What's the provider URL?\n\nUse %s as a substitute for the actual search.", settings.search.provider);
 					
 					saveSettings();
 				}
 			}
-		], search.box);
+		], {x: event.clientX, y: event.clientY, origin: search.box});
 		
 		event.preventDefault();
 		return false;
@@ -327,30 +337,31 @@ function init() {
 	icons.parent.addEventListener("contextmenu", function(event) {
 		var source = getParentWithTagName(event.target, "a");
 		
-		context(event.clientX, event.clientY, [
+		context([
 			{
 				name: "Open link",
-				callback: function(event, origin) {
+				callback: function(event, options) {
 					// Massive hack
-					var iconIndex = Array.from(icons.elements).indexOf(origin);
+					var iconIndex = Array.from(icons.elements).indexOf(options.origin);
 					
 					location.assign(settings.icons[iconIndex].link);
 				}
 			},
 			{
 				name: "Open link in new tab",
-				callback: function(event, origin) {
+				callback: function(event, options) {
 					// Massive hack
-					var iconIndex = Array.from(icons.elements).indexOf(origin);
+					var iconIndex = Array.from(icons.elements).indexOf(options.origin);
 					
 					window.open(settings.icons[iconIndex].link);
 				}
 			},
+			{},
 			{
 				name: "Edit icon",
-				callback: function(event, origin) {
+				callback: function(event, options) {
 					// Massive hack
-					var iconIndex = Array.from(icons.elements).indexOf(origin);
+					var iconIndex = Array.from(icons.elements).indexOf(options.origin);
 					
 					settings.icons[iconIndex].link = prompt("What's the website link?", settings.icons[iconIndex].link);
 					settings.icons[iconIndex].icon = prompt("What's the SVG?\n\nYou can use font awesome as fa-solid.svg, fa-regular.svg, and fa-brands.svg!", settings.icons[iconIndex].icon);
@@ -360,7 +371,7 @@ function init() {
 					saveSettings();
 				}
 			}
-		], source);
+		], {x: event.clientX, y: event.clientY, origin: source});
 		
 		event.preventDefault();
 		return false;
@@ -467,18 +478,24 @@ function saveSettings() {
 	storage.setItem("settings", JSON.stringify(settings));
 }
 
-function context(x, y, options = [{name: "No options?", callback: function() {}}], origin) {
-	origin.classList.add("contextopen");
+function context(items = [{name: "No options?", callback: function() {}}], options) {
+	console.log(options);
+	
+	if (options.origin)
+		options.origin.classList.add("contextopen");
 	
 	var contextlist = document.createElement("ul");
 	
 	contextlist.className = "contextlist";
-	contextlist.style.left = (x - 4) + "px";
-	contextlist.style.top = (y - 4) + "px";
 	contextlist.tabIndex = 100;
 	
-	for (var i = 0; i < options.length; i++) {
-		var contextoption = contextOption(options[i], origin);
+	if (options.x)
+		contextlist.style.left = (options.x - 4) + "px";
+	if (options.y)
+		contextlist.style.top = (options.y - 4) + "px";
+	
+	for (var i = 0; i < items.length; i++) {
+		var contextoption = contextOption(items[i], options);
 		
 		contextlist.appendChild(contextoption);
 	}
@@ -486,22 +503,23 @@ function context(x, y, options = [{name: "No options?", callback: function() {}}
 	contextlist.addEventListener("blur", function(event) {
 		var deletThis = event.target;
 		
-		console.log(event.target);
-		console.log(event.target.parentNode);
-		console.log(document.activeElement);
-		
-		if (document.activeElement === deletThis.parentNode && deletThis.parentNode != document.body) {
+		if (blurOverride) {
 			deletThis.focus();
 		} else {
 			while (deletThis.parentNode != document.body)
 				deletThis = deletThis.parentNode;
 			
-			origin.classList.remove("contextopen");
+			if (options.origin)
+				options.origin.classList.remove("contextopen");
+			
 			deletThis.remove();
 		}
 	});
 	
-	contextlist = document.body.appendChild(contextlist);
+	if (options.parent)
+		contextlist = options.parent.appendChild(contextlist);
+	else
+		contextlist = document.body.appendChild(contextlist);
 	
 	var contextfit = contextlist.getBoundingClientRect();
 	
@@ -516,28 +534,34 @@ function context(x, y, options = [{name: "No options?", callback: function() {}}
 }
 
 // Small hack fixing a variable scope problem
-function contextOption(option, origin) {
-	var contextoption = document.createElement("li");
-	var callback = option.callback;
-	
-	contextoption.innerHTML = option.name;
+function contextOption(item, options) {
+	var contextoption;
+	var callback = item.callback;
 	
 	if (callback) {
-		contextoption.addEventListener("click", function(event) {callback(event, origin);});
-		contextoption.addEventListener("contextmenu", function(event) {callback(event, origin); event.preventDefault(); return false;});
-	} else {
+		contextoption = document.createElement("li");
+		contextoption.innerHTML = item.name;
+		
+		contextoption.addEventListener("click", function(event) {callback(event, options);});
+		contextoption.addEventListener("contextmenu", function(event) {callback(event, options); event.preventDefault(); return false;});
+	} else if (item.name) {
+		contextoption = document.createElement("li");
+		contextoption.innerHTML = item.name;
+		
 		contextoption.classList.add("contextdisabled");
+	} else {
+		contextoption = document.createElement("hr");
 	}
 	
 	return contextoption;
 }
 
-function loadSecret(event, origin) {
+function loadSecret(event, options) {
 	if (!secretLoad) {
 		var secretScript = document.createElement("script");
 		
 		secretScript.type = "text/ecmascript";
-		secretScript.addEventListener("load", function(event) {startSecret(event, origin);});
+		secretScript.addEventListener("load", function(event) {startSecret(event, options);});
 		secretScript.src = "ignore.js";
 		
 		document.body.appendChild(secretScript);

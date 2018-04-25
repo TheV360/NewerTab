@@ -19,6 +19,7 @@ You can customize most settings by right clicking them. Some features may requir
 
 * Customization UI, but not trash
 * Little bit more polish
+* More empty space in the ignore.js file. Ignore the ignore.js file. There's nothing in it.
 
 # Credits
 

@@ -252,8 +252,15 @@ ul.contextlist li.contextdisabled {
 ul.contextlist li:hover {
 	background-color: #cfcfcf;
 }
-ul.contextlist li:not(:last-child) {
+ul.contextlist > :not(:last-child) {
 	border-bottom: 1px solid #efefef;
+}
+ul.contextlist hr {
+	margin: 1px 0;
+	border: 0;
+	height: 1px;
+	
+	background-color: #efefef;
 }
 ul.contextlist img {
 	width: 100%;
