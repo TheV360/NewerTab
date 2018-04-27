@@ -256,11 +256,10 @@ ul.contextlist > :not(:last-child) {
 	border-bottom: 1px solid #efefef;
 }
 ul.contextlist hr {
-	margin: 1px 0;
 	border: 0;
-	height: 1px;
+	height: .25rem;
 	
-	background-color: #efefef;
+	background-color: #f7f7f7;
 }
 ul.contextlist img {
 	width: 100%;
