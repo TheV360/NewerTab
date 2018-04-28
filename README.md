@@ -23,12 +23,12 @@ You can customize most settings by right clicking them. Some features may requir
 
 # Credits
 
-* That one frosted glass tutorial and the codepen of one person who did it
-* Me for the CSS
+* Me for the HTML, CSS, and Javascript
+* That one frosted glass tutorial and the Codepen of one person who did it
 * Pexels and Unsplash for the default backgrounds, specifically...
-	* background1.jpg by Joey Kyber, via Pexels.
-	* background2.jpg by Nodar Chernishev, via Snapwire, via Pexels.
-	* background3.jpg by Karol D., via Pexels.
-	* background-new1.jpg is by JOHN TOWNER, via Unsplash.
-	* background-new2.jpg is by Alexander Slattery, via Unsplash.
-	* background-new3.jpg is by Marcelo Quinan, via Unsplash.
+	* new/1.jpg by Joey Kyber, via Pexels.
+	* new/2.jpg by Nodar Chernishev, via Snapwire, via Pexels.
+	* new/3.jpg by Karol D., via Pexels.
+	* newer/1.jpg is by JOHN TOWNER, via Unsplash.
+	* newer/2.jpg is by Alexander Slattery, via Unsplash.
+	* newer/3.jpg is by Marcelo Quinan, via Unsplash.

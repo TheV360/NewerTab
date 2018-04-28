@@ -1,97 +1,63 @@
-window.addEventListener("DOMContentLoaded", init);
+"use strict";
 
-const version = "0.6";
-const settingsBlank = JSON.stringify({
-	"version": version,
-	"theme": "dark",
-	"backgrounds": [
-		{
-			"type": "image",
-			"src": "background-new1.jpg"
-		},
-		{
-			"type": "image",
-			"src": "background-new2.jpg"
-		},
-		{
-			"type": "image",
-			"src": "background-new3.jpg"
-		}
-	],
-	"clock": {
-		"military": false,
-		"seconds": false
-	},
-	"search": {
-		"date": "long",
-		"focus": false,
-		"provider": "https://encrypted.google.com/search?q=%s",
-	},
-	"icons": [
-		{
-			"icon": "fa-brands.svg#youtube",
-			"link": "https://www.youtube.com/feed/subscriptions",
-			"highlight": "#ff0000"
-		},
-		{
-			"icon": "fa-brands.svg#twitter",
-			"link": "https://www.twitter.com/",
-			"highlight": "#1da1f2"
-		},
-		{
-			"icon": "fa-brands.svg#tumblr",
-			"link": "https://www.tumblr.com",
-			"highlight": "#36465d"
-		},
-		{
-			"icon": "fa-brands.svg#reddit-alien",
-			"link": "https://www.reddit.com",
-			"highlight": "#ff4500"
-		},
-		{
-			"icon": "fa-brands.svg#smilebasic-source",
-			"link": "https://smilebasicsource.com/activity",
-			"highlight": "#009688"
-		},
-		{
-			"icon": "fa-brands.svg#github",
-			"link": "https://www.github.com",
-			"highlight": "#191717"
-		}
-	]
-});
+window.addEventListener("DOMContentLoaded", setup);
 
+const version = "0.6.1";
 const date = {
-	day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+	day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 	month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 };
 
 var storage = window.localStorage;
-var secretLoad = false;
+var settings = {};
 
-if (storage.getItem("settings")) {
-	try {
-		settings = JSON.parse(storage.getItem("settings"));
-		if (settings.version != version) {
-			console.log("Settings is out of date. Here's old settings, just so you can copy it:\n");
-			console.log(JSON.stringify(settings));
-			settings = JSON.parse(settingsBlank);
-			saveSettings();
+function loadSettings(additional) {
+	var validSettings = false;
+	
+	if (storage.getItem("settings")) {
+		try {
+			settings = JSON.parse(storage.getItem("settings"));
+			if (settings.version != version)
+				console.log("Settings is out of date. Here's old settings, just so you can copy it:\n\n" + JSON.stringify(settings));
+		 	else
+				validSettings = true;
+		} catch(error) {
+			console.log("Settings item is missing or corrupt.\n" + error);
 		}
-	} catch(error) {
-		console.log("Settings item is missing or corrupt.\n" + error);
-		settings = JSON.parse(settingsBlank);
-		saveSettings();
 	}
-} else {
-	console.log("No settings, making a new one");
-	settings = JSON.parse(settingsBlank);
-	saveSettings();
+
+	if (!validSettings) {
+		document.body.classList.add("loading");
+		loadJSON("default.json", (response)=>{
+			settings = JSON.parse(response);
+			settings.version = version;
+			
+			saveSettings();
+			
+			document.body.classList.remove("loading");
+			additional();
+		});
+	}
+	
+	return validSettings;
 }
 
+loadSettings(()=>{setup();});
+
+// Normal Programming Stuff
+var i, j;
+
+// Normal NewerTab stuff
+var background, clock, search, icons;
+
+// Secret trash
+var secretContent;
+var secretLoad = false;
+
+// Hacks
 var blurOverride = false;
 
-function init() {
+function setup() {
 	clean(document.body);
 	
 	background = {
@@ -134,7 +100,7 @@ function init() {
 	// CSS Rule map:
 	// 0 - 5: icons
 	// 6: background
-	for (i = 0; i < 6; i++)
+	for (var i = 0; i < 6; i++)
 		document.styleSheets[0].insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ".contextopen {}", i);
 	document.styleSheets[0].insertRule("body {}", 6);
 	
@@ -152,14 +118,14 @@ function init() {
 						var i;
 						var optionList = [
 							[
-								{"type": "image", "src": "background-new1.jpg"},
-								{"type": "image", "src": "background-new2.jpg"},
-								{"type": "image", "src": "background-new3.jpg"}
+								{"type": "image", "src": "img/newer/1.jpg"},
+								{"type": "image", "src": "img/newer/2.jpg"},
+								{"type": "image", "src": "img/newer/3.jpg"}
 							],
 							[
-								{"type": "image", "src": "background1.jpg"},
-								{"type": "image", "src": "background2.jpg"},
-								{"type": "image", "src": "background3.jpg"}
+								{"type": "image", "src": "img/new/1.jpg"},
+								{"type": "image", "src": "img/new/2.jpg"},
+								{"type": "image", "src": "img/new/3.jpg"}
 							],
 							[
 								{"type": "gradient", "from": "#283c86", "to": "#45a247", "angle": "100deg"},
@@ -497,7 +463,7 @@ function context(items = [{name: "No options?", callback: function() {}}], optio
 		contextoption = contextlist.appendChild(contextoption);
 	}
 	
-	contextlist.addEventListener("blur", function(event) {
+	contextlist.addEventListener("blur", (event)=>{
 		var deletThis = event.target;
 		
 		if (blurOverride) {
@@ -541,8 +507,8 @@ function contextOption(item, options) {
 		contextoption = document.createElement("li");
 		contextoption.innerHTML = item.name;
 		
-		contextoption.addEventListener("click", function(event) {callback(event, options);});
-		contextoption.addEventListener("contextmenu", function(event) {callback(event, options); event.preventDefault(); return false;});
+		contextoption.addEventListener("click", (event)=>{callback(event, options);});
+		contextoption.addEventListener("contextmenu", (event)=>{callback(event, options); event.preventDefault(); return false;});
 	} else if (item.name) {
 		contextoption = document.createElement("li");
 		contextoption.innerHTML = item.name;
@@ -599,4 +565,15 @@ function clean(node) {
 			clean(child);
 		}
 	}
+}
+
+// Stolen from codepen.io
+function loadJSON(file, callback) {
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState === 4 && xhr.status === 200)
+			callback(xhr.responseText);
+	}
+	xhr.open("GET", file, true);
+	xhr.send();
 }

@@ -1,24 +1,18 @@
 {
-	"version": "beta or something",
+	"version": null,
 	"theme": "dark",
 	"backgrounds": [
 		{
 			"type": "image",
-			"src": "background-new1.jpg"
+			"src": "img/newer/1.jpg"
 		},
 		{
 			"type": "image",
-			"src": "background-new2.jpg"
+			"src": "img/newer/2.jpg"
 		},
 		{
 			"type": "image",
-			"src": "background-new3.jpg"
-		},
-		{
-			"type": "gradient",
-			"from": "#1f2f3f",
-			"to": "#000f1f",
-			"angle": 0
+			"src": "img/newer/3.jpg"
 		}
 	],
 	"clock": {
@@ -28,36 +22,36 @@
 	"search": {
 		"date": "long",
 		"focus": false,
-		"provider": "https://encrypted.google.com/search?q=%s",
+		"provider": "https://encrypted.google.com/search?q=%s"
 	},
 	"icons": [
 		{
-			"icon": "fa-brands.svg#youtube",
+			"icon": "img/fa-brands.svg#youtube",
 			"link": "https://www.youtube.com/feed/subscriptions",
 			"highlight": "#ff0000"
 		},
 		{
-			"icon": "fa-brands.svg#twitter",
+			"icon": "img/fa-brands.svg#twitter",
 			"link": "https://www.twitter.com/",
 			"highlight": "#1da1f2"
 		},
 		{
-			"icon": "fa-brands.svg#tumblr",
+			"icon": "img/fa-brands.svg#tumblr",
 			"link": "https://www.tumblr.com",
 			"highlight": "#36465d"
 		},
 		{
-			"icon": "fa-brands.svg#reddit-alien",
+			"icon": "img/fa-brands.svg#reddit-alien",
 			"link": "https://www.reddit.com",
 			"highlight": "#ff4500"
 		},
 		{
-			"icon": "fa-brands.svg#smilebasic-source",
+			"icon": "img/fa-brands.svg#smilebasic-source",
 			"link": "https://smilebasicsource.com/activity",
 			"highlight": "#009688"
 		},
 		{
-			"icon": "fa-brands.svg#github",
+			"icon": "img/fa-brands.svg#github",
 			"link": "https://www.github.com",
 			"highlight": "#191717"
 		}
