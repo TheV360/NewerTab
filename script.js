@@ -48,7 +48,7 @@ loadSettings(()=>{setup();});
 var i, j;
 
 // Normal NewerTab stuff
-var background, clock, search, icons;
+var background, popup, clock, search, icons;
 
 // Secret trash
 var secretContent;
@@ -64,6 +64,14 @@ function setup() {
 		current: null,
 		element: document.body //hmm
 	}
+	
+	popup = {
+		parent: document.getElementById("popup"),
+		header: document.getElementById("popupheader"),
+		content: document.getElementById("popupcontent"),
+		title: document.getElementById("popuptitle"),
+		close: document.getElementById("popupclose")
+	};
 	
 	secretContent = document.getElementById("content");
 	
@@ -85,6 +93,14 @@ function setup() {
 		parent: document.getElementById("icons"),
 		elements: document.getElementsByClassName("icon")
 	};
+	
+	// Popup
+	popup.close.addEventListener("click", function() {
+		saveSettings();
+		popup.parent.classList.remove("show");
+		popup.title.innerHTML = "";
+		popup.content.innerHTML = "";
+	});
 	
 	// Clock
 	clock.blink.innerHTML = ":";
@@ -109,7 +125,7 @@ function setup() {
 	updateIcons();
 	
 	// Context menu fun
-	background.element.addEventListener("contextmenu", function(event) {
+	background.element.addEventListener("contextmenu", (event)=>{
 		if (event.target === background.element) {
 			context([
 				{
@@ -153,11 +169,28 @@ function setup() {
 					callback: function(event, options) {
 						var optionList = ["dark", "light"];
 						
-						document.body.parentNode.classList.remove(settings.theme);
-						
-						settings.theme = optionList[mod(optionList.indexOf(settings.theme) + 1, optionList.length)];
-						
-						document.body.parentNode.classList.add(settings.theme);
+						makePopup("Change theme", [
+							{
+								label: "Theme",
+								type: "select",
+								options: [
+									{
+										label: "Dark",
+										value: "dark",
+										default: true
+									},
+									{
+										label: "Light",
+										value: "light"
+									}
+								],
+								callback: (event)=>{
+									document.body.parentNode.classList.remove(settings.theme);
+									settings.theme = event.target.value;
+									document.body.parentNode.classList.add(settings.theme);
+								}
+							}
+						]);
 						saveSettings();
 					}
 				},
@@ -180,37 +213,50 @@ function setup() {
 		}
 		return false;
 	});
-	secretContent.addEventListener("contextmenu", function(event) {
+	secretContent.addEventListener("contextmenu", (event)=>{
 		if (event.target === secretContent) {
 			var itemList = [
 				{
-					"name": "Secret Bonus Menu!"
+					name: "Secret Bonus Menu!"
 				},
 				{},
 				{
-					"name": "Directly edit JSON settings",
-					"callback": function(event, options) {
-						var old = JSON.stringify(settings);
+					name: "Directly edit JSON settings...",
+					callback: function(event, options) {
+						var old = JSON.stringify(settings, null, "\t");
 						var tmp = old;
 						
-						tmp = prompt("JSON data here, I'mJustGoingToMakeThisDialogReallyLongForDesktopUsersMobileUsersAreOutOfLuck", tmp);
-						
-						if (tmp === "") tmp = old;
-						
-						console.log("old version");
-						console.log(old);
-						console.log("\nnew version");
-						console.log(tmp);
+						makePopup("JSON Settings", [
+							{
+								label: "Data",
+								type: "textarea",
+								value: tmp,
+								callback: (event)=>{
+									try {
+										tmp = JSON.parse(event.target.value);
+										
+										console.log("old version");
+										console.log(old);
+										console.log("\nnew version");
+										console.log(tmp);
+									} catch (error) {
+										console.log("parsing error! " + error);
+									}
+									
+									settings = tmp;
+								}
+							}
+						]);
 					}
 				},
 				{
-					"name": "Create another context menu",
-					"callback": loadSecret
+					name: "Create another context menu",
+					callback: loadSecret
 				},
 				{},
 				{
-					"name": "Delete everything",
-					"callback": function(event, options) {
+					name: "Delete everything",
+					callback: function(event, options) {
 						if (confirm("Are you sure?"))
 							if (confirm("Really sure?"))
 								if (!confirm("Are you not sure?")) {
@@ -232,31 +278,54 @@ function setup() {
 			return false;
 		}
 	});
-	clock.parent.addEventListener("contextmenu", function(event) {
+	clock.parent.addEventListener("contextmenu", (event)=>{
+		var dateList = ["none", "short", "long"];
 		context([
 			{
-				name: "Toggle seconds",
+				name: "Clock settings...",
 				callback: function(event, options) {
-					settings.clock.seconds = !settings.clock.seconds;
-					
-					saveSettings();
-				}
-			},
-			{
-				name: "Toggle military time",
-				callback: function(event, options) {
-					settings.clock.military = !settings.clock.military;
-					
-					saveSettings();
-				}
-			},
-			{
-				name: "Change date in search bar",
-				callback: function(event, options) {
-					var optionList = ["none", "short", "long"];
-					settings.search.date = optionList[mod(optionList.indexOf(settings.search.date) + 1, optionList.length)];
-					
-					saveSettings();
+					makePopup("Clock Settings", [
+						{
+							label: "Show seconds",
+							type: "checkbox",
+							checked: settings.clock.seconds,
+							callback: (event)=>{
+								settings.clock.seconds = !settings.clock.seconds;
+								event.target.checked = settings.clock.seconds;
+							}
+						},
+						{
+							label: "Show military time",
+							type: "checkbox",
+							checked: settings.clock.military,
+							callback: (event)=>{
+								settings.clock.military = !settings.clock.military;
+								event.target.checked = settings.clock.military;
+							}
+						},
+						{
+							label: "Date in search bar",
+							type: "select",
+							index: dateList.indexOf(settings.search.date),
+							options: [
+								{
+									label: "None",
+									value: "none"
+								},
+								{
+									label: "Short",
+									value: "short"
+								},
+								{
+									label: "Long",
+									value: "long"
+								}
+							],
+							callback: (event)=>{
+								settings.search.date = event.target.value;
+							}
+						},
+					]);
 				}
 			}
 		], {x: event.clientX, y: event.clientY, origin: clock.parent});
@@ -264,7 +333,7 @@ function setup() {
 		event.preventDefault();
 		return false;
 	});
-	search.box.addEventListener("contextmenu", function(event) {
+	search.box.addEventListener("contextmenu", (event)=>{
 		context([
 			{
 				name: "Search",
@@ -280,19 +349,27 @@ function setup() {
 			},
 			{},
 			{
-				name: "Toggle focus on open",
+				name: "Search settings...",
 				callback: function(event, options) {
-					settings.search.focus = !settings.search.focus;
-					
-					saveSettings();
-				}
-			},
-			{
-				name: "Edit provider URL",
-				callback: function(event, options) {
-					settings.search.provider = prompt("What's the provider URL?\n\nUse %s as a substitute for the actual search.", settings.search.provider);
-					
-					saveSettings();
+					makePopup("Search settings", [
+						{
+							label: "Focus on open",
+							type: "checkbox",
+							checked: settings.search.focus,
+							callback: (event)=>{
+								settings.search.focus = !settings.search.focus;
+								event.target.checked = settings.search.focus;
+							}
+						},
+						{
+							label: "Edit provider URL",
+							type: "text",
+							value: settings.search.provider,
+							callback: (event)=>{
+								settings.search.provider = event.target.value;
+							}
+						}
+					]);
 				}
 			}
 		], {x: event.clientX, y: event.clientY, origin: search.box});
@@ -300,7 +377,7 @@ function setup() {
 		event.preventDefault();
 		return false;
 	});
-	icons.parent.addEventListener("contextmenu", function(event) {
+	icons.parent.addEventListener("contextmenu", (event)=>{
 		var source = getParentWithTagName(event.target, "a");
 		
 		context([
@@ -324,17 +401,47 @@ function setup() {
 			},
 			{},
 			{
-				name: "Edit icon",
+				name: "Icon settings...",
 				callback: function(event, options) {
 					// Massive hack
 					var iconIndex = Array.from(icons.elements).indexOf(options.origin);
 					
-					settings.icons[iconIndex].link = prompt("What's the website link?", settings.icons[iconIndex].link);
-					settings.icons[iconIndex].icon = prompt("What's the SVG?\n\nYou can use font awesome as fa-solid.svg, fa-regular.svg, and fa-brands.svg!", settings.icons[iconIndex].icon);
-					settings.icons[iconIndex].highlight = prompt("What's the website color?", settings.icons[iconIndex].highlight);
+					makePopup("Icon settings", [
+						{
+							label: "Editing icon #" + (iconIndex + 1)
+						},
+						{
+							label: "Link",
+							type: "text",
+							value: settings.icons[iconIndex].link,
+							callback: (event)=>{
+								settings.icons[iconIndex].link = event.target.value;
+								updateIcons();
+							}
+						},
+						{
+							label: "SVG Icon <a href=\"https://thev360.github.io/icons.html\">(?)</a>",
+							type: "text",
+							value: settings.icons[iconIndex].icon,
+							callback: (event)=>{
+								settings.icons[iconIndex].icon = event.target.value;
+								updateIcons();
+							}
+						},
+						{
+							label: "Highlight Color",
+							type: "color",
+							value: settings.icons[iconIndex].highlight,
+							callback: (event)=>{
+								settings.icons[iconIndex].highlight = event.target.value;
+								updateIcons();
+							}
+						}
+					]);
 					
-					updateIcons();
-					saveSettings();
+					//settings.icons[iconIndex].link = prompt("What's the website link?", settings.icons[iconIndex].link);
+					//settings.icons[iconIndex].icon = prompt("What's the SVG?\n\nYou can use font awesome as fa-solid.svg, fa-regular.svg, and fa-brands.svg!", settings.icons[iconIndex].icon);
+					//settings.icons[iconIndex].highlight = prompt("What's the website color?", settings.icons[iconIndex].highlight);
 				}
 			}
 		], {x: event.clientX, y: event.clientY, origin: source});
@@ -359,7 +466,6 @@ function updateBackground() {
 	}
 	document.styleSheets[0].cssRules[6].style.backgroundImage = style;
 }
-
 function updateIcons() {
 	var style;
 	
@@ -376,7 +482,6 @@ function updateIcons() {
 		icons.elements[i].childNodes[0].childNodes[0].setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", settings.icons[i].icon);
 	}
 }
-
 function updateClock() {
 	var now = new Date();
 	
@@ -495,8 +600,6 @@ function context(items = [{name: "No options?", callback: function() {}}], optio
 	
 	return contextlist;
 }
-
-// Small hack fixing a variable scope problem
 function contextOption(item, options) {
 	var contextoption;
 	var callback;
@@ -519,6 +622,95 @@ function contextOption(item, options) {
 	}
 	
 	return contextoption;
+}
+
+function makePopup(title, items = [{name: "nothing"}]) {
+	popup.title.innerHTML = title;
+	popup.content.innerHTML = "";
+	
+	for (var i = 0; i < items.length; i++) {
+		popup.content.appendChild(popupItem(items[i], i));
+	}
+	
+	popup.parent.classList.add("show");
+	popup.close.focus();
+}
+function popupItem(item, index) {
+	var set = document.createElement("div");
+	var label, input;
+	var option;
+	var callback;
+	
+	set.className = "popupset";
+	
+	if (item.label) {
+		label = document.createElement("label");
+		label.htmlFor = "popupoption" + index;
+		
+		label.innerHTML = item.label;
+	}
+	
+	if (item.type) {
+		if (item.type === "select") {
+			input = document.createElement("select");
+			
+			if (item.options)
+				for (var i = 0; i < item.options.length; i++) {
+					var option = document.createElement("option");
+				
+					if (item.options[i].label)
+						option.innerHTML = item.options[i].label;
+					
+					if (item.options[i].value)
+						option.value = item.options[i].value;
+					
+					if (item.options[i].default)
+						option.selected = true;
+					
+					input.appendChild(option);
+				}
+				
+				if (item.index)
+					input.selectedIndex = item.index;
+		} else if (item.type === "textarea") {
+			input = document.createElement("textarea");
+			input.spellcheck = false;
+			
+			if (item.value)
+				input.innerHTML = item.value;
+			
+			if (item.placeholder)
+				input.placeholder = item.placeholder;
+		} else {
+			input = document.createElement("input");
+			
+			input.type = item.type;
+			
+			if (item.value)
+				input.value = item.value;
+			
+			if (item.checked)
+				input.checked = true;
+			
+			if (item.placeholder)
+				input.placeholder = item.placeholder;
+		}
+		
+		input.id = "popupoption" + index;
+		
+		if (item.callback) {
+			callback = item.callback;
+			input.addEventListener("change", function(event) {callback(event);});
+		}
+	}
+	
+	if (label) label = set.appendChild(label);
+	if (input) input = set.appendChild(input);
+	
+	if (item.type === "checkbox")
+		label = set.appendChild(label);
+	
+	return set;
 }
 
 function loadSecret(event, options) {
