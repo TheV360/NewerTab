@@ -420,7 +420,7 @@ function setup() {
 							}
 						},
 						{
-							label: "SVG Icon <a href=\"https://thev360.github.io/icons.html\">(?)</a>",
+							label: "SVG Icon <a href=\"https://thev360.github.io/NewerTab/icons.html\">(?)</a>",
 							type: "text",
 							value: settings.icons[iconIndex].icon,
 							callback: (event)=>{
