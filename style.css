@@ -162,6 +162,7 @@ div#popup #popupheader #popupclose {
 	background-color: transparent;
 	background-repeat: no-repeat;
 	background-size: cover;
+	background-position: center;
 	
 	font-size: inherit;
 }
@@ -210,9 +211,6 @@ div#popup #popupcontent textarea {
 	background-color: white;
 	
 	font-size: inherit;
-	
-	background-repeat: no-repeat;
-	background-size: cover;
 }
 div#popup #popupcontent input:hover,
 div#popup #popupcontent select:hover,
@@ -229,10 +227,14 @@ div#popup #popupcontent input[type="color"] {
 div#popup #popupcontent input[type="checkbox"] {
 	appearance: none;
 	-moz-appearance: none;
+	-webkit-appearance: none;
 	
 	padding: 0;
 	width: 2rem;
 	min-width: 0;
+	
+	background-position: center;
+	background-repeat: no-repeat;
 }
 div#popup #popupcontent input[type="checkbox"]:checked {
 	background-image: url("img/popup.svg#check-off");
@@ -244,12 +246,14 @@ div#popup #popupcontent input[type="checkbox"]:focus:checked {
 div#popup #popupcontent select {
 	appearance: none;
 	-moz-appearance: none;
+	-webkit-appearance: none;
 	
 	padding-right: 2rem;
 	
 	background-image: url("img/popup.svg#arrow-off");
 	background-position: calc(100% - .5rem) 0;
 	background-size: contain;
+	background-repeat: no-repeat;
 }
 div#popup #popupcontent select:hover,
 div#popup #popupcontent select:focus {
