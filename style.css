@@ -186,8 +186,9 @@ div#popup #popupcontent label {
 }
 div#popup #popupcontent input,
 div#popup #popupcontent select,
-div#popup #popupcontent button,
 div#popup #popupcontent textarea {
+	display: inline-block;
+	
 	border: solid 1px black;
 	padding: 0 .5rem;
 	
@@ -199,19 +200,49 @@ div#popup #popupcontent textarea {
 	background-color: white;
 	
 	font-size: inherit;
+	
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+div#popup #popupcontent input:hover,
+div#popup #popupcontent select:hover,
+div#popup #popupcontent textarea:hover,
+div#popup #popupcontent input:focus,
+div#popup #popupcontent select:focus,
+div#popup #popupcontent textarea:focus {
+	color: white;
+	background-color: black;
 }
 div#popup #popupcontent input[type="checkbox"] {
-	display: inline-block;
+	appearance: none;
+	-moz-appearance: none;
 	
-	/*appearance: none;
-	-moz-appearance: none;*/
-	
+	padding: 0;
 	width: 2rem;
 	min-width: 0;
 }
+div#popup #popupcontent input[type="checkbox"]:checked {
+	background-image: url("img/popup.svg#check-off");
+}
+div#popup #popupcontent input[type="checkbox"]:hover:checked,
+div#popup #popupcontent input[type="checkbox"]:focus:checked {
+	background-image: url("img/popup.svg#check-on");
+}
+div#popup #popupcontent select {
+	appearance: none;
+	-moz-appearance: none;
+	
+	background-image: url("img/popup.svg#arrow-off");
+	background-position: calc(100% - .5rem) 0;
+	background-size: contain;
+}
+div#popup #popupcontent select:hover,
+div#popup #popupcontent select:focus {
+	background-image: url("img/popup.svg#arrow-on");
+}
 div#popup #popupcontent textarea {
 	display: block;
-	/* Better to force a new line than switch between them randomly */
+	
 	width: 100%;
 	height: 16rem;
 	

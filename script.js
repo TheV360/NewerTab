@@ -697,6 +697,7 @@ function popupItem(item, index) {
 		}
 		
 		input.id = "popupoption" + index;
+		input.tabIndex = 200 + index;
 		
 		if (item.callback) {
 			callback = item.callback;
