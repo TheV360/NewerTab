@@ -157,7 +157,7 @@ var tmpBag = [];
 
 var sine, cosine, wavy, pulse;
 
-// Setup stuff
+// Set up stuff
 if (storage.getItem("secret")) {
 	try {
 		secret = JSON.parse(storage.getItem("secret"));
@@ -287,7 +287,8 @@ function playSecret2(event, options, control) {
 		{
 			"name": "Right",
 			"callback": goRight
-		}
+		},
+		{}
 	];
 	
 	var mapItem = "<pre style=\"font-family: monospace;\">";
@@ -309,6 +310,7 @@ function playSecret2(event, options, control) {
 	mapItem += "</pre>";
 	
 	itemList.push({"name": mapItem});
+	itemList.push({});
 	
 	context(itemList, {});
 }
@@ -317,6 +319,10 @@ function goUp() {}
 function goDown() {}
 function goLeft() {}
 function goRight() {}
+
+function doEvent(table) {
+	
+}
 
 function debug_everyEffect() {
 	sine = {"cycle": 90, "height": 16};

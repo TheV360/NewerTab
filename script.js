@@ -438,10 +438,6 @@ function setup() {
 							}
 						}
 					]);
-					
-					//settings.icons[iconIndex].link = prompt("What's the website link?", settings.icons[iconIndex].link);
-					//settings.icons[iconIndex].icon = prompt("What's the SVG?\n\nYou can use font awesome as fa-solid.svg, fa-regular.svg, and fa-brands.svg!", settings.icons[iconIndex].icon);
-					//settings.icons[iconIndex].highlight = prompt("What's the website color?", settings.icons[iconIndex].highlight);
 				}
 			}
 		], {x: event.clientX, y: event.clientY, origin: source});

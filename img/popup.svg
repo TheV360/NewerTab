@@ -1,1 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 600 600"><defs><g id="check"><path d="M45,150 L45,150 L60,135 L120,195 L255,60 L270,75 L120,225 L45,150" /><!--M60,60 L60,60 L60,240 L240,240 L240,60 L60,60--></g><g id="arrow"><path d="M285,120 L285,120 L225,180 L165,120 L285,120" /></g></defs><use x="000" y="000" style="fill: black;" xlink:href="#check" /><use x="300" y="000" style="fill: white;" xlink:href="#check" /><use x="000" y="300" style="fill: black;" xlink:href="#arrow" /><use x="300" y="300" style="fill: white;" xlink:href="#arrow" /><view id="check-off" viewBox="0 0 300 300" /><view id="check-on" viewBox="300 0 300 300" /><view id="arrow-off" viewBox="0 300 300 300" /><view id="arrow-on" viewBox="300 300 300 300" /></svg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 600 900" style="">
+	<defs>
+		<g id="check">
+			<path d="M45,150 L60,135 L120,195 L255,60 L270,75 L120,225 Z" />
+		</g>
+		<g id="arrow">
+			<path d="M15,120 H135 L75,180 Z" />
+		</g>
+		<g id="cross">
+			<path d="M45,75 L75,45 L150,120 L225,45 L255,75 L180,150 L255,225 L225,255 L150,180 L75,255 L45,225 L120,150 Z" />
+		</g>
+	</defs>
+	<use x="000" y="000" style="fill: black;" xlink:href="#check" /><use x="300" y="000" style="fill: white;" xlink:href="#check" />
+	<use x="000" y="300" style="fill: black;" xlink:href="#arrow" /><use x="150" y="300" style="fill: white;" xlink:href="#arrow" />
+	<use x="000" y="600" style="fill: black;" xlink:href="#cross" /><use x="300" y="600" style="fill: white;" xlink:href="#cross" />
+	<view id="check-off" viewBox="000 000 300 300" /><view id="check-on" viewBox="300 000 300 300" />
+	<view id="arrow-off" viewBox="000 300 150 300" /><view id="arrow-on" viewBox="150 300 150 300" />
+	<view id="cross-off" viewBox="000 600 300 300" /><view id="cross-on" viewBox="300 600 300 300" />
+</svg>
