@@ -2,7 +2,7 @@
 
 window.addEventListener("DOMContentLoaded", setup);
 
-const version = "0.6.1";
+const version = "0.6.2";
 const date = {
 	day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 	month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -34,9 +34,12 @@ function loadSettings(additional) {
 			
 			saveSettings();
 			
+			document.body.parentNode.classList.add(settings.theme);
 			document.body.classList.remove("loading");
 			additional();
 		});
+	} else {
+		document.body.parentNode.classList.add(settings.theme);
 	}
 	
 	return validSettings;
@@ -129,10 +132,10 @@ function setup() {
 		if (event.target === background.element) {
 			context([
 				{
-					name: "Change background set",
+					name: "Look and Feel settings...",
 					callback: function(event, options) {
-						var i;
-						var optionList = [
+						var setIndex;
+						var setList = [
 							[
 								{"type": "image", "src": "img/newer/1.jpg"},
 								{"type": "image", "src": "img/newer/2.jpg"},
@@ -149,35 +152,49 @@ function setup() {
 								{"type": "gradient", "from": "#5c258d", "to": "#4389a2", "angle": "300deg"}
 							]
 						];
+						var themeList = ["dark", "light"];
 						
-						for (i = 0; i < optionList.length; i++) {
-							if (JSON.stringify(settings.backgrounds) === JSON.stringify(optionList[i])) {
-								settings.backgrounds = optionList[mod(i + 1, optionList.length)];
+						for (setIndex = 0; i < setList.length; i++)
+							if (JSON.stringify(settings.backgrounds) === JSON.stringify(setList[setIndex]))
 								break;
-							}
-						}
 						
-						if (i === optionList.length)
-							settings.backgrounds = optionList[0];
+						if (setIndex === setList.length)
+							settings.backgrounds = setList[0];
 						
-						updateBackground();
-						saveSettings();
-					}
-				},
-				{
-					name: "Change theme",
-					callback: function(event, options) {
-						var optionList = ["dark", "light"];
-						
-						makePopup("Change theme", [
+						makePopup("Look and Feel Settings", [
+							{
+								label: "Background set",
+								type: "select",
+								index: setIndex,
+								options: [
+									{
+										label: "Newer Tab",
+										value: 0
+									},
+									{
+										label: "New Tab",
+										value: 1
+									},
+									{
+										label: "Gradients",
+										value: 2
+									}
+								],
+								callback: (event)=>{
+									console.log(event.target.value);
+									settings.backgrounds = setList[event.target.value];
+									
+									updateBackground();
+								}
+							},
 							{
 								label: "Theme",
 								type: "select",
+								index: themeList.indexOf(settings.theme),
 								options: [
 									{
 										label: "Dark",
-										value: "dark",
-										default: true
+										value: "dark"
 									},
 									{
 										label: "Light",
@@ -188,10 +205,11 @@ function setup() {
 									document.body.parentNode.classList.remove(settings.theme);
 									settings.theme = event.target.value;
 									document.body.parentNode.classList.add(settings.theme);
+									
+									updateBackground();
 								}
 							}
 						]);
-						saveSettings();
 					}
 				},
 				{},
@@ -553,9 +571,9 @@ function context(items = [{name: "No options?", callback: function() {}}], optio
 	contextlist.className = "contextlist";
 	contextlist.tabIndex = 100;
 	
-	if (options.x)
+	if (isNumber(options.x))
 		contextlist.style.left = (options.x - 4) + "px";
-	if (options.y)
+	if (isNumber(options.y))
 		contextlist.style.top = (options.y - 4) + "px";
 	
 	for (var i = 0; i < items.length; i++) {
@@ -657,7 +675,7 @@ function popupItem(item, index) {
 					if (item.options[i].label)
 						option.innerHTML = item.options[i].label;
 					
-					if (item.options[i].value)
+					if (item.options[i].value != undefined)
 						option.value = item.options[i].value;
 					
 					if (item.options[i].default)
@@ -666,7 +684,7 @@ function popupItem(item, index) {
 					input.appendChild(option);
 				}
 				
-				if (item.index)
+				if (isNumber(item.index))
 					input.selectedIndex = item.index;
 		} else if (item.type === "textarea") {
 			input = document.createElement("textarea");
@@ -682,7 +700,7 @@ function popupItem(item, index) {
 			
 			input.type = item.type;
 			
-			if (item.value)
+			if (item.value != undefined)
 				input.value = item.value;
 			
 			if (item.checked)
@@ -740,6 +758,10 @@ function getParentWithTagName(element, name) {
 
 function mod(n, m) {
 	return ((n % m) + m) % m;
+}
+
+function isNumber(n) {
+	return !isNaN(n) && isFinite(n)
 }
 
 // From sitepoint.com/removing-useless-nodes-from-the-dom/
