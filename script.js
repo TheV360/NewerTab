@@ -158,9 +158,6 @@ function setup() {
 							if (JSON.stringify(settings.backgrounds) === JSON.stringify(setList[setIndex]))
 								break;
 						
-						if (setIndex === setList.length)
-							setIndex = 0;
-						
 						makePopup("Look and Feel Settings", [
 							{
 								label: "Background set",
