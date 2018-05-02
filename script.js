@@ -154,7 +154,7 @@ function setup() {
 						];
 						var themeList = ["dark", "light"];
 						
-						for (setIndex = 0; i < setList.length; i++)
+						for (setIndex = 0; setIndex < setList.length; setIndex++)
 							if (JSON.stringify(settings.backgrounds) === JSON.stringify(setList[setIndex]))
 								break;
 						
