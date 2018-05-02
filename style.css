@@ -46,6 +46,7 @@ svg {
 	height: 100%;
 }
 textarea {
+	tab-size: 4;
 	white-space: pre;
 	overflow: auto;
 }
