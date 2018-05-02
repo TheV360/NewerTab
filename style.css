@@ -233,6 +233,9 @@ div#popup #popupcontent select:focus,
 div#popup #popupcontent textarea:focus {
 	color: white;
 	background-color: black;
+	
+	--text-color: black;
+	--alt-color: white;
 }
 div#popup #popupcontent input[type="color"] {
 	padding: .25rem;
