@@ -159,7 +159,7 @@ function setup() {
 								break;
 						
 						if (setIndex === setList.length)
-							settings.backgrounds = setList[0];
+							setIndex = 0;
 						
 						makePopup("Look and Feel Settings", [
 							{
@@ -181,7 +181,6 @@ function setup() {
 									}
 								],
 								callback: (event)=>{
-									console.log(event.target.value);
 									settings.backgrounds = setList[event.target.value];
 									
 									updateBackground();
@@ -281,7 +280,7 @@ function setup() {
 									console.log("Backup:");
 									console.log(JSON.stringify(settings));
 									localStorage.removeItem("settings");
-									alert("deleted");
+									alert("Deleted. Reload page to get defaults.");
 								}
 					}
 				}
@@ -668,7 +667,7 @@ function popupItem(item, index) {
 		if (item.type === "select") {
 			input = document.createElement("select");
 			
-			if (item.options)
+			if (item.options) {
 				for (var i = 0; i < item.options.length; i++) {
 					var option = document.createElement("option");
 				
@@ -684,8 +683,20 @@ function popupItem(item, index) {
 					input.appendChild(option);
 				}
 				
-				if (isNumber(item.index))
-					input.selectedIndex = item.index;
+				if (isNumber(item.index)) {
+					if (item.index < 0 || item.index >= item.options.length) {
+						option = document.createElement("option");
+						
+						option.innerHTML = "Other";
+						option.disabled = true;
+						
+						input.appendChild(option);
+						input.selectedIndex = item.options.length;
+					} else {
+						input.selectedIndex = item.index;
+					}
+				}
+			}
 		} else if (item.type === "textarea") {
 			input = document.createElement("textarea");
 			input.spellcheck = false;
