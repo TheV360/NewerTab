@@ -41,7 +41,7 @@ const dialogue = {
 	132: "Oh, I forgot this is actually fully-featured HTML.",
 	133: "<pre style=\"font-family: monospace;\">█ █\n█ █\n███\n█ █\n█ █\n\n███\n█\n██\n█\n███\n\n█\n█\n█\n█\n███\n\n█\n█\n█\n█\n███\n\n███\n█ █\n█ █\n█ █\n███\n\n\n\n █</pre>",
 	134: "Alright, here's the best level of this thing.<br />Thanks, and have fun!",
-	135: "more levels tomorrow"
+	135: "more levels as soon as I finish this page completely."
 };
 
 const randomDialogue = [
@@ -388,11 +388,6 @@ function saveSecret() {
 // Evil
 function fail() {
 	document.body.focus();
-}
-function goToLink(link) {
-	return function() {
-		location.assign(link);
-	}
 }
 
 // Helpful

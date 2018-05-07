@@ -2,7 +2,7 @@
 
 window.addEventListener("DOMContentLoaded", setup);
 
-const version = "0.6.2";
+const version = "0.7";
 const date = {
 	day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 	month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -51,7 +51,7 @@ loadSettings(()=>{setup();});
 var i, j;
 
 // Normal NewerTab stuff
-var background, popup, clock, search, icons;
+var background, backgroundinfo, popup, clock, search, icons;
 
 // Secret trash
 var secretContent;
@@ -130,29 +130,36 @@ function setup() {
 	// Context menu fun
 	background.element.addEventListener("contextmenu", (event)=>{
 		if (event.target === background.element) {
-			context([
+			var itemList = [
 				{
 					name: "Look and Feel settings...",
 					callback: function(event, options) {
 						var setIndex;
 						var setList = [
 							[
-								{"type": "image", "src": "img/newer/1.jpg"},
-								{"type": "image", "src": "img/newer/2.jpg"},
-								{"type": "image", "src": "img/newer/3.jpg"}
+								{"type": "image", "src": "img/newer/1.jpg", "author": "JOHN TOWNER", "link": "https://unsplash.com/photos/JgOeRuGD_Y4"},
+								{"type": "image", "src": "img/newer/2.jpg", "author": "Alexander Slattery", "link": "https://unsplash.com/photos/LI748t0BK8w"},
+								{"type": "image", "src": "img/newer/3.jpg", "author": "Marcelo Quinan", "link": "https://unsplash.com/photos/R3pUGn5YiTg"},
+								{"type": "image", "src": "img/newer/4.jpg", "author": "Andre Benz", "link": "https://unsplash.com/photos/cXU6tNxhub0"}
 							],
 							[
-								{"type": "image", "src": "img/new/1.jpg"},
-								{"type": "image", "src": "img/new/2.jpg"},
-								{"type": "image", "src": "img/new/3.jpg"}
+								{"type": "image", "src": "img/new/1.jpg", "author": "Joey Kyber", "link": "https://www.pexels.com/photo/time-lapse-cars-on-fast-motion-134643/"},
+								{"type": "image", "src": "img/new/2.jpg", "author": "Nodar Chernishev", "link": "https://www.pexels.com/photo/architecture-blur-bridge-buildings-390023/"},
+								{"type": "image", "src": "img/new/3.jpg", "author": "Karol D.", "link": "https://www.pexels.com/photo/blur-cars-city-commuting-409701/"}
 							],
 							[
-								{"type": "gradient", "from": "#283c86", "to": "#45a247", "angle": "100deg"},
-								{"type": "gradient", "from": "#c21500", "to": "#ffc500", "angle": "200deg"},
-								{"type": "gradient", "from": "#5c258d", "to": "#4389a2", "angle": "300deg"}
+								{"type": "gradient", "from": "#283c86", "to": "#45a247", "angle": "100deg", "author": "uiGradients", "link": "https://uigradients.com/#Meridian"},
+								{"type": "gradient", "from": "#c21500", "to": "#ffc500", "angle": "200deg", "author": "uiGradients", "link": "https://uigradients.com/#Kyoto"},
+								{"type": "gradient", "from": "#5c258d", "to": "#4389a2", "angle": "300deg", "author": "uiGradients", "link": "https://uigradients.com/#ShroomHaze"}
+							],
+							[
+								{"type": "reddit", "src": "EarthPorn", "offset": 0},
+								{"type": "reddit", "src": "EarthPorn", "offset": 1},
+								{"type": "reddit", "src": "EarthPorn", "offset": 2}
+								// TODO: make offsetrandom, which chooses a random offset in range 0->n-1 instead of this.
 							]
 						];
-						var themeList = ["dark", "light"];
+						var themeList = ["dark", "light", "noblur"];
 						
 						for (setIndex = 0; setIndex < setList.length; setIndex++)
 							if (JSON.stringify(settings.backgrounds) === JSON.stringify(setList[setIndex]))
@@ -175,6 +182,10 @@ function setup() {
 									{
 										label: "Gradients",
 										value: 2
+									},
+									{
+										label: "EarthPorn (Reddit)",
+										value: 3
 									}
 								],
 								callback: (event)=>{
@@ -195,6 +206,10 @@ function setup() {
 									{
 										label: "Light",
 										value: "light"
+									},
+									{
+										label: "No Blur",
+										value: "noblur"
 									}
 								],
 								callback: (event)=>{
@@ -211,17 +226,23 @@ function setup() {
 				{},
 				{
 					name: "NewerTab v" + version,
-					callback: function(event, options) {
-						location.assign("https://github.com/TheV360/NewerTab#newertab");
-					}
+					callback: goToLink("https://github.com/TheV360/NewerTab#newertab")
 				},
 				{
 					name: "By V360",
-					callback: function(event, options) {
-						location.assign("https://thev360.github.io");
-					}
+					callback: goToLink("https://thev360.github.io")
 				}
-			], {x: event.clientX, y: event.clientY, origin: background.element});
+			];
+			
+			if (backgroundinfo) {
+				itemList.splice(1, 0, {});
+				itemList.splice(2, 0, {
+					name: "Background by<br />" + backgroundinfo.author,
+					callback: goToLink(backgroundinfo.link)
+				});
+			}
+			
+			context(itemList, {x: event.clientX, y: event.clientY, origin: background.element});
 			
 			event.preventDefault();
 		}
@@ -236,7 +257,7 @@ function setup() {
 				{},
 				{
 					name: "Directly edit JSON settings...",
-					callback: function(event, options) {
+					callback: ()=>{
 						var old = JSON.stringify(settings, null, "\t");
 						var tmp = old;
 						
@@ -270,7 +291,7 @@ function setup() {
 				{},
 				{
 					name: "Delete everything",
-					callback: function(event, options) {
+					callback: ()=>{
 						if (confirm("Are you sure?"))
 							if (confirm("Really sure?"))
 								if (!confirm("Are you not sure?")) {
@@ -322,18 +343,9 @@ function setup() {
 							type: "select",
 							index: dateList.indexOf(settings.search.date),
 							options: [
-								{
-									label: "None",
-									value: "none"
-								},
-								{
-									label: "Short",
-									value: "short"
-								},
-								{
-									label: "Long",
-									value: "long"
-								}
+								{label: "None", value: "none"},
+								{label: "Short", value: "short"},
+								{label: "Long", value: "long"}
 							],
 							callback: (event)=>{
 								settings.search.date = event.target.value;
@@ -396,15 +408,6 @@ function setup() {
 		
 		context([
 			{
-				name: "Open link",
-				callback: function(event, options) {
-					// Massive hack
-					var iconIndex = Array.from(icons.elements).indexOf(options.origin);
-					
-					location.assign(settings.icons[iconIndex].link);
-				}
-			},
-			{
 				name: "Open link in new tab",
 				callback: function(event, options) {
 					// Massive hack
@@ -465,15 +468,42 @@ function updateBackground() {
 	background.current = Math.floor(Math.random() * settings.backgrounds.length);
 	
 	var currentBackground = settings.backgrounds[background.current];
-	var style;
+	var style = "black";
 	
 	if (currentBackground.type === "image") {
 		style = "url(" + currentBackground.src + ")";
+		
+		backgroundinfo = {
+			author: currentBackground.author,
+			link: currentBackground.link
+		};
 	} else if (currentBackground.type === "gradient") {
-		style = "linear-gradient(" + currentBackground.angle + ", " + currentBackground.from +", " + currentBackground.to + ")";
-	} else {
-		style = "black";
+		if (!currentBackground.angle) currentBackground.angle = "90deg";
+		
+		if (currentBackground.from && currentBackground.to) {
+			style = "linear-gradient(" + currentBackground.angle + ", " + currentBackground.from +", " + currentBackground.to + ")";
+		} else if (currentBackground.stops) {
+			style = "linear-gradient(" + currentBackground.angle;
+			
+			for (var i = 0; i < currentBackground.stops.length; i++) {
+				style += ", " + currentBackground.stops[i].color + " " + currentBackground.stops[i].percentage;
+			}
+			
+			style += ")";
+		} else {
+			console.log("Invalid gradient.");
+		}
+		
+		backgroundinfo = {
+			author: currentBackground.author,
+			link: currentBackground.link
+		};
+	} else if (currentBackground.type === "reddit") {
+		getFromReddit(currentBackground);
+	} else if (currentBackground.type === "tumblr") {
+		getFromTumblr(currentBackground);
 	}
+	
 	document.styleSheets[0].cssRules[6].style.backgroundImage = style;
 }
 function updateIcons() {
@@ -752,6 +782,114 @@ function loadSecret(event, options) {
 	return false;
 }
 
+/*
+image type:
+	src: url
+	bginfo: author, link
+
+gradients type:
+	~~EITHER THIS~~
+	from: color 1
+	to: color 2
+	~~OR THAT~~
+	stops:
+		color:
+		percentage:
+	~~THIS TOO~~
+	angle: in deg (if not present, 90deg)
+	bginfo: author, link
+
+reddit type:
+	src: subreddit name
+	offset: posts from top (if not present, 0)
+	spoiler: allow spoiler posts (if not present, false)
+	nsfw: allow nsfw posts (if not present, false)
+	gif: allow gif posts (if not present, false)
+	maxresolution: max resolution allowed (if not present or negative, don't care)
+	
+	puts this stuff into bginfo:
+		author: (post's author value) username, should appear in bg right click menu
+		link: image url
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+redditJSON.data.children[post number].post_hint MUST BE "image"! If not, move on to the next one.
+
+author = redditJSON.data.children[post number].data.author
+url = redditJSON.data.children[post number].data.url
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+tumblr type:
+	src: first part of tumblr url
+	offset: posts from top (if not present, 0)
+	nsfw: allow nsfw posts (if not present, false)
+	maxresolution: max resolution allowed (if not present or negative, don't care)
+	
+	puts this stuff into bginfo:
+		author: the username
+		link: image url
+
+~~~~~~~~~~~ NOT POSSIBLE WITHOUT OAUTH ~~~~~~~~~~~~
+ twitter type:
+	src: twitter handle
+	offset: posts from top (if not present, 0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+function getFromReddit(background) {
+	loadJSON("https://api.reddit.com/r/" + background.src + "/top.json?t=week", (response)=>{
+		var redditJSON = JSON.parse(response);
+		var postIndex = 0;
+		var post;
+		var imageURL;
+		
+		if (background.offset) postIndex = background.offset;
+		
+		post = redditJSON.data.children[postIndex].data;
+		
+		while (post.post_hint != "image") {
+			postIndex++;
+			
+			if (redditJSON.data.children[postIndex])
+				post = redditJSON.data.children[postIndex].data;
+			else
+				return;
+		}
+		
+		backgroundinfo = {
+			author: "/u/" + post.author,
+			link: "https://reddit.com" + post.permalink
+		};
+		
+		imageURL = post.url;
+		
+		document.styleSheets[0].cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
+	});
+}
+
+function getFromTumblr(background) {
+	const APIKey = "x3BjA367hUvdXMmo1yTfMMus0ijKCJkyDECkaHlTCREuq0NFe4"; // what theh
+	
+	loadJSON("https://api.tumblr.com/v2/blog/" + background.src + "/posts/photo?api_key=" + APIKey, (response)=>{
+		var tumblrJSON = JSON.parse(response);
+		var postIndex = 0;
+		var post;
+		var imageURL;
+		
+		if (background.offset) postIndex = background.offset;
+		
+		post = tumblrJSON.response.posts[postIndex];
+		
+		backgroundinfo = {
+			author: post.blog_name, // TODO: actually find source
+			link: post.post_url
+		};
+		
+		imageURL = post.photos[0].original_size.url;
+		
+		document.styleSheets[0].cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
+	});
+}
+
 function getParentWithTagName(element, name) {
 	var node = element;
 	name = name.toUpperCase();
@@ -772,6 +910,12 @@ function isNumber(n) {
 	return !isNaN(n) && isFinite(n)
 }
 
+function goToLink(link) {
+	return function() {
+		location.assign(link);
+	}
+}
+
 // From sitepoint.com/removing-useless-nodes-from-the-dom/
 function clean(node) {
 	for (var n = 0; n < node.childNodes.length; n++) {
@@ -786,13 +930,18 @@ function clean(node) {
 	}
 }
 
-// Stolen from codepen.io
 function loadJSON(file, callback) {
 	var xhr = new XMLHttpRequest();
-	xhr.onreadystatechange = function(){
+	
+	xhr.open("GET", file, true);
+	
+	xhr.onload = function() {
 		if(xhr.readyState === 4 && xhr.status === 200)
 			callback(xhr.responseText);
-	}
-	xhr.open("GET", file, true);
+	};
+	xhr.onerror = function(error) {
+		console.log("Failed to load.");
+	};
+	
 	xhr.send();
 }

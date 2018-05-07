@@ -63,16 +63,26 @@ textarea {
 	--border-radius: .25rem;
 	
 	--blur-color: rgba(255, 255, 255, .05);
+	--blur-size: .5rem;
 }
 :root.dark {
 	--text-color: white;
 	--alt-color: black;
+	
 	--blur-color: rgba(255, 255, 255, .05);
 }
 :root.light {
 	--text-color: white;
 	--alt-color: black;
+	
 	--blur-color: rgba(255, 255, 255, .25);
+}
+:root.noblur {
+	--text-color: white;
+	--alt-color: black;
+	
+	--blur-color: rgba(255, 255, 255, .05);
+	--blur-size: 0px;
 }
 
 /* Background */
@@ -301,7 +311,7 @@ div.glass::before {
 	
 	background: inherit;
 	box-shadow: inset 0 0 0 calc(var(--content-size-width) + var(--content-size-height)) var(--blur-color);
-	filter: blur(.5rem);
+	filter: blur(var(--blur-size));
 }
 div.glass {
 	position: absolute;
