@@ -875,18 +875,23 @@ function getFromTumblr(background) {
 		var post;
 		var imageURL;
 		
-		if (background.offset) postIndex = background.offset;
-		
-		post = tumblrJSON.response.posts[postIndex];
-		
-		backgroundinfo = {
-			author: post.blog_name, // TODO: actually find source
-			link: post.post_url
-		};
-		
-		imageURL = post.photos[0].original_size.url;
-		
-		document.styleSheets[0].cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
+		if (tumblrJSON.response.posts.length) {
+			if (background.offset)
+				postIndex = Math.min(tumblrJSON.response.posts.length, background.offset);
+			
+			post = tumblrJSON.response.posts[postIndex];
+			
+			backgroundinfo = {
+				author: post.blog_name, // TODO: actually find source
+				link: post.post_url
+			};
+			
+			imageURL = post.photos[Math.floor(Math.random() * post.photos.length)].original_size.url;
+			
+			document.styleSheets[0].cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
+		} else {
+			console.log("Error while retrieving posts for Tumblr user " + background.src + ". Either there's too many blocked posts or they deleted something.");
+		}
 	});
 }
 
