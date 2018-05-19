@@ -77,11 +77,18 @@ textarea {
 	
 	--blur-color: rgba(255, 255, 255, .25);
 }
-:root.noblur {
+:root.darkclear {
 	--text-color: white;
 	--alt-color: black;
 	
-	--blur-color: rgba(255, 255, 255, .05);
+	--blur-color: rgba(0, 0, 0, .25);
+	--blur-size: 0px;
+}
+:root.lightclear {
+	--text-color: white;
+	--alt-color: black;
+	
+	--blur-color: rgba(255, 255, 255, .25);
 	--blur-size: 0px;
 }
 

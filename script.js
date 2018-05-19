@@ -2,11 +2,33 @@
 
 window.addEventListener("DOMContentLoaded", setup);
 
-const version = "0.7";
+const version = "0.7.1";
 const date = {
 	day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 	month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 };
+const backgroundsets = [
+	[
+		{"type": "image", "src": "img/newer/1.jpg", "author": "JOHN TOWNER", "link": "https://unsplash.com/photos/JgOeRuGD_Y4"},
+		{"type": "image", "src": "img/newer/2.jpg", "author": "Alexander Slattery", "link": "https://unsplash.com/photos/LI748t0BK8w"},
+		{"type": "image", "src": "img/newer/3.jpg", "author": "Marcelo Quinan", "link": "https://unsplash.com/photos/R3pUGn5YiTg"},
+		{"type": "image", "src": "img/newer/4.jpg", "author": "Andre Benz", "link": "https://unsplash.com/photos/cXU6tNxhub0"}
+	],
+	[
+		{"type": "image", "src": "img/new/1.jpg", "author": "Joey Kyber", "link": "https://www.pexels.com/photo/time-lapse-cars-on-fast-motion-134643/"},
+		{"type": "image", "src": "img/new/2.jpg", "author": "Nodar Chernishev", "link": "https://www.pexels.com/photo/architecture-blur-bridge-buildings-390023/"},
+		{"type": "image", "src": "img/new/3.jpg", "author": "Karol D.", "link": "https://www.pexels.com/photo/blur-cars-city-commuting-409701/"},
+		{"type": "image", "src": "img/new/4.jpg", "author": "Tobias-Steinert", "link": "https://www.pexels.com/photo/light-trails-on-road-at-night-315939/"}
+	],
+	[
+		{"type": "gradient", "from": "#283c86", "to": "#45a247", "angle": "100deg", "author": "uiGradients", "link": "https://uigradients.com/#Meridian"},
+		{"type": "gradient", "from": "#c21500", "to": "#ffc500", "angle": "200deg", "author": "uiGradients", "link": "https://uigradients.com/#Kyoto"},
+		{"type": "gradient", "from": "#5c258d", "to": "#4389a2", "angle": "300deg", "author": "uiGradients", "link": "https://uigradients.com/#ShroomHaze"}
+	],
+	[
+		{"type": "reddit", "src": "EarthPorn", "offsetrandom": 3}
+	]
+];
 
 var storage = window.localStorage;
 var settings = {};
@@ -135,34 +157,10 @@ function setup() {
 					name: "Look and Feel settings...",
 					callback: function(event, options) {
 						var setIndex;
-						var setList = [
-							[
-								{"type": "image", "src": "img/newer/1.jpg", "author": "JOHN TOWNER", "link": "https://unsplash.com/photos/JgOeRuGD_Y4"},
-								{"type": "image", "src": "img/newer/2.jpg", "author": "Alexander Slattery", "link": "https://unsplash.com/photos/LI748t0BK8w"},
-								{"type": "image", "src": "img/newer/3.jpg", "author": "Marcelo Quinan", "link": "https://unsplash.com/photos/R3pUGn5YiTg"},
-								{"type": "image", "src": "img/newer/4.jpg", "author": "Andre Benz", "link": "https://unsplash.com/photos/cXU6tNxhub0"}
-							],
-							[
-								{"type": "image", "src": "img/new/1.jpg", "author": "Joey Kyber", "link": "https://www.pexels.com/photo/time-lapse-cars-on-fast-motion-134643/"},
-								{"type": "image", "src": "img/new/2.jpg", "author": "Nodar Chernishev", "link": "https://www.pexels.com/photo/architecture-blur-bridge-buildings-390023/"},
-								{"type": "image", "src": "img/new/3.jpg", "author": "Karol D.", "link": "https://www.pexels.com/photo/blur-cars-city-commuting-409701/"}
-							],
-							[
-								{"type": "gradient", "from": "#283c86", "to": "#45a247", "angle": "100deg", "author": "uiGradients", "link": "https://uigradients.com/#Meridian"},
-								{"type": "gradient", "from": "#c21500", "to": "#ffc500", "angle": "200deg", "author": "uiGradients", "link": "https://uigradients.com/#Kyoto"},
-								{"type": "gradient", "from": "#5c258d", "to": "#4389a2", "angle": "300deg", "author": "uiGradients", "link": "https://uigradients.com/#ShroomHaze"}
-							],
-							[
-								{"type": "reddit", "src": "EarthPorn", "offset": 0},
-								{"type": "reddit", "src": "EarthPorn", "offset": 1},
-								{"type": "reddit", "src": "EarthPorn", "offset": 2}
-								// TODO: make offsetrandom, which chooses a random offset in range 0->n-1 instead of this.
-							]
-						];
-						var themeList = ["dark", "light", "noblur"];
+						var themeList = ["dark", "light", "darkclear", "lightclear"];
 						
-						for (setIndex = 0; setIndex < setList.length; setIndex++)
-							if (JSON.stringify(settings.backgrounds) === JSON.stringify(setList[setIndex]))
+						for (setIndex = 0; setIndex < backgroundsets.length; setIndex++)
+							if (JSON.stringify(settings.backgrounds) === JSON.stringify(backgroundsets[setIndex]))
 								break;
 						
 						makePopup("Look and Feel Settings", [
@@ -189,7 +187,7 @@ function setup() {
 									}
 								],
 								callback: (event)=>{
-									settings.backgrounds = setList[event.target.value];
+									settings.backgrounds = backgroundsets[event.target.value];
 									
 									updateBackground();
 								}
@@ -208,8 +206,12 @@ function setup() {
 										value: "light"
 									},
 									{
-										label: "No Blur",
-										value: "noblur"
+										label: "Dark Clear",
+										value: "darkclear"
+									},
+									{
+										label: "Light Clear",
+										value: "lightclear"
 									}
 								],
 								callback: (event)=>{
@@ -802,8 +804,11 @@ gradients type:
 reddit type:
 	src: subreddit name
 	offset: posts from top (if not present, 0)
+	
 	spoiler: allow spoiler posts (if not present, false)
 	nsfw: allow nsfw posts (if not present, false)
+	preview: allow posts that don't have previews (if not present, false)
+	
 	gif: allow gif posts (if not present, false)
 	maxresolution: max resolution allowed (if not present or negative, don't care)
 	
@@ -836,23 +841,63 @@ tumblr type:
 */
 
 function getFromReddit(background) {
+	console.log(background);
+	
 	loadJSON("https://api.reddit.com/r/" + background.src + "/top.json?t=week", (response)=>{
 		var redditJSON = JSON.parse(response);
 		var postIndex = 0;
 		var post;
 		var imageURL;
 		
-		if (background.offset) postIndex = background.offset;
+		// Random post offset
+		
+		if (background.offset)
+			postIndex = Math.min(redditJSON.data.children.length, background.offset);
+		
+		if (background.offsetrandom)
+			postIndex += randomInt(background.offsetrandom);
 		
 		post = redditJSON.data.children[postIndex].data;
 		
-		while (post.post_hint != "image") {
+		// Get a post that matches the criteria
+		while (post.post_hint != "image" || (post.over_18 && !background.nsfw) || (post.spoiler && !background.spoiler) || (!post.preview.enabled && background.previews)) {
 			postIndex++;
 			
 			if (redditJSON.data.children[postIndex])
 				post = redditJSON.data.children[postIndex].data;
-			else
+			else {
+				console.log("Error while retrieving subreddit " + background.src + ". Criteria not met. Either:\n• This subreddit's top posts only had text or non-image links.\n• All of the posts were NSFW/Spoilers.");
 				return;
+			}
+		}
+		
+		if (post.preview.enabled) {
+			var imageList = post.preview.images[randomInt(post.preview.images.length)];
+			
+			console.log(imageList);
+			
+			// Is the maxresolution greater than the source images' resolution?
+			if (background.maxresolution > 0 && background.maxresolution < Math.min(imageList.source.width, imageList.source.height)) {
+				for (var i = 0; i < imageList.resolutions.length; i++) {
+					// Get the largest post that fits the criteria
+					
+					if (Math.min(imageList.resolutions[i].width, imageList.resolutions[i].height) <= background.maxresolution) {
+						imageURL = imageList.resolutions[i].url;
+						console.log("Found image with max resolution of " + Math.min(imageList.resolutions[i].width, imageList.resolutions[i].height) + "!");
+					}
+				}
+			} else {
+				console.log("Largest image is already within maxresolution!");
+				
+				imageURL = post.url;
+			}
+		} else {
+			console.log("Warning while retrieving subreddit " + background.src + ". Post's preview was disabled. This may lead to ridiculously big images being loaded and slow loading.");
+			
+			if (background.previews)
+				return;
+			else
+				imageURL = post.url;
 		}
 		
 		backgroundinfo = {
@@ -860,8 +905,9 @@ function getFromReddit(background) {
 			link: "https://reddit.com" + post.permalink
 		};
 		
-		imageURL = post.url;
+		imageURL = decodeEntities(imageURL);
 		
+		console.log("Set URL to " + imageURL);
 		document.styleSheets[0].cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
 	});
 }
@@ -890,7 +936,7 @@ function getFromTumblr(background) {
 			
 			document.styleSheets[0].cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
 		} else {
-			console.log("Error while retrieving posts for Tumblr user " + background.src + ". Either there's too many blocked posts or they deleted something.");
+			console.log("Error while retrieving posts for Tumblr user " + background.src + ". Couldn't find any posts.");
 		}
 	});
 }
@@ -905,6 +951,10 @@ function getParentWithTagName(element, name) {
 	}
 	console.log("Couldn't find parent with name " + name + "!");
 	return element;
+}
+
+function randomInt(n) {
+	return Math.floor(Math.random() * n);
 }
 
 function mod(n, m) {
@@ -933,6 +983,13 @@ function clean(node) {
 			clean(child);
 		}
 	}
+}
+
+// From https://stackoverflow.com/a/7394787/8659088
+function decodeEntities(html) {
+	var txt = document.createElement("textarea");
+	txt.innerHTML = html;
+	return txt.value;
 }
 
 function loadJSON(file, callback) {
