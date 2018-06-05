@@ -161,7 +161,7 @@ div#popup.show {
 	display: block;
 }
 div#popup #popupheader {
-	border-bottom: solid 1px black;
+	border-bottom: solid 1px #cfcfcf;
 	
 	width: 100%;
 	height: 2em;
@@ -184,7 +184,7 @@ div#popup #popupheader #popupclose {
 	display: inline-block;
 	
 	padding: .5rem;
-	border-left: solid 1px black;
+	border-left: solid 1px #cfcfcf;
 	
 	width: 2rem;
 	height: 2rem;
@@ -199,7 +199,7 @@ div#popup #popupheader #popupclose {
 }
 div#popup #popupheader #popupclose:hover {
 	background-image: url("img/popup.svg#cross-on");
-	background-color: black;
+	background-color: #cfcfcf;
 }
 div#popup #popupheader #popupclose:focus {
 	outline: 0;
@@ -545,13 +545,6 @@ a.icon svg {
 	.svg-sf, .svg-fs { stroke: var(--icon-color); fill: var(--icon-color); }
 	.svg-it { stroke: inherit; fill: transparent; }
 	.svg-ti { stroke: transparent; fill: inherit; }
-
-	.icon.youtube:hover { background-color: #ff0000; fill: #ff0000; }
-	.icon.twitter:hover { background-color: #1da1f2; fill: #1da1f2; }
-	.icon.reddit:hover { background-color: #ff4500; fill: #ff4500; }
-	.icon.tumblr:hover { background-color: #36465d; fill: #36465d; }
-	.icon.smilebasic-source:hover { background-color: #009688; fill: #009688; }
-	.icon.github:hover { background-color: #191717; fill: #191717; }
 /* FoldThat */
 
 /* Old responsive design code */

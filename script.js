@@ -127,9 +127,6 @@ function setup() {
 		popup.content.innerHTML = "";
 	});
 	
-	// Clock
-	clock.blink.innerHTML = ":";
-	
 	// Search
 	search.parent.addEventListener("submit", function() {doSearch(false);});
 	
@@ -170,11 +167,11 @@ function setup() {
 								index: setIndex,
 								options: [
 									{
-										label: "Newer Tab",
+										label: "NewerTab (Landscapes)",
 										value: 0
 									},
 									{
-										label: "New Tab",
+										label: "New Tab (Cityscapes)",
 										value: 1
 									},
 									{
@@ -227,12 +224,33 @@ function setup() {
 				},
 				{},
 				{
+					name: "Moving to GitLab...",
+					callback: (event, options)=>{
+						var settingsExport = JSON.stringify(settings, null, "\t");
+						makePopup("Move to GitLab", [
+							{
+								label: "Copy this stuff to the GitLab version and everything should work.",
+								type: "textarea",
+								value: settingsExport,
+								readOnly: true,
+								callback: (event)=>{
+									alert("Yikes, don't edit this!");
+								}
+							},
+							{
+								label: "<a href=\"https://thev360.gitlab.io/NewerTab/\">NewerTab</a>"
+							}
+						]);
+					}
+				},
+				{},
+				{
 					name: "NewerTab v" + version,
-					callback: goToLink("https://github.com/TheV360/NewerTab#newertab")
+					callback: goToLink("https://gitlab.com/TheV360/NewerTab#newertab")
 				},
 				{
 					name: "By V360",
-					callback: goToLink("https://thev360.github.io")
+					callback: goToLink("https://thev360.gitlab.io")
 				}
 			];
 			
@@ -439,7 +457,7 @@ function setup() {
 							}
 						},
 						{
-							label: "SVG Icon <a href=\"https://thev360.github.io/NewerTab/icons.html\">(?)</a>",
+							label: "SVG Icon <a href=\"https://thev360.gitlab.io/NewerTab/icons.html\">(?)</a>",
 							type: "text",
 							value: settings.icons[iconIndex].icon,
 							callback: (event)=>{
@@ -735,6 +753,9 @@ function popupItem(item, index) {
 			
 			if (item.placeholder)
 				input.placeholder = item.placeholder;
+			
+			if (item.readOnly)
+				input.readOnly = item.readOnly;
 		} else {
 			input = document.createElement("input");
 			

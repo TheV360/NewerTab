@@ -1,4 +1,4 @@
-# [NewerTab](https://thev360.github.io/NewerTab)
+# [NewerTab](https://thev360.gitlab.io/NewerTab)
 
 It's my new tab page, but it isn't held together with duct tape!
 

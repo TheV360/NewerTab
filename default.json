@@ -24,7 +24,7 @@
 		},
 		{
 			"icon": "img/fa-brands.svg#twitter",
-			"link": "https://www.twitter.com/",
+			"link": "https://www.twitter.com",
 			"highlight": "#1da1f2"
 		},
 		{
@@ -34,7 +34,7 @@
 		},
 		{
 			"icon": "img/fa-brands.svg#reddit-alien",
-			"link": "https://www.reddit.com",
+			"link": "https://www.reddit.com/hot/",
 			"highlight": "#ff4500"
 		},
 		{
@@ -43,9 +43,9 @@
 			"highlight": "#009688"
 		},
 		{
-			"icon": "img/fa-brands.svg#github",
-			"link": "https://www.github.com",
-			"highlight": "#191717"
+			"icon": "img/fa-brands.svg#gitlab",
+			"link": "https://www.gitlab.com",
+			"highlight": "#fc6d26"
 		}
 	],
 	"css": ""
