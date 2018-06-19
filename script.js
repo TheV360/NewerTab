@@ -2,7 +2,7 @@
 
 window.addEventListener("DOMContentLoaded", setup);
 
-const version = "0.7.1";
+const version = "0.7.2";
 const date = {
 	day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 	month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -62,6 +62,7 @@ function loadSettings(additional) {
 		});
 	} else {
 		document.body.parentNode.classList.add(settings.theme);
+		if (settings.animations) document.body.parentNode.classList.add("animations");
 	}
 	
 	return validSettings;
@@ -138,9 +139,22 @@ function setup() {
 	// CSS Rule map:
 	// 0 - 5: icons
 	// 6: background
+	// 7+: your CSS.
 	for (var i = 0; i < 6; i++)
 		document.styleSheets[0].insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ".contextopen {}", i);
 	document.styleSheets[0].insertRule("body {}", 6);
+	
+	// TODO: finish custom CSS
+	if (settings.css.length) {
+		var cssRules = settings.css.split("}");
+		try {
+			for (var i = 0; i < cssRules.length - 1; i++) {
+				document.styleSheets[0].insertRule(cssRules[i] + "}", 7 + i);
+			}
+		} catch (e) {
+			console.log("!!! " + e)
+		}
+	}
 	
 	updateBackground();
 	updateClock();
@@ -161,6 +175,17 @@ function setup() {
 								break;
 						
 						makePopup("Look and Feel Settings", [
+							{
+								label: "Animations",
+								type: "checkbox",
+								checked: settings.animations,
+								callback: (event)=>{
+									settings.animations = !settings.animations;
+									event.target.checked = settings.animations;
+									
+									document.body.parentNode.classList.toggle("animations");
+								}
+							},
 							{
 								label: "Background set",
 								type: "select",
@@ -215,30 +240,7 @@ function setup() {
 									document.body.parentNode.classList.remove(settings.theme);
 									settings.theme = event.target.value;
 									document.body.parentNode.classList.add(settings.theme);
-									
-									updateBackground();
 								}
-							}
-						]);
-					}
-				},
-				{},
-				{
-					name: "Moving to GitLab...",
-					callback: (event, options)=>{
-						var settingsExport = JSON.stringify(settings, null, "\t");
-						makePopup("Move to GitLab", [
-							{
-								label: "Copy this stuff to the GitLab version and everything should work.",
-								type: "textarea",
-								value: settingsExport,
-								readOnly: true,
-								callback: (event)=>{
-									alert("Yikes, don't edit this!");
-								}
-							},
-							{
-								label: "<a href=\"https://thev360.gitlab.io/NewerTab/\">NewerTab</a>"
 							}
 						]);
 					}
@@ -246,11 +248,11 @@ function setup() {
 				{},
 				{
 					name: "NewerTab v" + version,
-					callback: goToLink("https://gitlab.com/TheV360/NewerTab#newertab")
+					callback: goToLink("https://github.com/TheV360/NewerTab#newertab")
 				},
 				{
 					name: "By V360",
-					callback: goToLink("https://thev360.gitlab.io")
+					callback: goToLink("https://thev360.github.io")
 				}
 			];
 			
@@ -457,7 +459,7 @@ function setup() {
 							}
 						},
 						{
-							label: "SVG Icon <a href=\"https://thev360.gitlab.io/NewerTab/icons.html\">(?)</a>",
+							label: "SVG Icon <a href=\"https://thev360.github.io/NewerTab/icons.html\">(?)</a>",
 							type: "text",
 							value: settings.icons[iconIndex].icon,
 							callback: (event)=>{
@@ -614,7 +616,7 @@ function context(items = [{name: "No options?", callback: function() {}}], optio
 	
 	var contextlist = document.createElement("ul");
 	
-	contextlist.className = "contextlist";
+	contextlist.classList.add("contextlist");
 	contextlist.tabIndex = 100;
 	
 	if (isNumber(options.x))
@@ -701,7 +703,7 @@ function popupItem(item, index) {
 	var option;
 	var callback;
 	
-	set.className = "popupset";
+	set.classList.add("popupset");
 	
 	if (item.label) {
 		label = document.createElement("label");

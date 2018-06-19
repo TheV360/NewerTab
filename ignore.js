@@ -69,7 +69,7 @@ const randomDialogue = [
 	"Hello, I am an option",
 	"Some people say that there's nothing at click #200",
 	"Beep beep beep",
-	"Spelling error? Go to NewerTab's GitLab page and open an issue!",
+	"Spelling error? Go to NewerTab's GitHub page and open an issue!",
 	"I have been trapped in vim for the past 3 weeks. Send help.",
 	"Wow, that's a lot of options",
 	"Life is short. Quit now and do something more interesting than searching for a button.",

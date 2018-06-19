@@ -1,6 +1,7 @@
 {
 	"version": null,
 	"theme": "dark",
+	"animations": true,
 	"backgrounds": [
 		{"type": "image", "src": "img/newer/1.jpg", "author": "JOHN TOWNER", "link": "https://unsplash.com/photos/JgOeRuGD_Y4"},
 		{"type": "image", "src": "img/newer/2.jpg", "author": "Alexander Slattery", "link": "https://unsplash.com/photos/LI748t0BK8w"},
@@ -18,6 +19,11 @@
 	},
 	"icons": [
 		{
+			"icon": "img/fa-solid.svg#envelope",
+			"link": "https://mail.google.com/",
+			"highlight": "#c5221f"
+		},
+		{
 			"icon": "img/fa-brands.svg#youtube",
 			"link": "https://www.youtube.com/feed/subscriptions",
 			"highlight": "#ff0000"
@@ -28,24 +34,19 @@
 			"highlight": "#1da1f2"
 		},
 		{
-			"icon": "img/fa-brands.svg#tumblr",
-			"link": "https://www.tumblr.com",
-			"highlight": "#36465d"
-		},
-		{
 			"icon": "img/fa-brands.svg#reddit-alien",
 			"link": "https://www.reddit.com/hot/",
 			"highlight": "#ff4500"
 		},
 		{
-			"icon": "img/fa-brands.svg#smilebasic-source",
-			"link": "https://smilebasicsource.com/activity",
-			"highlight": "#009688"
+			"icon": "img/fa-brands.svg#tumblr",
+			"link": "https://www.tumblr.com",
+			"highlight": "#36465d"
 		},
 		{
-			"icon": "img/fa-brands.svg#gitlab",
-			"link": "https://www.gitlab.com",
-			"highlight": "#fc6d26"
+			"icon": "img/fa-brands.svg#github",
+			"link": "https://www.github.com",
+			"highlight": "#24292e"
 		}
 	],
 	"css": ""
