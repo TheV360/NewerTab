@@ -310,6 +310,18 @@ function setup() {
 					name: "Create another context menu",
 					callback: loadSecret
 				},
+				{
+					name: "DEBUG RPG",
+					callback: (event)=>{
+						localStorage.removeItem("secret");
+						loadSecret(event);
+						
+						window.setTimeout(()=>{
+							loadSecret2(0);
+							playSecret2();
+						}, 1e3);
+					}
+				},
 				{},
 				{
 					name: "Delete everything",
@@ -611,18 +623,20 @@ function saveSettings() {
 }
 
 function context(items = [{name: "No options?", callback: function() {}}], options) {
-	if (options.origin)
-		options.origin.classList.add("contextopen");
+	if (options.origin) options.origin.classList.add("contextopen");
 	
 	var contextlist = document.createElement("ul");
 	
 	contextlist.classList.add("contextlist");
 	contextlist.tabIndex = 100;
 	
-	if (isNumber(options.x))
-		contextlist.style.left = (options.x - 4) + "px";
-	if (isNumber(options.y))
-		contextlist.style.top = (options.y - 4) + "px";
+	if (options.noAnimations) contextlist.classList.add("noanimations");
+	
+	if (options.width) contextlist.style.width = options.width;
+	if (options.height) contextlist.style.height = options.height;
+	
+	if (isNumber(options.x)) contextlist.style.left = (options.x - 4) + "px";
+	if (isNumber(options.y)) contextlist.style.top = (options.y - 4) + "px";
 	
 	for (var i = 0; i < items.length; i++) {
 		var contextoption = contextOption(items[i], options);
@@ -646,17 +660,13 @@ function context(items = [{name: "No options?", callback: function() {}}], optio
 		}
 	});
 	
-	if (options.parent)
-		contextlist = options.parent.appendChild(contextlist);
-	else
-		contextlist = document.body.appendChild(contextlist);
+	if (options.parent) contextlist = options.parent.appendChild(contextlist);
+	else contextlist = document.body.appendChild(contextlist);
 	
 	var contextfit = contextlist.getBoundingClientRect();
 	
-	if (contextfit.x + contextfit.width > window.innerWidth)
-		contextlist.style.left = (window.innerWidth - contextfit.width) + "px";
-	if (contextfit.y + contextfit.height > window.innerHeight)
-		contextlist.style.top = (window.innerHeight - contextfit.height) + "px";
+	if (contextfit.x + contextfit.width > window.innerWidth) contextlist.style.left = (window.innerWidth - contextfit.width) + "px";
+	if (contextfit.y + contextfit.height > window.innerHeight) contextlist.style.top = (window.innerHeight - contextfit.height) + "px";
 	
 	contextlist.focus();
 	
@@ -674,11 +684,15 @@ function contextOption(item, options) {
 		
 		contextoption.addEventListener("click", (event)=>{callback(event, options);});
 		contextoption.addEventListener("contextmenu", (event)=>{callback(event, options); event.preventDefault(); return false;});
+		
+		if (item.class) contextoption.classList.add(item.class);
 	} else if (item.name) {
 		contextoption = document.createElement("li");
 		contextoption.innerHTML = item.name;
 		
 		contextoption.classList.add("contextdisabled");
+		
+		if (item.class) contextoption.classList.add(item.class);
 	} else {
 		contextoption = document.createElement("hr");
 	}

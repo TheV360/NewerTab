@@ -57,6 +57,17 @@ textarea {
 	--content-size-height: 17rem;
 	--content-size-padding: 5rem;
 	
+	--text-color: white;
+	--alt-color: black;
+	
+	--context-text: black;
+	--context-disabled: #9f9f9f;
+	--context-background: white;
+	--context-hover: #cfcfcf;
+	--context-section: #f7f7f7;
+	--context-divider: #efefef;
+	--context-border: rgb(191, 191, 191, .5);
+	
 	--icon-color: white;
 	--icon-size: 7rem;
 	
@@ -69,28 +80,23 @@ textarea {
 	--animation-function: linear;
 }
 :root.dark {
-	--text-color: white;
-	--alt-color: black;
-	
 	--blur-color: rgba(255, 255, 255, .05);
+	
+	--context-text: white;
+	--context-disabled: #7f7f7f;
+	--context-background: black;
+	--context-hover: #3f3f3f;
+	--context-section: #171717;
+	--context-divider: #2f2f2f;
 }
 :root.light {
-	--text-color: white;
-	--alt-color: black;
-	
 	--blur-color: rgba(255, 255, 255, .25);
 }
 :root.darkclear {
-	--text-color: white;
-	--alt-color: black;
-	
 	--blur-color: rgba(0, 0, 0, .25);
 	--blur-size: 0px;
 }
 :root.lightclear {
-	--text-color: white;
-	--alt-color: black;
-	
 	--blur-color: rgba(255, 255, 255, .25);
 	--blur-size: 0px;
 }
@@ -258,9 +264,6 @@ div#popup #popupcontent select:focus,
 div#popup #popupcontent textarea:focus {
 	color: white;
 	background-color: black;
-	
-	--text-color: black;
-	--alt-color: white;
 }
 div#popup #popupcontent input[type="color"] {
 	padding: .25rem;
@@ -471,10 +474,10 @@ ul.contextlist {
 	max-height: 75vh;
 	
 	padding: 6px 0;
-	border: 1px solid rgb(191, 191, 191, .5);
+	border: 1px solid var(--context-border);
 	
-	color: black;
-	background-color: white;
+	color: var(--context-text);
+	background-color: var(--context-background);
 	
 	border-radius: var(--border-radius);
 	
@@ -486,10 +489,13 @@ ul.contextlist {
 	
 	animation: fadeIn var(--animation-time) var(--animation-function);
 }
+ul.contextlist.noanimations {
+	animation: none;
+}
 ul.contextlist li {
 	padding: .5rem;
 	
-	color: black;
+	color: var(--context-text);
 	background-color: transparent;
 	
 	font-weight: 300;
@@ -497,21 +503,21 @@ ul.contextlist li {
 	z-index: 101;
 }
 ul.contextlist li.contextdisabled {
-	color: #9f9f9f;
+	color: var(--context-disabled);
 	
 	font-weight: 400;
 }
 ul.contextlist li:hover {
-	background-color: #cfcfcf;
+	background-color: var(--context-hover);
 }
 ul.contextlist > :not(:last-child) {
-	border-bottom: 1px solid #efefef;
+	border-bottom: 1px solid var(--context-divider);
 }
 ul.contextlist hr {
 	border: 0;
 	height: .25rem;
 	
-	background-color: #f7f7f7;
+	background-color: var(--context-section);
 }
 ul.contextlist img {
 	width: 100%;
@@ -521,6 +527,28 @@ ul.contextlist img {
 @keyframes fadeIn {
 	from { opacity: 0; }
 	to { opacity: 1; }
+}
+
+/* Unused classes */
+.monospaced {
+	font-family: "Fira Mono", monospace;
+}
+li.up, li.left, li.right, li.down {
+	width: 100%;
+	
+	text-align: center;
+}
+li.left {
+	display: inline-block;
+	
+	border-right: .5px solid var(--context-divider);
+	width: 50%;
+}
+li.right {
+	display: inline-block;
+	
+	border-left: .5px solid var(--context-divider);
+	width: 50%;
 }
 
 /* Unused animations */

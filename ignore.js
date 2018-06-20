@@ -1,3 +1,5 @@
+"use strict";
+
 // This is lore. Don't look at this
 const secretBlank = JSON.stringify({
 	"version": version,
@@ -5,12 +7,12 @@ const secretBlank = JSON.stringify({
 	"high": 0,
 	"bonus": {
 		"map": 0,
-		"x": 2,
+		"x": 3,
 		"y": 4,
 		"hp": 10,
 		"hpmax": 10,
-		"inventory": {},
-		"flags": []
+		"inventory": [],
+		"flags": {}
 	}
 });
 
@@ -39,7 +41,7 @@ const dialogue = {
 	130: "But 200. That's where the finish line is. Once you reach that, you've won.",
 	131: "Yep, you can finally 100% a new tab page. Thank god.",
 	132: "Oh, I forgot this is actually fully-featured HTML.",
-	133: "<pre style=\"font-family: monospace;\">█ █\n█ █\n███\n█ █\n█ █\n\n███\n█\n██\n█\n███\n\n█\n█\n█\n█\n███\n\n█\n█\n█\n█\n███\n\n███\n█ █\n█ █\n█ █\n███\n\n\n\n █</pre>",
+	133: "<pre class=\"monospaced\">█ █\n█ █\n███\n█ █\n█ █\n\n███\n█\n██\n█\n███\n\n█\n█\n█\n█\n███\n\n█\n█\n█\n█\n███\n\n███\n█ █\n█ █\n█ █\n███\n\n\n\n █</pre>",
 	134: "Alright, here's the best level of this thing.<br />Thanks, and have fun!",
 	135: "more levels as soon as I finish this page completely."
 };
@@ -87,25 +89,37 @@ const randomDialogue = [
 	"Push another broken commit"
 ];
 
+const solid = /[^\s«».■□]/imu;
+
 const maps = [
+	[ // 0123456789012
+		"╔╤═══╤╦═════╗",
+		"║└O☼ˇ┘║/    ║",
+		"║b    ║    J║",
+		"╠═■═══╣     ║",
+		"║     ■     ║",
+		"║     ║     ■",
+		"║bed T║     ║",
+		"╚═════╩═════╝"
+	]
+];
+const mapInfo = [
 	{
-		map: [
-			"#######",
-			"#\\_*_/#",
-			"#.....#",
-			"#.....>",
-			"#.....#",
-			"#bed.T#",
-			"#######"
-		],
+		name: "House",
 		events: [
 			{
+				x: 2,
+				y: 2,
+				width: 4,
+				text: "It's the bathroom, complete with sink and toilet."
+			},
+			{
 				x: 3,
-				y: 1,
+				y: 2,
 				check: {
-					flag: 0,
+					flag: "waterFlower",
 					off: {
-						switch: 0,
+						switch: "waterFlower",
 						text: "It's a small flower in a pot. You water it."
 					},
 					on: {
@@ -114,20 +128,25 @@ const maps = [
 				}
 			},
 			{
+				x: 4,
+				y: 2,
+				text: "It's a mug you use to water the flower."
+			},
+			{
 				x: 1,
-				y: 6,
+				y: 5,
 				width: 3,
 				text: "It's your bed! It's a bit of a mess..."
 			},
 			{
 				x: 5,
-				y: 6,
+				y: 5,
 				check: {
-					flag: 1,
+					flag: "bedsideGold",
 					off: {
-						switch: 1,
+						switch: "bedsideGold",
 						give: {
-							name: "gold",
+							name: "Gold",
 							amount: 3
 						},
 						text: "It's a bedside table. It has a small lantern and... oh! There's some gold in a drawer."
@@ -136,9 +155,43 @@ const maps = [
 						text: "It's a bedside table. It has a small lantern and an empty drawer."
 					}
 				},
+			},
+			{
+				x: 8,
+				y: 1,
+				text: "The TV! You waste too much time staring at this flat rectangle.",
+				check: {
+					flag: "chairDecision",
+					off: {
+						text: "It's showing the pause screen of your favorite game, Superb Platforming Guy. You're only on world 3, but that's just because you got the game a week ago."
+					},
+					on: {
+						text: "It's tuned to your favorite channel, the weather. Something about that channel is just calming, and the music is good to browse through social media to."
+					}
+				}
+			},
+			{
+				x: 10,
+				y: 2,
+				check: {
+					flag: "chairDecision",
+					off: {
+						switch: "chairDecision",
+						text: "Your chair! You sit down and watch some TV."
+					},
+					on: {
+						switch: "chairDecision",
+						text: "Your chair! You sit down and play a game."
+					}
+				}
 			}
 		]
 	}
+];
+
+const itemInfo = [
+	{name: "Gold", usable: false},
+	{name: "Map", usable: true}
 ];
 
 // Event specs:
@@ -154,6 +207,7 @@ const maps = [
 
 var secret = {};
 var tmpBag = [];
+var elementFit;
 
 var sine, cosine, wavy, pulse;
 
@@ -178,7 +232,7 @@ if (storage.getItem("secret")) {
 	saveSecret();
 }
 
-function startSecret(event, options) {
+function startSecret() {
 	// Sine objects, will use later.
 	// For now, reset them
 	sine = null;
@@ -189,10 +243,10 @@ function startSecret(event, options) {
 	secret.score = 0;
 	
 	// Start the dang thing
-	doSecret(event, options);
+	doSecret();
 }
 
-function doSecret(event, options) {
+function doSecret() {
 	// The first option
 	var itemList = [
 		{
@@ -260,45 +314,61 @@ function doSecret(event, options) {
 	saveSecret();
 }
 
+var i, j;
+var loadedMap, loadedInfo, nextMap;
+var itemList, mapItem;
+var texts = [];
+
 function loadSecret2(map) {
-	secret.bonus.map = map;
-	loadedMap = maps[map].map;
+	sine = null;
+	cosine = null;
+	wavy = null;
+	pulse = null;
 	
-	for (var j = 0; j < loadedMap.length; j++)
-		for (var i = 0; i < loadedMap[j]; i++) {
-		}
+	secret.bonus.map = map;
+	
+	loadedMap = maps[map].slice();
+	loadedInfo = mapInfo[map];
 }
 
-function playSecret2(event, options, control) {
+function playSecret2() {
 	// Game controls
-	var itemList = [
-		{
-			"name": "Up",
-			"callback": goUp
-		},
-		{
-			"name": "Down",
-			"callback": goDown
-		},
-		{
-			"name": "Left",
-			"callback": goLeft
-		},
-		{
-			"name": "Right",
-			"callback": goRight
-		},
+	itemList = [
+		{"name": "Up", "callback": goUp, "class": "up"},
+		{"name": "Left", "callback": goLeft, "class": "left"},
+		{"name": "Right", "callback": goRight, "class": "right"},
+		{"name": "Down", "callback": goDown, "class": "down"},
 		{}
 	];
 	
-	var mapItem = "<pre style=\"font-family: monospace;\">";
-	for (var i = 0; i < loadedMap.length; i++) {
-		if (i) mapItem += "\n";
+	// for (i = 0; i < loadedMap.length; i++) {
+	// 	loadedMap[i] = loadedMap[i].substr(1) + loadedMap[i][0];
+	// }
+	// loadedMap.push(loadedMap.shift());
+	
+	// Fix controls
+	if (mapCollide(loadedMap, secret.bonus.x, secret.bonus.y - 1)) itemList[0].callback = undefined;
+	if (mapCollide(loadedMap, secret.bonus.x - 1, secret.bonus.y)) itemList[1].callback = undefined;
+	if (mapCollide(loadedMap, secret.bonus.x + 1, secret.bonus.y)) itemList[2].callback = undefined;
+	if (mapCollide(loadedMap, secret.bonus.x, secret.bonus.y + 1)) itemList[3].callback = undefined;
+	
+	// Do events
+	texts = [];
+	for (i = 0; i < loadedInfo.events.length; i++) {
+		doEvent(loadedInfo.events[i]);
+	}
+	
+	// Draw the map, insert player character.
+	mapItem = "<div style=\"text-align: center;\">" + loadedInfo.name + "<pre class=\"monospaced\">";
+	for (i = 0; i < loadedMap.length; i++) {
+		mapItem += "\n";
 		
 		if (i === secret.bonus.y) {
-			for (var j = 0; j < loadedMap[i].length; j++) {
+			for (j = 0; j < loadedMap[i].length; j++) {
 				if (j === secret.bonus.x) {
-					mapItem += "@";
+					mapItem += "☺";
+					
+					if (loadedMap[i][j] === "■") loadedMap[i] = replaceChar(loadedMap[i], j, "□");
 				} else {
 					mapItem += loadedMap[i][j];
 				}
@@ -307,21 +377,147 @@ function playSecret2(event, options, control) {
 			mapItem += loadedMap[i];
 		}
 	}
-	mapItem += "</pre>";
+	mapItem += "</pre></div>";
 	
 	itemList.push({"name": mapItem});
-	itemList.push({});
 	
-	context(itemList, {});
+	if (texts.length) {
+		itemList.push({});
+		
+		for (var i = 0; i < texts.length; i++) {
+			itemList.push({"name": texts[i]});
+		}
+	}
+	
+	if (secret.bonus.inventory.length) {
+		itemList.push({}, {"name": "<div style=\"text-align: center;\">Inventory</div>"});
+		
+		for (var i = 0; i < secret.bonus.inventory.length; i++) {
+			itemList.push({"name": secret.bonus.inventory[i].amount + " × " + secret.bonus.inventory[i].name});
+		}
+	}
+	
+	saveSecret();
+	context(itemList, {noAnimations: true, y: 8, width: "24rem"});
+	
+	if (nextMap) {
+		loadSecret2(nextMap.map);
+		
+		secret.bonus.x = nextMap.x;
+		secret.bonus.y = nextMap.y;
+		
+		nextMap = undefined;
+	}
 }
 
-function goUp() {}
-function goDown() {}
-function goLeft() {}
-function goRight() {}
+function goUp() {secret.bonus.y--; playSecret2();}
+function goLeft() {secret.bonus.x--; playSecret2();}
+function goRight() {secret.bonus.x++; playSecret2();}
+function goDown() {secret.bonus.y++; playSecret2();}
+
+function makeUseItem(itemIndex) {
+	return function() {
+		
+	}
+}
 
 function doEvent(table) {
+	if (collide(secret.bonus.x, secret.bonus.y, table.x, table.y, table.width, table.height)) {
+		// console.log("Event okayed!");
+		// console.log(table);
+		
+		if (table.text) {
+			texts.push(table.text);
+		}
+		
+		if (table.switch) {
+			// console.log("Encountered a switch! It's switching the " + table.switch + " flag.");
+			
+			secret.bonus.flags[table.switch] = !secret.bonus.flags[table.switch];
+		}
+		
+		if (table.give) {
+			// console.log("Encountered a give! It wants to give the player " + table.give.amount + " " + table.give.name + "(s).");
+			
+			var itemIndex = secret.bonus.inventory.findIndex(inventoryItem(table.give.name, table.give.amount));
+			
+			if (itemIndex < 0) {
+				itemIndex = secret.bonus.inventory.push({name: table.give.name, amount: 0}) - 1;
+			}
+			
+			if (table.give.amount) {
+				secret.bonus.inventory[itemIndex].amount += table.give.amount;
+			} else {
+				secret.bonus.inventory[itemIndex].amount += 1;
+			}
+			
+			texts.push("You found " + table.give.amount + " " + table.give.name + ".");
+		}
+		
+		if (table.check) {
+			// console.log("Encountered a check! It's checking for the " + table.check.flag + " flag.");
+			
+			if (secret.bonus.flags[table.check.flag]) {
+				// console.log("The check succeeded. table.check.on is running.");
+				
+				doEvent(table.check.on);
+			} else {
+				// console.log("The check failed. table.check.off is running.");
+				
+				doEvent(table.check.off);
+			}
+				
+			// console.log("Event should've been okayed!");
+		}
+		
+		if (table.move) {
+			nextMap = table.move;
+		}
+		
+		if (table.also) {
+			doEvent(table.also);
+		}
+	} else {
+		// console.log("Event failed.");
+		// console.log("collide(" + secret.bonus.x + ", " + secret.bonus.y + ", " + table.x + ", " + table.y + ", " + table.width + ", " + table.height + ") == false");
+	}
+}
+
+function collide(sx, sy, tx, ty, width, height) {
+	var x = false;
+	var y = false;
 	
+	if (tx === undefined) {
+		x = true;
+	} else if (width === undefined) {
+		x = sx === tx;
+	} else {
+		x = sx >= tx && sx < tx + width;
+	}
+	
+	if (ty === undefined) {
+		y = true;
+	} else if (height === undefined) {
+		y = sy === ty;
+	} else {
+		y = sy >= ty && sy < ty + height;
+	}
+	
+	return x && y;
+}
+
+function mapCollide(map, x, y) {
+	if (x < 0 || y < 0 || x >= map[0].length || y >= map.length) return true;
+	
+	return solid.test(map[y][x]);
+}
+
+function inventoryItem(name, amount) {
+	if (!amount) amount = 1;
+	
+	return function(element) {
+		return element.name === name && element.amount >= amount;
+	}
 }
 
 function debug_everyEffect() {
@@ -397,4 +593,8 @@ function shuffle(a) {
         [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
+}
+
+function replaceChar(string, index, replacement) {
+	return string.substr(0, index) + replacement + string.substr(index + replacement.length);
 }

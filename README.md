@@ -8,6 +8,7 @@ You can customize most settings by right clicking them. Some features may requir
 
 * Pretty interface
 * Customizable everything! (backgrounds, icons, themes)
+* Dark theme!
 * Backgrounds support (gradients, images, top posts of subreddits, most recent posts of tumblr blogs)
 * Backgrounds credit (author and link to page)
 * Nice selection of default images.
@@ -15,9 +16,9 @@ You can customize most settings by right clicking them. Some features may requir
 
 # To-do
 
-* Custom CSS
+* ~~Custom CSS~~
 * Background Wizard (make new JSON Background objects)
-* More polish, maybe animations?
+* ~~More polish, maybe animations?~~
 * More empty space in the ignore.js file. Ignore the ignore.js file. There's nothing in it.
 
 # Credits
