@@ -121,7 +121,7 @@ function setup() {
 	};
 	
 	// Popup
-	popup.close.addEventListener("click", function() {
+	popup.close.addEventListener("click", ()=>{
 		saveSettings();
 		popup.parent.classList.remove("show");
 		popup.title.innerHTML = "";
@@ -129,7 +129,14 @@ function setup() {
 	});
 	
 	// Search
-	search.parent.addEventListener("submit", function() {doSearch(false);});
+	search.box.addEventListener("input", ()=>{
+		if (search.box.value.length) {
+			search.box.classList.add("text");
+		} else {
+			search.box.classList.remove("text");
+		}
+	});
+	search.parent.addEventListener("submit", ()=>{doSearch(false);});
 	
 	if (settings.search.focus) {
 		search.box.focus();
@@ -152,7 +159,7 @@ function setup() {
 				document.styleSheets[0].insertRule(cssRules[i] + "}", 7 + i);
 			}
 		} catch (e) {
-			console.log("!!! " + e)
+			console.log("!!! " + e);
 		}
 	}
 	
@@ -311,15 +318,21 @@ function setup() {
 					callback: loadSecret
 				},
 				{
-					name: "DEBUG RPG",
-					callback: (event)=>{
-						localStorage.removeItem("secret");
-						loadSecret(event);
-						
-						window.setTimeout(()=>{
-							loadSecret2(0);
-							playSecret2();
-						}, 1e3);
+					name: "Debug RPG",
+					callback: (event)=>{ // Whoops
+						if (prompt("What's the password, the one that's definitely not stored in plaintext?") === "☺") {
+							if (confirm("Reset?")) {
+								localStorage.removeItem("secret");
+								loadSecret(event);
+							}
+							
+							window.setTimeout(()=>{
+								loadSecret2(0);
+								playSecret2();
+							}, 0.5e3);
+						} else {
+							alert("Nope, try again.");
+						}
 					}
 				},
 				{},

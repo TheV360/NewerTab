@@ -403,6 +403,9 @@ input#searchbox {
 	
 	transition: background-color var(--animation-time) var(--animation-function);
 }
+input#searchbox.text {
+	text-align: left;
+}
 input#searchbox.date {
 	background-color: transparent;
 }
@@ -413,6 +416,7 @@ input#searchbox:focus,
 input#searchbox.contextopen {
 	color: var(--alt-color);
 	background-color: white;
+	
 	text-align: left;
 }
 input#searchbox::placeholder {
@@ -425,6 +429,23 @@ input#searchbox.contextopen::placeholder {
 input#searchbox.date:focus::placeholder,
 input#searchbox.date.contextopen::placeholder {
 	color: transparent;
+}
+input#searchbox::-webkit-search-cancel-button {
+	-webkit-appearance: none;
+	
+	border-radius: 50%;
+	
+	width: 1rem;
+	height: 1rem;
+	
+	background: var(--text-color);
+}
+input#searchbox:focus::-webkit-search-cancel-button,
+input#searchbox.contextopen::-webkit-search-cancel-button {
+	background-color: black;
+}
+input#searchbox::-webkit-search-cancel-button:active {
+	opacity: .5;
 }
 
 /* Icon grid */

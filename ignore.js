@@ -89,122 +89,6 @@ const randomDialogue = [
 	"Push another broken commit"
 ];
 
-const solid = /[^\s«».■□]/imu;
-
-const maps = [
-	[ // 0123456789012
-		"╔╤═══╤╦═════╗",
-		"║└O☼ˇ┘║/    ║",
-		"║b    ║    J║",
-		"╠═■═══╣     ║",
-		"║     ■     ║",
-		"║     ║     ■",
-		"║bed T║     ║",
-		"╚═════╩═════╝"
-	]
-];
-const mapInfo = [
-	{
-		name: "House",
-		events: [
-			{
-				x: 2,
-				y: 2,
-				width: 4,
-				text: "It's the bathroom, complete with sink and toilet."
-			},
-			{
-				x: 3,
-				y: 2,
-				check: {
-					flag: "waterFlower",
-					off: {
-						switch: "waterFlower",
-						text: "It's a small flower in a pot. You water it."
-					},
-					on: {
-						text: "It's a small flower in a pot. You water it daily. You already watered it today..."
-					}
-				}
-			},
-			{
-				x: 4,
-				y: 2,
-				text: "It's a mug you use to water the flower."
-			},
-			{
-				x: 1,
-				y: 5,
-				width: 3,
-				text: "It's your bed! It's a bit of a mess..."
-			},
-			{
-				x: 5,
-				y: 5,
-				check: {
-					flag: "bedsideGold",
-					off: {
-						switch: "bedsideGold",
-						give: {
-							name: "Gold",
-							amount: 3
-						},
-						text: "It's a bedside table. It has a small lantern and... oh! There's some gold in a drawer."
-					},
-					on: {
-						text: "It's a bedside table. It has a small lantern and an empty drawer."
-					}
-				},
-			},
-			{
-				x: 8,
-				y: 1,
-				text: "The TV! You waste too much time staring at this flat rectangle.",
-				check: {
-					flag: "chairDecision",
-					off: {
-						text: "It's showing the pause screen of your favorite game, Superb Platforming Guy. You're only on world 3, but that's just because you got the game a week ago."
-					},
-					on: {
-						text: "It's tuned to your favorite channel, the weather. Something about that channel is just calming, and the music is good to browse through social media to."
-					}
-				}
-			},
-			{
-				x: 10,
-				y: 2,
-				check: {
-					flag: "chairDecision",
-					off: {
-						switch: "chairDecision",
-						text: "Your chair! You sit down and watch some TV."
-					},
-					on: {
-						switch: "chairDecision",
-						text: "Your chair! You sit down and play a game."
-					}
-				}
-			}
-		]
-	}
-];
-
-const itemInfo = [
-	{name: "Gold", usable: false},
-	{name: "Map", usable: true}
-];
-
-// Event specs:
-//	Check: checks if flag x is set, does on/off event based on flag status
-//	Switch: after event is done, switch flag x
-//	X, Y: coordinates, if not given, will immediately
-//	Width: width of object. If not defined, assumed to be 1. If negative, it spans the entire map.
-//	Height: like width, but height. If not defined, assumed to be 1. If negative, it spans the entire map.
-//	Give:
-//	  Name:
-//	    make item in inventory and give amount.
-//	Text: text to show when looking at item
-
 var secret = {};
 var tmpBag = [];
 var elementFit;
@@ -314,10 +198,148 @@ function doSecret() {
 	saveSecret();
 }
 
+const solid = /[^\s«».■□]/imu;
+
+const maps = [
+	[ // 0123456789012
+		"╔╤═══╤╦═════╗",
+		"║└O☼ˇ┘║/    ║",
+		"║b    ║    J║",
+		"╠═■═══╣     ║",
+		"║     ■     ║",
+		"║     ║     ■",
+		"║bed T║     ║",
+		"╚═════╩═════╝"
+	],
+	[
+		"╔════════════════╗",
+		"║                ║",
+		"║                ║",
+		"║                ║",
+		"║                ║",
+		"║                ║",
+		"╚════════════════╝"
+	]
+];
+const mapInfo = [
+	{
+		name: "House",
+		events: [
+			{
+				x: 2,
+				y: 2,
+				width: 4,
+				text: "It's the bathroom, complete with sink and toilet."
+			},
+			{
+				x: 3,
+				y: 2,
+				check: {
+					flag: "waterFlower",
+					off: {
+						switch: "waterFlower",
+						text: "It's a small flower in a pot. You water it."
+					},
+					on: {
+						text: "It's a small flower in a pot. You water it daily. You already watered it today..."
+					}
+				}
+			},
+			{
+				x: 4,
+				y: 2,
+				text: "It's a mug you use to water the flower."
+			},
+			{
+				x: 1,
+				y: 5,
+				width: 3,
+				text: "It's your bed! It's a bit of a mess..."
+			},
+			{
+				x: 5,
+				y: 5,
+				check: {
+					flag: "bedsideGold",
+					off: {
+						switch: "bedsideGold",
+						give: {
+							name: "Gold",
+							amount: 3
+						},
+						text: "It's a bedside table. It has a small lantern and... oh! There's some gold in a drawer."
+					},
+					on: {
+						text: "It's a bedside table. It has a small lantern and an empty drawer."
+					}
+				},
+			},
+			{
+				x: 8,
+				y: 1,
+				text: "The TV! You waste too much time staring at this flat rectangle.",
+				check: {
+					flag: "chairDecision",
+					off: {
+						text: "It's showing the pause screen of your favorite game, Superb Platforming Guy. You're only on world 3, but that's just because you got the game a week ago."
+					},
+					on: {
+						text: "It's tuned to your favorite channel, the weather. Something about that channel is just calming, and the music is good to browse through social media to."
+					}
+				}
+			},
+			{
+				x: 10,
+				y: 2,
+				check: {
+					flag: "chairDecision",
+					off: {
+						switch: "chairDecision",
+						text: "Your chair! You sit down and watch some TV."
+					},
+					on: {
+						switch: "chairDecision",
+						text: "Your chair! You sit down and play a game."
+					}
+				}
+			},
+			{
+				x: 12,
+				y: 5,
+				move: {
+					map: 1,
+					x: 1,
+					y: 1
+				}
+			}
+		]
+	},
+	{
+		name: "Outside",
+		events: [
+			{
+				y: 3,
+				text: "thanky",
+				option: {
+					text: "Make a true statement",
+					click: {
+						text: "Reality sucks"
+					}
+				}
+			}
+		]
+	}
+];
+
+const itemInfo = [
+	{name: "Gold", usable: false},
+	{name: "Map", usable: true}
+];
+
 var i, j;
 var loadedMap, loadedInfo, nextMap;
 var itemList, mapItem;
-var texts = [];
+var texts = [], options = [];
 
 function loadSecret2(map) {
 	sine = null;
@@ -331,16 +353,16 @@ function loadSecret2(map) {
 	loadedInfo = mapInfo[map];
 }
 
-function playSecret2() {
+function playSecret2(tempEvent) {
 	// Game controls
 	itemList = [
 		{"name": "Up", "callback": goUp, "class": "up"},
 		{"name": "Left", "callback": goLeft, "class": "left"},
 		{"name": "Right", "callback": goRight, "class": "right"},
-		{"name": "Down", "callback": goDown, "class": "down"},
-		{}
+		{"name": "Down", "callback": goDown, "class": "down"}
 	];
 	
+	// Scream forever
 	// for (i = 0; i < loadedMap.length; i++) {
 	// 	loadedMap[i] = loadedMap[i].substr(1) + loadedMap[i][0];
 	// }
@@ -354,8 +376,15 @@ function playSecret2() {
 	
 	// Do events
 	texts = [];
+	options = [];
+	
+	if (tempEvent) doEvent(tempEvent);
 	for (i = 0; i < loadedInfo.events.length; i++) {
 		doEvent(loadedInfo.events[i]);
+	}
+	
+	for (i = 0; i < options.length; i++) {
+		itemList.push(options[i]);
 	}
 	
 	// Draw the map, insert player character.
@@ -379,7 +408,7 @@ function playSecret2() {
 	}
 	mapItem += "</pre></div>";
 	
-	itemList.push({"name": mapItem});
+	itemList.push({}, {"name": mapItem});
 	
 	if (texts.length) {
 		itemList.push({});
@@ -401,12 +430,14 @@ function playSecret2() {
 	context(itemList, {noAnimations: true, y: 8, width: "24rem"});
 	
 	if (nextMap) {
-		loadSecret2(nextMap.map);
+		if (secret.bonus.map != nextMap.map) loadSecret2(nextMap.map);
 		
-		secret.bonus.x = nextMap.x;
-		secret.bonus.y = nextMap.y;
+		if (nextMap.x) secret.bonus.x = nextMap.x;
+		if (nextMap.y) secret.bonus.y = nextMap.y;
 		
 		nextMap = undefined;
+		
+		playSecret2();
 	}
 }
 
@@ -417,32 +448,51 @@ function goDown() {secret.bonus.y++; playSecret2();}
 
 function makeUseItem(itemIndex) {
 	return function() {
-		
+		// TODO
 	}
 }
 
 function doEvent(table) {
 	if (collide(secret.bonus.x, secret.bonus.y, table.x, table.y, table.width, table.height)) {
-		// console.log("Event okayed!");
-		// console.log(table);
-		
 		if (table.text) {
 			texts.push(table.text);
 		}
 		
+		if (table.option) {
+			if (table.option.text && table.option.click) {
+				options.push({"name": table.option.text, "callback": ()=>{
+					playSecret2(table.option.click);
+				}});
+			}
+		}
+		
 		if (table.switch) {
-			// console.log("Encountered a switch! It's switching the " + table.switch + " flag.");
-			
-			secret.bonus.flags[table.switch] = !secret.bonus.flags[table.switch];
+			secret.bonus.flags[table.switch] = !secret.bonus.flags[table.switch] + 0;
+		}
+		
+		if (table.switchOn) {
+			secret.bonus.flags[table.switchOn] = 1;
+		}
+		
+		if (table.switchOff) {
+			secret.bonus.flags[table.switchOff] = 0;
+		}
+		
+		if (table.add) {
+			if (table.add.flag) {
+				if (table.add.amount) {
+					secret.bonus.flags[table.add.flag] = secret.bonus.flags[table.add.flag] + table.add.amount;
+				} else {
+					secret.bonus.flags[table.add.flag] = secret.bonus.flags[table.add.flag] + 1;
+				}
+			}
 		}
 		
 		if (table.give) {
-			// console.log("Encountered a give! It wants to give the player " + table.give.amount + " " + table.give.name + "(s).");
-			
 			var itemIndex = secret.bonus.inventory.findIndex(inventoryItem(table.give.name, table.give.amount));
 			
 			if (itemIndex < 0) {
-				itemIndex = secret.bonus.inventory.push({name: table.give.name, amount: 0}) - 1;
+				itemIndex = secret.bonus.inventory.push({"name": table.give.name, amount: 0}) - 1;
 			}
 			
 			if (table.give.amount) {
@@ -455,32 +505,25 @@ function doEvent(table) {
 		}
 		
 		if (table.check) {
-			// console.log("Encountered a check! It's checking for the " + table.check.flag + " flag.");
-			
 			if (secret.bonus.flags[table.check.flag]) {
-				// console.log("The check succeeded. table.check.on is running.");
-				
 				doEvent(table.check.on);
 			} else {
-				// console.log("The check failed. table.check.off is running.");
-				
 				doEvent(table.check.off);
 			}
-				
-			// console.log("Event should've been okayed!");
 		}
 		
 		if (table.move) {
-			nextMap = table.move;
+			if (table.move.map && (table.move.x || table.move.y)) {
+				nextMap = table.move;
+			}
 		}
 		
 		if (table.also) {
 			doEvent(table.also);
 		}
-	} else {
-		// console.log("Event failed.");
-		// console.log("collide(" + secret.bonus.x + ", " + secret.bonus.y + ", " + table.x + ", " + table.y + ", " + table.width + ", " + table.height + ") == false");
-	}
+	}/* else {
+		
+	}*/
 }
 
 function collide(sx, sy, tx, ty, width, height) {
