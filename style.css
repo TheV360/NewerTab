@@ -278,6 +278,7 @@ div#popup #popupcontent input[type="checkbox"] {
 	min-width: 0;
 	
 	background-position: center;
+	background-size: cover;
 	background-repeat: no-repeat;
 }
 div#popup #popupcontent input[type="checkbox"]:checked {
