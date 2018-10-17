@@ -22,6 +22,10 @@ You can customize most settings by right clicking them. Some features may requir
 * More empty space in the ignore.js file. Ignore the ignore.js file. There's nothing in it. (Will add items, fix map 2, remove existential crisis)
 * Migrate NewerTab CSS to Less, for easier maintaining.
 
+# Known Issues
+
+* Dark Reader completely breaks page. Disable for my github.io site anyway, it already has a dark theme.
+
 # Credits
 
 * Me for the HTML, CSS, and Javascript

@@ -1,0 +1,282 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400");
+
+/* Reset Styles */
+* {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	outline: 0;
+	
+	box-sizing: border-box;
+}
+html, body {
+	width: 100%;
+	min-height: 100%;
+	
+	color: white;
+	background-color: black;
+	
+	font-family: "Roboto", sans-serif;
+	font-weight: 300;
+	
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+::placeholder {
+	opacity: 1;
+}
+::-moz-selection {
+	color: var(--text-color);
+	background-color: var(--alt-color);
+}
+::selection {
+	color: var(--text-color);
+	background-color: var(--alt-color);
+}
+::-webkit-color-swatch {
+	border: none;
+}
+::-moz-color-swatch {
+	border: none;
+}
+svg {
+	width: 100%;
+	height: 100%;
+}
+textarea {
+	tab-size: 4;
+	white-space: pre;
+	overflow: auto;
+}
+
+/* Variables, oh man! */
+:root {
+	--content-size-width: 44rem;
+	--content-size-height: 17rem;
+	--content-size-padding: 5rem;
+	
+	--text-color: white;
+	--alt-color: black;
+	
+	--context-text: black;
+	--context-disabled: #9f9f9f;
+	--context-background: white;
+	--context-hover: #cfcfcf;
+	--context-section: #f7f7f7;
+	--context-divider: #efefef;
+	--context-border: rgb(191, 191, 191, .5);
+	
+	--icon-color: white;
+	--icon-size: 7rem;
+	
+	--border-radius: .25rem;
+	
+	--blur-color: rgba(255, 255, 255, .05);
+	--blur-size: .5rem;
+	
+	--animation-time: 0s;
+	--animation-function: linear;
+	
+	&.dark {
+		--blur-color: rgba(255, 255, 255, .05);
+		
+		--context-text: white;
+		--context-disabled: #7f7f7f;
+		--context-background: black;
+		--context-hover: #3f3f3f;
+		--context-section: #171717;
+		--context-divider: #2f2f2f;
+	}
+	&.light {
+		--blur-color: rgba(255, 255, 255, .25);
+	}
+	&.darkclear {
+		--blur-color: rgba(0, 0, 0, .25);
+		--blur-size: 0px;
+	}
+	&.lightclear {
+		--blur-color: rgba(255, 255, 255, .25);
+		--blur-size: 0px;
+	}
+
+	&.animations {
+		--animation-time: .125s;
+		--animation-function: ease-in-out;
+	}
+}
+
+/* Popup style */
+div#popup {
+	display: none;
+	position: absolute;
+	border: 1px solid rgb(191, 191, 191, .5);
+	
+	width: 100%;
+	height: auto;
+	
+	max-width: 32rem;
+	max-height: 24rem;
+	
+	color: black;
+	background-color: white;
+	
+	border-radius: var(--border-radius);
+	
+	z-index: 2;
+	
+	&.show {
+		display: block;
+	}
+	
+	#popupheader {
+		border-bottom: solid 1px #cfcfcf;
+		
+		width: 100%;
+		height: 2em;
+		
+		#popuptitle {
+			display: inline-block;
+			
+			padding: .5rem;
+			
+			width: calc(100% - 2rem);
+			height: 2rem;
+			
+			font-size: 1rem;
+			font-weight: 400;
+			line-height: 1rem;
+			
+			vertical-align: top;
+		}
+		
+		#popupclose {
+			display: inline-block;
+			
+			padding: .5rem;
+			border-left: solid 1px #cfcfcf;
+			
+			width: 2rem;
+			height: 2rem;
+			
+			background-image: url("img/popup.svg#cross-off");
+			background-color: transparent;
+			background-repeat: no-repeat;
+			background-size: cover;
+			background-position: center;
+			
+			font-size: inherit;
+			
+			&:hover {
+				background-image: url("img/popup.svg#cross-on");
+				background-color: #cfcfcf;
+			}
+			
+			&:focus {
+				outline: 0;
+			}
+		}
+	}
+}
+div#popup #popupheader #popupclose:focus {
+	outline: 0;
+}
+div#popup #popupcontent {
+	padding: 1rem;
+	
+	overflow-y: auto;
+}
+div#popup #popupcontent .popupset:not(:last-child) {
+	margin-bottom: .5rem;
+}
+
+/* Popup Inputs and Labels style */
+div#popup #popupcontent label {
+	display: inline-block;
+	
+	padding: 0 .5rem;
+	
+	min-width: 40%;
+	
+	height: 2rem;
+	
+	line-height: 2rem;
+	vertical-align: top;
+}
+div#popup #popupcontent input,
+div#popup #popupcontent select,
+div#popup #popupcontent textarea {
+	display: inline-block;
+	
+	border: solid 1px black;
+	padding: 0 .5rem;
+	
+	min-width: 60%;
+	
+	height: 2rem;
+	
+	color: black;
+	background-color: white;
+	
+	font-size: inherit;
+}
+div#popup #popupcontent input:hover,
+div#popup #popupcontent select:hover,
+div#popup #popupcontent textarea:hover,
+div#popup #popupcontent input:focus,
+div#popup #popupcontent select:focus,
+div#popup #popupcontent textarea:focus {
+	color: white;
+	background-color: black;
+}
+div#popup #popupcontent input[type="color"] {
+	padding: .25rem;
+}
+div#popup #popupcontent input[type="checkbox"] {
+	appearance: none;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	
+	padding: 0;
+	width: 2rem;
+	min-width: 0;
+	
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+div#popup #popupcontent input[type="checkbox"]:checked {
+	background-image: url("img/popup.svg#check-off");
+}
+div#popup #popupcontent input[type="checkbox"]:hover:checked,
+div#popup #popupcontent input[type="checkbox"]:focus:checked {
+	background-image: url("img/popup.svg#check-on");
+}
+div#popup #popupcontent select {
+	appearance: none;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	
+	padding-right: 2rem;
+	
+	background-image: url("img/popup.svg#arrow-down-off");
+	background-position: calc(100% - .5rem) 0;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+div#popup #popupcontent select:hover {
+	background-image: url("img/popup.svg#arrow-down-on");
+}
+div#popup #popupcontent select:focus {
+	background-image: url("img/popup.svg#arrow-up-on");
+}
+div#popup #popupcontent textarea {
+	display: block;
+	
+	width: 100%;
+	height: 16rem;
+	
+	max-width: 100%;
+	max-height: 16rem;
+}
