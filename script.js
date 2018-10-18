@@ -26,7 +26,7 @@ const backgroundsets = [
 		{"type": "gradient", "from": "#5c258d", "to": "#4389a2", "angle": "300deg", "author": "uiGradients", "link": "https://uigradients.com/#ShroomHaze"}
 	],
 	[
-		{"type": "reddit", "src": "EarthPorn", "offsetrandom": 3}
+		{"type": "reddit", "src": "EarthPorn", "offsetrandom": 5}
 	]
 ];
 
