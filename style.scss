@@ -69,7 +69,7 @@ textarea {
 	--context-hover: #cfcfcf;
 	--context-section: #f7f7f7;
 	--context-divider: #efefef;
-	--context-border: rgb(191, 191, 191, .5);
+	--context-border: rgba(191, 191, 191, .5);
 	
 	--icon-color: white;
 	--icon-size: 7rem;
@@ -159,7 +159,7 @@ div#preload * {
 div#popup {
 	display: none;
 	position: absolute;
-	border: 1px solid rgb(191, 191, 191, .5);
+	border: 1px solid rgba(191, 191, 191, .5);
 	
 	width: 100%;
 	height: auto;
