@@ -20,7 +20,7 @@ You can customize most settings by right clicking them. Some features may requir
 * Background Wizard (make new JSON Background objects)
 * ~~More polish, maybe animations?~~
 * More empty space in the ignore.js file. Ignore the ignore.js file. There's nothing in it. (Will add items, fix map 2, remove existential crisis)
-* Migrate NewerTab CSS to Less, for easier maintaining.
+* Migrate NewerTab CSS to SCSS, for easier maintaining.
 
 # Known Issues
 
