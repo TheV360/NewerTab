@@ -31,12 +31,12 @@ html, body {
 	opacity: 1;
 }
 ::-moz-selection {
-	color: var(--text-color);
-	background-color: var(--alt-color);
+	color: var(--highlight-foreground-color);
+	background-color: var(--highlight-background-color);
 }
 ::selection {
-	color: var(--text-color);
-	background-color: var(--alt-color);
+	color: var(--highlight-foreground-color);
+	background-color: var(--highlight-background-color);
 }
 ::-webkit-color-swatch {
 	border: none;
@@ -49,6 +49,7 @@ svg {
 	height: 100%;
 }
 textarea {
+	-moz-tab-size: 4;
 	tab-size: 4;
 	white-space: pre;
 	overflow: auto;
@@ -62,6 +63,9 @@ textarea {
 	
 	--text-color: white;
 	--alt-color: black;
+	
+	--highlight-foreground-color: var(--text-color);
+	--highlight-background-color: var(--alt-color);
 	
 	--context-text: black;
 	--context-disabled: #9f9f9f;
@@ -96,11 +100,11 @@ textarea {
 		--blur-color: rgba(255, 255, 255, .25);
 	}
 	&.darkclear {
-		--blur-color: rgba(0, 0, 0, .25);
+		@extend .dark;
 		--blur-size: 0px;
 	}
 	&.lightclear {
-		--blur-color: rgba(255, 255, 255, .25);
+		@extend .light;
 		--blur-size: 0px;
 	}
 
@@ -136,8 +140,8 @@ body {
 		
 		text-align: center;
 		
-		color: white;
-		background-color: black;
+		color: var(--text-color);
+		background-color: var(--alt-color);
 		
 		z-index: 101;
 	}
@@ -167,8 +171,8 @@ div#popup {
 	max-width: 32rem;
 	max-height: 24rem;
 	
-	color: black;
-	background-color: white;
+	color: var(--alt-color);
+	background-color: var(--text-color);
 	
 	border-radius: var(--border-radius);
 	
@@ -228,8 +232,12 @@ div#popup {
 	}
 	
 	#popupcontent {
-		padding: 1rem;
+		margin: 1rem 0;
+		padding: 0 1rem;
 		
+		max-height: 22rem;
+		
+		overflow-x: hidden;
 		overflow-y: auto;
 		
 		.popupset:not(:last-child) {
@@ -259,14 +267,17 @@ div#popup {
 			
 			height: 2rem;
 			
-			color: black;
-			background-color: white;
+			color: var(--alt-color);
+			background-color: var(--text-color);
 			
 			font-size: inherit;
 			
 			&:hover, &:focus {
-				color: white;
-				background-color: black;
+				color: var(--text-color);
+				background-color: var(--alt-color);
+				
+				--highlight-foreground-color: var(--alt-color);
+				--highlight-background-color: var(--text-color);
 			}
 		}
 		

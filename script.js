@@ -156,7 +156,8 @@ function setup() {
 		var cssRules = settings.css.split("}");
 		try {
 			for (var i = 0; i < cssRules.length - 1; i++) {
-				document.styleSheets[0].insertRule(cssRules[i] + "}", 7 + i);
+				// FIX: Temporary hack for CSS importance.
+				document.styleSheets[0].insertRule(":root " + cssRules[i] + "}", 7 + i);
 			}
 		} catch (e) {
 			console.log("!!! " + e);
