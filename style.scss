@@ -551,6 +551,10 @@ ul.contextlist {
 	&.noanimations {
 		animation: none;
 	}
+		
+	&:not(:last-child) {
+		border-bottom: 1px solid var(--context-divider);
+	}
 	
 	li {
 		padding: .5rem;
@@ -571,14 +575,11 @@ ul.contextlist {
 		&:hover {
 			background-color: var(--context-hover);
 		}
-		
-		& > :not(:last-child) {
-			border-bottom: 1px solid var(--context-divider);
-		}
 	}
 	
 	hr {
-		border: 0;
+		border: none;
+		
 		height: .25rem;
 		
 		background-color: var(--context-section);
