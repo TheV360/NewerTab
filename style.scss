@@ -487,6 +487,7 @@ input#searchbox {
 }
 
 /* Icon grid */
+/* FoldThis */
 div#icons {
 	grid-template-columns: repeat(6, 1fr);
 	grid-column-gap: 0;
@@ -519,6 +520,7 @@ a.icon {
 		--icon-color: black;
 	}
 }
+/* FoldThat */
 
 /* Right Click Menu */
 ul.contextlist {
@@ -550,7 +552,7 @@ ul.contextlist {
 		animation: none;
 	}
 		
-	&:not(:last-child) {
+	> :not(:last-child) {
 		border-bottom: 1px solid var(--context-divider);
 	}
 	
@@ -653,16 +655,17 @@ li {
 a.icon svg {
 	padding: .75rem;
 }
-
-.svg-ii { stroke: inherit; fill: inherit; }
-.svg-tt { stroke: transparent; fill: transparent; }
-.svg-if, .svg-fi { stroke: inherit; fill: var(--icon-color); }
-.svg-si, .svg-is { stroke: var(--icon-color); fill: inherit; }
-.svg-tf, .svg-ft { stroke: transparent; fill: var(--icon-color); }
-.svg-st, .svg-ts { stroke: var(--icon-color); fill: transparent; }
-.svg-sf, .svg-fs { stroke: var(--icon-color); fill: var(--icon-color); }
-.svg-it { stroke: inherit; fill: transparent; }
-.svg-ti { stroke: transparent; fill: inherit; }
+/* FoldThis */
+	.svg-ii { stroke: inherit; fill: inherit; }
+	.svg-tt { stroke: transparent; fill: transparent; }
+	.svg-if, .svg-fi { stroke: inherit; fill: var(--icon-color); }
+	.svg-si, .svg-is { stroke: var(--icon-color); fill: inherit; }
+	.svg-tf, .svg-ft { stroke: transparent; fill: var(--icon-color); }
+	.svg-st, .svg-ts { stroke: var(--icon-color); fill: transparent; }
+	.svg-sf, .svg-fs { stroke: var(--icon-color); fill: var(--icon-color); }
+	.svg-it { stroke: inherit; fill: transparent; }
+	.svg-ti { stroke: transparent; fill: inherit; }
+/* FoldThat */
 
 /* Old responsive design code */
 @media (orientation: portrait) {
