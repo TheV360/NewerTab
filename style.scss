@@ -57,6 +57,11 @@ textarea {
 
 /* Variables, oh man! */
 :root {
+	--content: {
+		size-width: 44rem;
+		size-height: 17rem;
+		size-padding: 5rem;
+	}
 	--content-size-width: 44rem;
 	--content-size-height: 17rem;
 	--content-size-padding: 5rem;
