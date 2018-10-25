@@ -552,7 +552,7 @@ ul.contextlist {
 		animation: none;
 	}
 		
-	&:not(:last-child) {
+	> :not(:last-child) {
 		border-bottom: 1px solid var(--context-divider);
 	}
 	
