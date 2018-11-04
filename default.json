@@ -6,7 +6,7 @@
 		{"type": "image", "src": "img/newer/1.jpg", "author": "JOHN TOWNER", "link": "https://unsplash.com/photos/JgOeRuGD_Y4"},
 		{"type": "image", "src": "img/newer/2.jpg", "author": "Alexander Slattery", "link": "https://unsplash.com/photos/LI748t0BK8w"},
 		{"type": "image", "src": "img/newer/3.jpg", "author": "Marcelo Quinan", "link": "https://unsplash.com/photos/R3pUGn5YiTg"},
-		{"type": "image", "src": "img/newer/4.jpg", "author": "Andre Benz", "link": "https://unsplash.com/photos/cXU6tNxhub0"}
+		{"type": "image", "src": "img/newer/4.jpg", "author": "Bryan Minear", "link": "https://unsplash.com/photos/daArlleh6b8"}
 	],
 	"clock": {
 		"military": false,
@@ -19,32 +19,32 @@
 	},
 	"icons": [
 		{
-			"icon": "img/fa-solid.svg#envelope",
+			"icon": "img/solid.svg#envelope",
 			"link": "https://mail.google.com/",
 			"highlight": "#c5221f"
 		},
 		{
-			"icon": "img/fa-brands.svg#youtube",
+			"icon": "img/brands.svg#youtube",
 			"link": "https://www.youtube.com/feed/subscriptions",
 			"highlight": "#ff0000"
 		},
 		{
-			"icon": "img/fa-brands.svg#twitter",
+			"icon": "img/brands.svg#twitter",
 			"link": "https://www.twitter.com",
 			"highlight": "#1da1f2"
 		},
 		{
-			"icon": "img/fa-brands.svg#reddit-alien",
+			"icon": "img/brands.svg#reddit-alien",
 			"link": "https://www.reddit.com/hot/",
 			"highlight": "#ff4500"
 		},
 		{
-			"icon": "img/fa-brands.svg#tumblr",
+			"icon": "img/brands.svg#tumblr",
 			"link": "https://www.tumblr.com",
 			"highlight": "#36465d"
 		},
 		{
-			"icon": "img/fa-brands.svg#github",
+			"icon": "img/brands.svg#github",
 			"link": "https://www.github.com",
 			"highlight": "#24292e"
 		}

@@ -37,6 +37,11 @@ html, body {
 ::selection {
 	color: var(--highlight-foreground-color);
 	background-color: var(--highlight-background-color);
+	
+	// &:window-inactive {
+	// 	--highlight-foreground-color: white;
+	// 	--highlight-background-color: navy;
+	// }
 }
 ::-webkit-color-swatch {
 	border: none;
@@ -101,11 +106,23 @@ textarea {
 	}
 	&.darkclear {
 		@extend .dark;
-		--blur-size: 0px;
+		
+		--blur-color: rgba(32, 32, 32, .25);
+		--blur-size: 0;
 	}
 	&.lightclear {
-		@extend .light;
-		--blur-size: 0px;
+		--blur-color: rgba(255, 255, 255, .25);
+		--blur-size: 0;
+	}
+	&.darkopaque {
+		@extend .darkclear;
+		
+		--blur-color: rgba(32, 32, 32, 1);
+	}
+	&.lightopaque {
+		@extend .lightclear;
+		
+		--blur-color: rgba(255, 255, 255, 1);
 	}
 
 	&.animations {
