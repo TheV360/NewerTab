@@ -62,7 +62,7 @@ const randomDialogue = [
 	"I am not lying, you just scrolled past the right one",
 	"Lorem ipsum dolor sit amet",
 	"Create a mistake",
-	"Create another <span style=\"color: white;\">bamboozle</span>",
+	"Create another <span style=\"color: var(--context-background);\">bamboozle</span>",
 	"YOU JUST GOT PRANKED!",
 	"I think you just got an important email",
 	"Wait... is that a new video? From your favorite Youtuber?",

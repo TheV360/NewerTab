@@ -616,9 +616,6 @@ function context(items = [{name: "No options?", callback: function() {}}], optio
 	if (options.width) contextlist.style.width = options.width;
 	if (options.height) contextlist.style.height = options.height;
 	
-	if (isNumber(options.x)) contextlist.style.left = (options.x - 4) + "px";
-	if (isNumber(options.y)) contextlist.style.top = (options.y - 4) + "px";
-	
 	for (var i = 0; i < items.length; i++) {
 		var contextoption = contextOption(items[i], options);
 		
@@ -646,8 +643,8 @@ function context(items = [{name: "No options?", callback: function() {}}], optio
 	
 	var contextfit = contextlist.getBoundingClientRect();
 	
-	if (contextfit.x + contextfit.width > window.innerWidth) contextlist.style.left = (window.innerWidth - contextfit.width) + "px";
-	if (contextfit.y + contextfit.height > window.innerHeight) contextlist.style.top = (window.innerHeight - contextfit.height) + "px";
+	if (isNumber(options.x)) contextlist.style.left = Math.max(0, Math.min(options.x - 4, window.innerWidth - contextfit.width)) + "px";
+	if (isNumber(options.y)) contextlist.style.top = Math.max(0, Math.min(options.y - 4, window.innerHeight - contextfit.height)) + "px";
 	
 	contextlist.focus();
 	
