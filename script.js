@@ -9,10 +9,10 @@ const date = {
 };
 const backgroundsets = [
 	[
-		{"type": "image", "src": "img/newer/1.jpg", "author": "JOHN TOWNER", "link": "https://unsplash.com/photos/JgOeRuGD_Y4"},
+		{"type": "image", "src": "img/newer/1.jpg", "author": "John Towner", "link": "https://unsplash.com/photos/JgOeRuGD_Y4"},
 		{"type": "image", "src": "img/newer/2.jpg", "author": "Alexander Slattery", "link": "https://unsplash.com/photos/LI748t0BK8w"},
 		{"type": "image", "src": "img/newer/3.jpg", "author": "Marcelo Quinan", "link": "https://unsplash.com/photos/R3pUGn5YiTg"},
-		{"type": "image", "src": "img/newer/4.jpg", "author": "Andre Benz", "link": "https://unsplash.com/photos/cXU6tNxhub0"}
+		{"type": "image", "src": "img/newer/4.jpg", "author": "Sophie Dale", "link": "https://unsplash.com/photos/4wG_qIjrd5U"}
 	],
 	[
 		{"type": "image", "src": "img/new/1.jpg", "author": "Joey Kyber", "link": "https://www.pexels.com/photo/time-lapse-cars-on-fast-motion-134643/"},
@@ -56,19 +56,17 @@ function loadSettings(additional) {
 			
 			saveSettings();
 			
-			document.body.parentNode.classList.add(settings.theme);
 			document.body.classList.remove("loading");
 			additional();
 		});
 	} else {
-		document.body.parentNode.classList.add(settings.theme);
-		if (settings.animations) document.body.parentNode.classList.add("animations");
+		additional();
 	}
 	
 	return validSettings;
 }
 
-loadSettings(()=>{setup();});
+loadSettings(setup);
 
 // Normal Programming Stuff
 var i, j;
@@ -85,6 +83,9 @@ var blurOverride = false;
 
 function setup() {
 	clean(document.body);
+	
+	document.body.parentNode.classList.add(settings.theme);
+	if (settings.animations) document.body.parentNode.classList.add("animations");
 	
 	background = {
 		current: null,
@@ -138,7 +139,7 @@ function setup() {
 	});
 	search.parent.addEventListener("submit", ()=>{doSearch(false);});
 	
-	if (settings.search.focus) {
+	if (settings.search && settings.search.focus) {
 		search.box.focus();
 		search.box.select();
 	}
@@ -156,8 +157,13 @@ function setup() {
 		var cssRules = settings.css.split("}");
 		try {
 			for (var i = 0; i < cssRules.length - 1; i++) {
-				// FIX: Temporary hack for CSS importance.
-				document.styleSheets[0].insertRule(":root " + cssRules[i] + "}", 7 + i);
+				cssRules[i] = cssRules[i].trim();
+				
+				if (cssRules[i].startsWith(":root")) {
+					document.styleSheets[0].insertRule("html" + cssRules[i] + "}", 7 + i);
+				} else {
+					document.styleSheets[0].insertRule(":root " + cssRules[i] + "}", 7 + i);
+				}
 			}
 		} catch (e) {
 			console.log("!!! " + e);
@@ -199,22 +205,10 @@ function setup() {
 								type: "select",
 								index: setIndex,
 								options: [
-									{
-										label: "NewerTab (Landscapes)",
-										value: 0
-									},
-									{
-										label: "New Tab (Cityscapes)",
-										value: 1
-									},
-									{
-										label: "Gradients",
-										value: 2
-									},
-									{
-										label: "EarthPorn (Reddit)",
-										value: 3
-									}
+									{ label: "NewerTab (Landscapes)", value: 0 },
+									{ label: "New Tab (Cityscapes)", value: 1 },
+									{ label: "Gradients", value: 2 },
+									{ label: "EarthPorn (Reddit)", value: 3 }
 								],
 								callback: (event)=>{
 									settings.backgrounds = backgroundsets[event.target.value];
@@ -227,22 +221,10 @@ function setup() {
 								type: "select",
 								index: themeList.indexOf(settings.theme),
 								options: [
-									{
-										label: "Dark",
-										value: "dark"
-									},
-									{
-										label: "Light",
-										value: "light"
-									},
-									{
-										label: "Dark Clear",
-										value: "darkclear"
-									},
-									{
-										label: "Light Clear",
-										value: "lightclear"
-									}
+									{ label: "Dark", value: "dark" },
+									{ label: "Light", value: "light" },
+									{ label: "Dark Clear", value: "darkclear" },
+									{ label: "Light Clear", value: "lightclear" }
 								],
 								callback: (event)=>{
 									document.body.parentNode.classList.remove(settings.theme);
@@ -281,9 +263,7 @@ function setup() {
 	secretContent.addEventListener("contextmenu", (event)=>{
 		if (event.target === secretContent) {
 			var itemList = [
-				{
-					name: "Secret Bonus Menu!"
-				},
+				{ name: "Secret Bonus Menu!" },
 				{},
 				{
 					name: "Directly edit JSON settings...",
@@ -314,10 +294,7 @@ function setup() {
 						]);
 					}
 				},
-				{
-					name: "Create another context menu",
-					callback: loadSecret
-				},
+				{ name: "Create another context menu", callback: loadSecret },
 				{
 					name: "Debug RPG",
 					callback: (event)=>{ // Whoops
@@ -409,18 +386,8 @@ function setup() {
 	});
 	search.box.addEventListener("contextmenu", (event)=>{
 		context([
-			{
-				name: "Search",
-				callback: function(event, options) {
-					doSearch(false);
-				}
-			},
-			{
-				name: "Search in new tab",
-				callback: function(event, options) {
-					doSearch(true);
-				}
-			},
+			{ name: "Search", callback: (event, options)=>{ doSearch(false); } },
+			{ name: "Search in new tab", callback: (event, options)=>{ doSearch(true); } },
 			{},
 			{
 				name: "Search settings...",
@@ -1017,9 +984,7 @@ function isNumber(n) {
 }
 
 function goToLink(link) {
-	return function() {
-		location.assign(link);
-	}
+	return ()=>{ location.assign(link); }
 }
 
 // From sitepoint.com/removing-useless-nodes-from-the-dom/

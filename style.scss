@@ -58,6 +58,7 @@ textarea {
 	tab-size: 4;
 	white-space: pre;
 	overflow: auto;
+	resize: vertical;
 }
 
 /* Variables, oh man! */
@@ -352,7 +353,7 @@ div#popup {
 			height: 16rem;
 			
 			max-width: 100%;
-			max-height: 16rem;
+			max-height: 24rem;
 		}
 	}
 }

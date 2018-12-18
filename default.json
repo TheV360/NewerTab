@@ -3,10 +3,10 @@
 	"theme": "dark",
 	"animations": true,
 	"backgrounds": [
-		{"type": "image", "src": "img/newer/1.jpg", "author": "JOHN TOWNER", "link": "https://unsplash.com/photos/JgOeRuGD_Y4"},
+		{"type": "image", "src": "img/newer/1.jpg", "author": "John Towner", "link": "https://unsplash.com/photos/JgOeRuGD_Y4"},
 		{"type": "image", "src": "img/newer/2.jpg", "author": "Alexander Slattery", "link": "https://unsplash.com/photos/LI748t0BK8w"},
 		{"type": "image", "src": "img/newer/3.jpg", "author": "Marcelo Quinan", "link": "https://unsplash.com/photos/R3pUGn5YiTg"},
-		{"type": "image", "src": "img/newer/4.jpg", "author": "Bryan Minear", "link": "https://unsplash.com/photos/daArlleh6b8"}
+		{"type": "image", "src": "img/newer/4.jpg", "author": "Sophie Dale", "link": "https://unsplash.com/photos/4wG_qIjrd5U"}
 	],
 	"clock": {
 		"military": false,

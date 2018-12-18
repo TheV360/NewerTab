@@ -28,7 +28,7 @@ You can customize most settings by right clicking them. Some features may requir
 
 # Custom CSS Samples
 
-Google Chrome-style search bar (rounded edges)
+### Google Chrome-style search bar (rounded edges)
 
 ```css
 input#searchbox {
@@ -36,6 +36,46 @@ input#searchbox {
 	border-radius: 1rem;
 }
 ```
+
+### No solid highlight color for search bar
+
+```css
+input#searchbox:focus,
+input#searchbox.contextopen {
+	color: var(--text-color);
+	background-color: transparent;
+	--highlight-foreground-color: var(--alt-color);
+	--highlight-background-color: var(--text-color);
+}
+```
+
+### Neat border for search bar
+
+```css
+input#searchbox {
+	border: 1px solid transparent;	
+}
+input#searchbox:focus,
+input#searchbox.contextopen {
+	border-color: var(--text-color);
+}
+```
+
+### Sharper corners on everything
+```css
+:root {
+	--border-radius: 0;
+}
+```
+
+### Kid's budget Android tablet UI
+```css
+:root {
+	--border-radius: 50%;
+}
+```
+
+Please don't actually use this last one.
 
 # Credits
 
@@ -46,9 +86,11 @@ input#searchbox {
 	* new/2.jpg by [Nodar Chernishev, via Snapwire, via Pexels.](https://www.pexels.com/photo/architecture-blur-bridge-buildings-390023/)
 	* new/3.jpg by [Karol D., via Pexels.](https://www.pexels.com/photo/blur-cars-city-commuting-409701/)
 	* new/4.jpg by [Tobias-Steinert, via Pixabay, via Pexels.](https://www.pexels.com/photo/light-trails-on-road-at-night-315939/)
-	* newer/1.jpg by [JOHN TOWNER, via Unsplash.](https://unsplash.com/photos/JgOeRuGD_Y4)
+	* newer/1.jpg by [John Towner, via Unsplash.](https://unsplash.com/photos/JgOeRuGD_Y4)
 	* newer/2.jpg by [Alexander Slattery, via Unsplash.](https://unsplash.com/photos/LI748t0BK8w)
 	* newer/3.jpg by [Marcelo Quinan, via Unsplash.](https://unsplash.com/photos/R3pUGn5YiTg)
-	* newer/4.jpg by [Andre Benz, via Unsplash.](https://unsplash.com/photos/cXU6tNxhub0)
+	* newer/4.jpg by [Sophie Dale, via Unsplash.](https://unsplash.com/photos/4wG_qIjrd5U)
+	* Previous newer/4.jpg by [Bryan Minear, via Unsplash](https://unsplash.com/photos/daArlleh6b8)
+	* Previous previous newer/4.jpg by [Andre Benz, via Unsplash.](https://unsplash.com/photos/cXU6tNxhub0)
 * Reddit for the amazing API. I am not associated with Reddit.
 * Tumblr for the awesome API. I am not associated with Tumblr.
