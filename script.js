@@ -82,10 +82,15 @@ var secretLoad = false;
 var blurOverride = false;
 
 function setup() {
+	// Remove all empty whitespace nodes.
 	clean(document.body);
 	
+	// Add animations class if you have animations enabled.
 	document.body.parentNode.classList.add(settings.theme);
 	if (settings.animations) document.body.parentNode.classList.add("animations");
+	if (settings.quickblur) document.body.parentNode.classList.add("quickblur");
+	
+	// Set up all these things
 	
 	background = {
 		current: null,
@@ -139,6 +144,7 @@ function setup() {
 	});
 	search.parent.addEventListener("submit", ()=>{doSearch(false);});
 	
+	// Focus search box if you selected that option.
 	if (settings.search && settings.search.focus) {
 		search.box.focus();
 		search.box.select();
@@ -149,10 +155,10 @@ function setup() {
 	// 6: background
 	// 7+: your CSS.
 	for (var i = 0; i < 6; i++)
-		document.styleSheets[0].insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ".contextopen {}", i);
+		document.styleSheets[0].insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ":focus, a.icon.icon" + i + ".contextopen {}", i);
 	document.styleSheets[0].insertRule("body {}", 6);
 	
-	// TODO: finish custom CSS
+	// hopefully this is enough.
 	if (settings.css.length) {
 		var cssRules = settings.css.split("}");
 		try {
@@ -198,6 +204,20 @@ function setup() {
 									event.target.checked = settings.animations;
 									
 									document.body.parentNode.classList.toggle("animations");
+								}
+							},
+							{
+								label: "Quick Blur (only on static background sets) <a href=\"https://thev360.github.io/NewerTab/quickblur.html\">(?)</a>",
+								type: "checkbox",
+								checked: settings.quickblur,
+								disabled: setIndex > 1,
+								callback: (event)=>{
+									settings.quickblur = !settings.quickblur;
+									event.target.checked = settings.quickblur;
+									
+									document.body.parentNode.classList.toggle("quickblur");
+									
+									updateBackground();
 								}
 							},
 							{
@@ -487,6 +507,7 @@ function updateBackground() {
 	
 	if (currentBackground.type === "image") {
 		style = "url(" + currentBackground.src + ")";
+		if (settings.quickblur) document.styleSheets[0].cssRules[6].style.setProperty("--blur-image", style.replace(".", "b."));
 		
 		backgroundinfo = {
 			author: currentBackground.author,
@@ -760,6 +781,9 @@ function popupItem(item, index) {
 			
 			if (item.checked)
 				input.checked = true;
+		
+			if (item.disabled)
+				input.disabled = true;
 			
 			if (item.placeholder)
 				input.placeholder = item.placeholder;

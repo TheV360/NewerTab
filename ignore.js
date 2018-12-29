@@ -203,16 +203,16 @@ const solid = /[^\s«».■□]/imu;
 const maps = [
 	[ // 0123456789012
 		"╔╤═══╤╦═════╗",
-		"║└O☼ˇ┘║/    ║",
-		"║b    ║    J║",
-		"╠═■═══╣     ║",
+		"║└O☼ˇ┘║/    │",
+		"║b    ║    J│",
+		"╠═■═══╣     │",
 		"║     ■     ║",
 		"║     ║     ■",
 		"║bed T║     ║",
 		"╚═════╩═════╝"
 	],
 	[
-		"╔════════════════╗",
+		"╔═■═─────════════╗",
 		"║                ║",
 		"║                ║",
 		"║                ║",
@@ -237,8 +237,15 @@ const mapInfo = [
 				check: {
 					flag: "waterFlower",
 					off: {
-						switch: "waterFlower",
-						text: "It's a small flower in a pot. You water it."
+						text: "It's a small flower in a pot. It hasn't been watered today.",
+						options: [
+							{
+								text: "Water flower.",
+								click: {
+									switch: "waterFlower"
+								}
+							}
+						]
 					},
 					on: {
 						text: "It's a small flower in a pot. You water it daily. You already watered it today..."
@@ -260,14 +267,21 @@ const mapInfo = [
 				x: 5,
 				y: 5,
 				check: {
-					flag: "bedsideGold",
+					flag: "bedsideGold", // if true, you took the gold already.
 					off: {
-						switch: "bedsideGold",
-						give: {
-							name: "Gold",
-							amount: 3
-						},
-						text: "It's a bedside table. It has a small lantern and... oh! There's some gold in a drawer."
+						text: "It's a bedside table. It has a small lantern and... oh! There's some gold in a drawer.",
+						options: [
+							{
+								text: "Take gold",
+								click: {
+									switch: "bedsideGold",
+									give: {
+										name: "Gold",
+										amount: 3
+									}
+								}
+							}
+						]
 					},
 					on: {
 						text: "It's a bedside table. It has a small lantern and an empty drawer."
@@ -284,7 +298,7 @@ const mapInfo = [
 						text: "It's showing the pause screen of your favorite game, Superb Platforming Guy. You're only on world 3, but that's just because you got the game a week ago."
 					},
 					on: {
-						text: "It's tuned to your favorite channel, the weather. Something about that channel is just calming, and the music is good to browse through social media to."
+						text: "It's tuned to your favorite channel, the weather. Something about that channel is just calming, and the music is good to read to."
 					}
 				}
 			},
@@ -320,12 +334,14 @@ const mapInfo = [
 			{
 				y: 3,
 				text: "thanky",
-				option: {
-					text: "Make a true statement",
-					click: {
-						text: "Reality sucks"
+				options: [
+					{
+						text: "Make a true statement",
+						click: {
+							text: "minecraft....... is good"
+						}
 					}
-				}
+				]
 			}
 		]
 	}
@@ -397,6 +413,7 @@ function playSecret2(tempEvent) {
 				if (j === secret.bonus.x) {
 					mapItem += "☺";
 					
+					// Edit the map in the draw code, sure why not
 					if (loadedMap[i][j] === "■") loadedMap[i] = replaceChar(loadedMap[i], j, "□");
 				} else {
 					mapItem += loadedMap[i][j];
@@ -458,11 +475,12 @@ function doEvent(table) {
 			texts.push(table.text);
 		}
 		
-		if (table.option) {
-			if (table.option.text && table.option.click) {
-				options.push({"name": table.option.text, "callback": ()=>{
-					playSecret2(table.option.click);
-				}});
+		if (table.options) {
+			for (var i = 0; i < table.options.length; i++) {
+				if (table.options[i].text && table.options[i].click)
+					options.push({"name": table.options[i].text, "callback": ()=>{
+						playSecret2(table.options[i].click);
+					}});
 			}
 		}
 		
@@ -521,9 +539,7 @@ function doEvent(table) {
 		if (table.also) {
 			doEvent(table.also);
 		}
-	}/* else {
-		
-	}*/
+	}
 }
 
 function collide(sx, sy, tx, ty, width, height) {

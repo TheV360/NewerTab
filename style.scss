@@ -296,6 +296,10 @@ div#popup {
 				
 				--highlight-foreground-color: var(--alt-color);
 				--highlight-background-color: var(--text-color);
+				
+				&:disabled {
+					background-color: #cfcfcf;
+				}
 			}
 		}
 		
@@ -373,6 +377,17 @@ div.glass {
 		background: inherit;
 		box-shadow: inset 0 0 0 calc(var(--content-size-width) + var(--content-size-height)) var(--blur-color);
 		filter: blur(var(--blur-size));
+	}
+	.quickblur &::before {
+		background-image: var(--blur-image);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-attachment: fixed;
+		background-size: cover;
+		
+		box-shadow: inset 0 0 0 calc(var(--content-size-width) + var(--content-size-height)) var(--blur-color);
+		
+		filter: none;
 	}
 	
 	position: absolute;
@@ -555,6 +570,14 @@ ul.contextlist {
 	
 	color: var(--context-text);
 	background-color: var(--context-background);
+	
+	// .quickblur & {
+	// 	background-image: var(--blur-image);
+	// 	background-repeat: no-repeat;
+	// 	background-position: center;
+	// 	background-attachment: fixed;
+	// 	background-size: cover;
+	// }
 	
 	border-radius: var(--border-radius);
 	
