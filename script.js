@@ -150,6 +150,7 @@ function setup() {
 		search.box.select();
 	}
 	
+	customStyles = document.getElementById("custom-styles");
 	// CSS Rule map:
 	// 0 - 5: icons
 	// 6: background
@@ -609,7 +610,7 @@ function updateClock() {
 		search.box.placeholder = "Search";
 	}
 	
-	window.requestAnimationFrame(updateClock);
+	window.setTimeout(updateClock, 250);
 }
 
 function doSearch(newtab = false) {

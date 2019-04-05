@@ -16,7 +16,7 @@
 	"search": {
 		"date": "long",
 		"focus": false,
-		"provider": "https://encrypted.google.com/search?q=%s"
+		"provider": "https://google.com/search?q=%s"
 	},
 	"icons": [
 		{
