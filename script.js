@@ -176,9 +176,11 @@ function setup() {
 				}
 			}
 		} catch (e) {
-			console.log("!!! " + e);
+			console.log("Custom CSS error! " + e);
 		}
 	}
+	
+	if (document.querySelector("style.darkreader")) makePopup("Dark Reader Support", [{type: "notice", value: "Hey! This site looks horrible with Dark Reader on, so it would be best to disable it. Thanks for using NewerTab!"}]);
 	
 	updateBackground();
 	updateClock();
@@ -775,6 +777,11 @@ function popupItem(item, index) {
 			
 			if (item.readOnly)
 				input.readOnly = item.readOnly;
+		} else if (item.type === "notice") {
+			input = document.createElement("p");
+			
+			if (item.value)
+				input.innerHTML = item.value;
 		} else {
 			input = document.createElement("input");
 			
