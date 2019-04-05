@@ -513,7 +513,7 @@ function updateBackground() {
 	
 	if (currentBackground.type === "image") {
 		style = "url(" + currentBackground.src + ")";
-		if (settings.quickblur) customStyles.cssRules[6].style.setProperty("--blur-image", style.replace(".", "b."));
+		if (settings.quickblur) customStyles.setProperty("--blur-image", style.replace(".", "b."));
 		
 		backgroundinfo = {
 			author: currentBackground.author,
