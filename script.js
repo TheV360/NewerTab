@@ -33,7 +33,7 @@ const backgroundsets = [
 var storage = window.localStorage;
 var settings = {};
 
-function loadSettings(additional) {
+function loadSettings() {
 	var validSettings = false;
 	
 	if (storage.getItem("settings")) {
@@ -57,10 +57,10 @@ function loadSettings(additional) {
 			saveSettings();
 			
 			document.body.classList.remove("loading");
-			additional();
+			// additional();
 		});
-	} else {
-		additional();
+	// } else {
+	// 	additional();
 	}
 	
 	return validSettings;
@@ -161,7 +161,6 @@ function setup() {
 	for (var i = 0; i < 6; i++)
 		customStyles.insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ":focus, a.icon.icon" + i + ".contextopen {}", i);
 	customStyles.insertRule("body {}", 6);
-	console.log("Hello! I have added 7 rules.");
 	
 	// hopefully this is enough.
 	if (settings.css.length) {
@@ -504,6 +503,8 @@ function setup() {
 		event.preventDefault();
 		return false;
 	});
+	
+	setup = undefined;
 }
 
 function updateBackground() {
