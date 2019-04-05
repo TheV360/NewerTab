@@ -66,7 +66,7 @@ function loadSettings(additional) {
 	return validSettings;
 }
 
-loadSettings(setup);
+loadSettings();
 
 // Normal Programming Stuff
 var i, j;
