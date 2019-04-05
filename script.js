@@ -78,6 +78,9 @@ var background, backgroundinfo, popup, clock, search, icons;
 var secretContent;
 var secretLoad = false;
 
+// Style sheet stuff
+var customStyles;
+
 // Hacks
 var blurOverride = false;
 
@@ -156,8 +159,8 @@ function setup() {
 	// 6: background
 	// 7+: your CSS.
 	for (var i = 0; i < 6; i++)
-		document.styleSheets[0].insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ":focus, a.icon.icon" + i + ".contextopen {}", i);
-	document.styleSheets[0].insertRule("body {}", 6);
+		customStyles.sheet.insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ":focus, a.icon.icon" + i + ".contextopen {}", i);
+	customStyles.sheet.insertRule("body {}", 6);
 	
 	// hopefully this is enough.
 	if (settings.css.length) {
@@ -167,9 +170,9 @@ function setup() {
 				cssRules[i] = cssRules[i].trim();
 				
 				if (cssRules[i].startsWith(":root")) {
-					document.styleSheets[0].insertRule("html" + cssRules[i] + "}", 7 + i);
+					customStyles.sheet.insertRule("html" + cssRules[i] + "}", 7 + i);
 				} else {
-					document.styleSheets[0].insertRule(":root " + cssRules[i] + "}", 7 + i);
+					customStyles.sheet.insertRule(":root " + cssRules[i] + "}", 7 + i);
 				}
 			}
 		} catch (e) {
@@ -508,7 +511,7 @@ function updateBackground() {
 	
 	if (currentBackground.type === "image") {
 		style = "url(" + currentBackground.src + ")";
-		if (settings.quickblur) document.styleSheets[0].cssRules[6].style.setProperty("--blur-image", style.replace(".", "b."));
+		if (settings.quickblur) customStyles.sheet.cssRules[6].style.setProperty("--blur-image", style.replace(".", "b."));
 		
 		backgroundinfo = {
 			author: currentBackground.author,
@@ -541,7 +544,7 @@ function updateBackground() {
 		getFromTumblr(currentBackground);
 	}
 	
-	document.styleSheets[0].cssRules[6].style.backgroundImage = style;
+	customStyles.sheet.cssRules[6].style.backgroundImage = style;
 }
 function updateIcons() {
 	var style;
@@ -552,8 +555,8 @@ function updateIcons() {
 		
 		// Get icon color working
 		icons.elements[i].className = "icon icon" + i;
-		document.styleSheets[0].cssRules[i].style.backgroundColor = settings.icons[i].highlight;
-		document.styleSheets[0].cssRules[i].style.fill = settings.icons[i].highlight;
+		customStyles.sheet.cssRules[i].style.backgroundColor = settings.icons[i].highlight;
+		customStyles.sheet.cssRules[i].style.fill = settings.icons[i].highlight;
 		
 		// Set icon
 		icons.elements[i].childNodes[0].childNodes[0].setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", settings.icons[i].icon);
@@ -948,7 +951,7 @@ function getFromReddit(background) {
 		imageURL = decodeEntities(imageURL);
 		
 		console.log("Set URL to " + imageURL);
-		document.styleSheets[0].cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
+		customStyles.sheet.cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
 	});
 }
 
@@ -974,7 +977,7 @@ function getFromTumblr(background) {
 			
 			imageURL = post.photos[Math.floor(Math.random() * post.photos.length)].original_size.url;
 			
-			document.styleSheets[0].cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
+			customStyles.sheet.cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
 		} else {
 			console.log("Error while retrieving posts for Tumblr user " + background.src + ". Couldn't find any posts.");
 		}
