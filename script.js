@@ -513,7 +513,7 @@ function updateBackground() {
 	
 	if (currentBackground.type === "image") {
 		style = "url(" + currentBackground.src + ")";
-		if (settings.quickblur) customStyles.setProperty("--blur-image", style.replace(".", "b."));
+		if (settings.quickblur) customStyles.cssRules[6].style.setProperty("--blur-image", style.replace(".", "b."));
 		
 		backgroundinfo = {
 			author: currentBackground.author,
@@ -549,8 +549,6 @@ function updateBackground() {
 	customStyles.cssRules[6].style.backgroundImage = style;
 }
 function updateIcons() {
-	var style;
-	
 	for (var i = 0; i < icons.elements.length; i++) {
 		// Set link
 		icons.elements[i].href = settings.icons[i].link;
