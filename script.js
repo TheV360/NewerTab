@@ -161,7 +161,7 @@ function setup() {
 	for (var i = 0; i < 6; i++)
 		customStyles.insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ":focus, a.icon.icon" + i + ".contextopen {}", i);
 	customStyles.insertRule("body {}", 6);
-	print("Hello! I have added 7 rules.")
+	console.log("Hello! I have added 7 rules.");
 	
 	// hopefully this is enough.
 	if (settings.css.length) {
