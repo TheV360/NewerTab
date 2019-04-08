@@ -512,7 +512,7 @@ function setupCSS() {
 	// 6: background
 	// 7+: your CSS.
 	customStyles = document.getElementById("custom-styles").sheet;
-	for (var i = customStyles.cssRules.length; i >= 0; i--)
+	for (var i = customStyles.cssRules.length - 1; i >= 0; i--)
 		customStyles.deleteRule(i);
 	for (var i = 0; i < 6; i++)
 		customStyles.insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ":focus, a.icon.icon" + i + ".contextopen {}", i);
