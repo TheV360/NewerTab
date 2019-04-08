@@ -670,7 +670,7 @@ function doSearch(newtab = false) {
 function transitionTo(url) {
 	if (!settings.transitions) location.assign(url);
 	
-	window.setTimeout(location.assign, 500, url);
+	window.setTimeout(window.location.assign, 500, url);
 	fadeout.classList.add("on");
 }
 
