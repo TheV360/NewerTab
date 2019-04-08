@@ -1,0 +1,53 @@
+image type:
+	src: url
+	bginfo: author, link
+
+gradients type:
+	~~EITHER THIS~~
+	from: color 1
+	to: color 2
+	~~OR THAT~~
+	stops:
+		color:
+		percentage:
+	~~THIS TOO~~
+	angle: in deg (if not present, 90deg)
+	bginfo: author, link
+
+reddit type:
+	src: subreddit name
+	offset: posts from top (if not present, 0)
+	
+	spoiler: allow spoiler posts (if not present, false)
+	nsfw: allow nsfw posts (if not present, false)
+	preview: allow posts that don't have previews (if not present, false)
+	
+	gif: allow gif posts (if not present, false)
+	maxresolution: max resolution allowed (if not present or negative, don't care)
+	
+	puts this stuff into bginfo:
+		author: (post's author value) username, should appear in bg right click menu
+		link: image url
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+redditJSON.data.children[post number].post_hint MUST BE "image"! If not, move on to the next one.
+
+author = redditJSON.data.children[post number].data.author
+url = redditJSON.data.children[post number].data.url
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+tumblr type:
+	src: first part of tumblr url
+	offset: posts from top (if not present, 0)
+	nsfw: allow nsfw posts (if not present, false)
+	maxresolution: max resolution allowed (if not present or negative, don't care)
+	
+	puts this stuff into bginfo:
+		author: the username
+		link: image url
+
+~~~~~~~~~~~ NOT POSSIBLE WITHOUT OAUTH ~~~~~~~~~~~~
+ twitter type:
+	src: twitter handle
+	offset: posts from top (if not present, 0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

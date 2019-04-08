@@ -2,6 +2,7 @@
 	"version": null,
 	"theme": "dark",
 	"animations": true,
+	"transitions": true,
 	"quickblur": false,
 	"backgrounds": [
 		{"type": "image", "src": "img/newer/1.jpg", "author": "John Towner", "link": "https://unsplash.com/photos/JgOeRuGD_Y4"},

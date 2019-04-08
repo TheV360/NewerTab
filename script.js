@@ -1,8 +1,6 @@
 "use strict";
 
-window.addEventListener("DOMContentLoaded", setup);
-
-const version = "0.7.2";
+const version = "0.7.3";
 const date = {
 	day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 	month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -32,6 +30,8 @@ const backgroundsets = [
 
 var storage = window.localStorage;
 var settings = {};
+
+window.addEventListener("DOMContentLoaded", setup);
 
 function loadSettings() {
 	var validSettings = false;
@@ -68,11 +68,9 @@ function loadSettings() {
 
 loadSettings();
 
-// Normal Programming Stuff
-var i, j;
-
 // Normal NewerTab stuff
 var background, backgroundinfo, popup, clock, search, icons;
+var fadeout;
 
 // Secret trash
 var secretContent;
@@ -94,11 +92,36 @@ function setup() {
 	if (settings.quickblur) document.body.parentNode.classList.add("quickblur");
 	
 	// Set up all these things
+	setupElementReferences();
 	
+	// Set up general event listeners
+	setupElementEventListeners();
+	
+	// Set up context menus
+	setupElementContextMenus();
+	
+	// Set up "dynamic" CSS & custom CSS
+	setupCSS();
+	
+	// Focus search box if you selected that option.
+	if (settings.search && settings.search.focus) {
+		search.box.focus();
+		search.box.select();
+	}
+	
+	updateBackground();
+	updateClock();
+	updateIcons();
+	
+	setup = undefined;
+}
+
+function setupElementReferences() {
 	background = {
-		current: null,
 		element: document.body //hmm
 	}
+	
+	fadeout = document.getElementById("fadeout");
 	
 	popup = {
 		parent: document.getElementById("popup"),
@@ -128,6 +151,13 @@ function setup() {
 		parent: document.getElementById("icons"),
 		elements: document.getElementsByClassName("icon")
 	};
+}
+
+function setupElementEventListeners() {
+	// Transition fix
+	window.addEventListener("pageshow", ()=>{
+		fadeout.classList.remove("on");
+	});
 	
 	// Popup
 	popup.close.addEventListener("click", ()=>{
@@ -145,48 +175,10 @@ function setup() {
 			search.box.classList.remove("text");
 		}
 	});
-	search.parent.addEventListener("submit", ()=>{doSearch(false);});
-	
-	// Focus search box if you selected that option.
-	if (settings.search && settings.search.focus) {
-		search.box.focus();
-		search.box.select();
-	}
-	
-	customStyles = document.getElementById("custom-styles").sheet;
-	// CSS Rule map:
-	// 0 - 5: icons
-	// 6: background
-	// 7+: your CSS.
-	for (var i = 0; i < 6; i++)
-		customStyles.insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ":focus, a.icon.icon" + i + ".contextopen {}", i);
-	customStyles.insertRule("body {}", 6);
-	
-	// hopefully this is enough.
-	if (settings.css.length) {
-		var cssRules = settings.css.split("}");
-		try {
-			for (var i = 0; i < cssRules.length - 1; i++) {
-				cssRules[i] = cssRules[i].trim();
-				
-				if (cssRules[i].startsWith(":root")) {
-					customStyles.insertRule("html" + cssRules[i] + "}", 7 + i);
-				} else {
-					customStyles.insertRule(":root " + cssRules[i] + "}", 7 + i);
-				}
-			}
-		} catch (e) {
-			console.log("Custom CSS error! " + e);
-		}
-	}
-	
-	if (document.querySelector("style.darkreader")) makePopup("Dark Reader Support", [{type: "notice", value: "Hey! This site looks horrible with Dark Reader on, so it would be best to disable it. Thanks for using NewerTab!"}]);
-	
-	updateBackground();
-	updateClock();
-	updateIcons();
-	
-	// Context menu fun
+	search.parent.addEventListener("submit", ()=>{doSearch(false);});	
+}
+
+function setupElementContextMenus() {
 	background.element.addEventListener("contextmenu", (event)=>{
 		if (event.target === background.element) {
 			var itemList = [
@@ -210,6 +202,15 @@ function setup() {
 									event.target.checked = settings.animations;
 									
 									document.body.parentNode.classList.toggle("animations");
+								}
+							},
+							{
+								label: "Transitions",
+								type: "checkbox",
+								checked: settings.transitions,
+								callback: (event)=>{
+									settings.transitions = !settings.transitions;
+									event.target.checked = settings.transitions;
 								}
 							},
 							{
@@ -502,15 +503,53 @@ function setup() {
 		
 		event.preventDefault();
 		return false;
-	});
+	});	
+}
+
+function setupCSS() {
+	// CSS Rule map:
+	// 0 - 5: icons
+	// 6: background
+	// 7+: your CSS.
+	customStyles = document.getElementById("custom-styles").sheet;
+	for (var i = customStyles.cssRules.length; i >= 0; i--)
+		customStyles.deleteRule(i);
+	for (var i = 0; i < 6; i++)
+		customStyles.insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ":focus, a.icon.icon" + i + ".contextopen {}", i);
+	customStyles.insertRule("body {}", 6);
 	
-	setup = undefined;
+	// hopefully this is enough.
+	if (settings.css.length) {
+		var cssRules = settings.css.split("}");
+		try {
+			for (var i = 0; i < cssRules.length; i++) {
+				cssRules[i] = cssRules[i].trim();
+				
+				if (cssRules[i].startsWith(":root")) {
+					customStyles.insertRule("html" + cssRules[i] + "}", 7 + i);
+				} else {
+					customStyles.insertRule(":root " + cssRules[i] + "}", 7 + i);
+				}
+			}
+		} catch (e) {
+			console.log("Custom CSS error! " + e);
+		}
+	}
+	
+	if (document.querySelector("style.darkreader")) {
+		makePopup("Dark Reader Support", [
+			{
+				type: "notice",
+				value: "Hey! This site looks horrible with Dark Reader on, so it would be best to disable it. Thanks for using NewerTab!"
+			}
+		]);
+	}
 }
 
 function updateBackground() {
-	background.current = Math.floor(Math.random() * settings.backgrounds.length);
+	var c = Math.floor(Math.random() * settings.backgrounds.length);
 	
-	var currentBackground = settings.backgrounds[background.current];
+	var currentBackground = settings.backgrounds[c];
 	var style = "black";
 	
 	if (currentBackground.type === "image") {
@@ -619,11 +658,20 @@ function updateClock() {
 }
 
 function doSearch(newtab = false) {
-	if (search.box.value.length)
-		if (newtab)
+	if (search.box.value.length) {
+		if (newtab) {
 			window.open(settings.search.provider.replace("%s", encodeURIComponent(search.box.value)));
-		else
-			location.assign(settings.search.provider.replace("%s", encodeURIComponent(search.box.value)));
+		} else {
+			transitionTo(settings.search.provider.replace("%s", encodeURIComponent(search.box.value)));
+		}
+	}
+}
+
+function transitionTo(url) {
+	if (!settings.transitions) location.assign(url);
+	
+	window.setTimeout(500, ()=>{location.assign(url);});
+	fadeout.classList.add("on");
 }
 
 function saveSettings() {
@@ -833,62 +881,6 @@ function loadSecret(event, options) {
 	event.preventDefault();
 	return false;
 }
-
-/*
-image type:
-	src: url
-	bginfo: author, link
-
-gradients type:
-	~~EITHER THIS~~
-	from: color 1
-	to: color 2
-	~~OR THAT~~
-	stops:
-		color:
-		percentage:
-	~~THIS TOO~~
-	angle: in deg (if not present, 90deg)
-	bginfo: author, link
-
-reddit type:
-	src: subreddit name
-	offset: posts from top (if not present, 0)
-	
-	spoiler: allow spoiler posts (if not present, false)
-	nsfw: allow nsfw posts (if not present, false)
-	preview: allow posts that don't have previews (if not present, false)
-	
-	gif: allow gif posts (if not present, false)
-	maxresolution: max resolution allowed (if not present or negative, don't care)
-	
-	puts this stuff into bginfo:
-		author: (post's author value) username, should appear in bg right click menu
-		link: image url
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-redditJSON.data.children[post number].post_hint MUST BE "image"! If not, move on to the next one.
-
-author = redditJSON.data.children[post number].data.author
-url = redditJSON.data.children[post number].data.url
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-tumblr type:
-	src: first part of tumblr url
-	offset: posts from top (if not present, 0)
-	nsfw: allow nsfw posts (if not present, false)
-	maxresolution: max resolution allowed (if not present or negative, don't care)
-	
-	puts this stuff into bginfo:
-		author: the username
-		link: image url
-
-~~~~~~~~~~~ NOT POSSIBLE WITHOUT OAUTH ~~~~~~~~~~~~
- twitter type:
-	src: twitter handle
-	offset: posts from top (if not present, 0)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
 
 function getFromReddit(background) {
 	console.log(background);
