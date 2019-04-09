@@ -290,8 +290,8 @@ function setupElementContextMenus() {
 										lines[i] = lines[i].trim();
 										
 										// Now crunch it down to a single line.
-										if (i > 0 && i < lines.length - 1) {
-											result += " " + lines[i] + " ";
+										if (i > 0) {
+											result += " " + lines[i];
 										} else {
 											result += lines[i];
 										}
