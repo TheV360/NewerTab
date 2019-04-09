@@ -569,14 +569,14 @@ a.icon {
 a.icon {
 	padding: .5rem;
 	
-	&:hover, &.contextopen {
+	&:focus, &:hover, &.contextopen {
 		padding: 0;
 		
 		background-color: #1f1f1f7f;
 		fill: #1f1f1f7f;
 	}
 	
-	&.light:hover, &.light.contextopen {
+	&.light:focus &.light:hover, &.light.contextopen {
 		--icon-color: black;
 	}
 }
