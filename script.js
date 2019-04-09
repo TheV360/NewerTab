@@ -278,7 +278,7 @@ function setupElementContextMenus() {
 								value: "Advanced CSS settings below! Do not edit if you don't know what you're doing! Also, sorry about everything being on one line. I'm working on fixing that."
 							},
 							{
-								label: "Custom CSS"
+								label: "Custom CSS",
 								type: "textarea",
 								callback: (event)=>{
 									var lines = event.target.value.split("\n");
