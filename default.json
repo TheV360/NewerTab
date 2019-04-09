@@ -4,6 +4,7 @@
 	"animations": true,
 	"transitions": true,
 	"quickblur": false,
+	"textareatab": false,
 	"backgrounds": [
 		{"type": "image", "src": "img/newer/1.jpg", "author": "John Towner", "link": "https://unsplash.com/photos/JgOeRuGD_Y4"},
 		{"type": "image", "src": "img/newer/2.jpg", "author": "Alexander Slattery", "link": "https://unsplash.com/photos/LI748t0BK8w"},

@@ -272,6 +272,35 @@ function setupElementContextMenus() {
 									settings.theme = event.target.value;
 									document.body.parentNode.classList.add(settings.theme);
 								}
+							},
+							{
+								type: "notice",
+								value: "Advanced CSS settings below! Do not edit if you don't know what you're doing! Also, sorry about everything being on one line. I'm working on fixing that."
+							},
+							{
+								label: "Custom CSS"
+								type: "textarea",
+								callback: (event)=>{
+									var lines = event.target.value.split("\n");
+									var result = "";
+									
+									for (var i = 0; i < lines.length; i++)
+									{
+										// Make sure there's a real character at the end of each line.
+										lines[i] = lines[i].trim();
+										
+										// Now crunch it down to a single line.
+										if (i > 0 && i < lines.length - 1) {
+											result += " " + lines[i] + " ";
+										} else {
+											result += lines[i];
+										}
+									}
+									
+									settings.css = result;
+									
+									// TODO: https://stackoverflow.com/a/11591793
+								}
 							}
 						]);
 					}
@@ -313,6 +342,15 @@ function setupElementContextMenus() {
 						var tmp = old;
 						
 						makePopup("JSON Settings", [
+							{
+								label: "Allow tabbing in &lt;textarea&gt;s",
+								type: "checkbox",
+								checked: settings.textareatab,
+								callback: (event)=>{
+									settings.textareatab = !settings.textareatab;
+									event.target.checked = settings.textareatab;
+								}
+							},
 							{
 								label: "Data",
 								type: "textarea",
@@ -841,6 +879,10 @@ function popupItem(item, index) {
 			
 			if (item.readOnly)
 				input.readOnly = item.readOnly;
+			
+			if (settings.textareatab)
+				input.addEventListener("keydown", textAreaTabEvent);
+			
 		} else if (item.type === "notice") {
 			input = document.createElement("p");
 			
@@ -1009,6 +1051,18 @@ function getParentWithTagName(element, name) {
 	}
 	console.log("Couldn't find parent with name " + name + "!");
 	return element;
+}
+
+function textAreaTabEvent(e) {
+	var t = e.target;
+	if (e.keyCode == 9) {
+		var s = t.selectionStart;
+		
+		t.value = t.value.substring(0, t.selectionStart) + "\t" + t.value.substring(t.selectionEnd);
+		t.selectionEnd = s + 1;
+		
+		e.preventDefault();
+	}
 }
 
 function randomInt(n) {

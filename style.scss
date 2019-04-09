@@ -48,6 +48,9 @@ html, body {
 }
 ::-moz-color-swatch {
 	border: none;
+}		
+::-moz-focus-inner {
+	border: none;
 }
 svg {
 	width: 100%;
@@ -265,13 +268,9 @@ div#popup {
 			
 			font-size: inherit;
 			
-			&:hover {
+			&:hover, &:focus {
 				background-image: url("img/popup.svg#cross-on");
 				background-color: #cfcfcf;
-			}
-			
-			&:focus {
-				outline: 0;
 			}
 		}
 	}
