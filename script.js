@@ -175,9 +175,23 @@ function setupElementEventListeners() {
 			search.box.classList.remove("text");
 		}
 	});
-	search.parent.addEventListener("submit", ()=>{doSearch(false);});	
+	search.parent.addEventListener("submit", ()=>{doSearch(false);});
+	
+	// My attempt at a closure.
+	function makeIconHandler(index) {
+		return (e)=>{
+			if (e.button == 0 && settings.transitions) {
+				transitionTo(icons.elements[index].href);
+				e.preventDefault();
+			}
+		};
+	}
+	
+	// Icons
+	for (var i = 0; i < icons.elements.length; i++) {
+		icons.elements[i].addEventListener("click", makeIconHandler(i));
+	}
 }
-
 function setupElementContextMenus() {
 	background.element.addEventListener("contextmenu", (event)=>{
 		if (event.target === background.element) {
@@ -475,7 +489,7 @@ function setupElementContextMenus() {
 							value: settings.icons[iconIndex].link,
 							callback: (event)=>{
 								settings.icons[iconIndex].link = event.target.value;
-								updateIcons();
+								updateIcon(iconIndex);
 							}
 						},
 						{
@@ -484,7 +498,7 @@ function setupElementContextMenus() {
 							value: settings.icons[iconIndex].icon,
 							callback: (event)=>{
 								settings.icons[iconIndex].icon = event.target.value;
-								updateIcons();
+								updateIcon(iconIndex);
 							}
 						},
 						{
@@ -493,7 +507,7 @@ function setupElementContextMenus() {
 							value: settings.icons[iconIndex].highlight,
 							callback: (event)=>{
 								settings.icons[iconIndex].highlight = event.target.value;
-								updateIcons();
+								updateIcon(iconIndex);
 							}
 						}
 					]);
@@ -505,7 +519,6 @@ function setupElementContextMenus() {
 		return false;
 	});	
 }
-
 function setupCSS() {
 	// CSS Rule map:
 	// 0 - 5: icons
@@ -591,17 +604,20 @@ function updateBackground() {
 }
 function updateIcons() {
 	for (var i = 0; i < icons.elements.length; i++) {
-		// Set link
-		icons.elements[i].href = settings.icons[i].link;
-		
-		// Get icon color working
-		icons.elements[i].className = "icon icon" + i;
-		customStyles.cssRules[i].style.backgroundColor = settings.icons[i].highlight;
-		customStyles.cssRules[i].style.fill = settings.icons[i].highlight;
-		
-		// Set icon
-		icons.elements[i].childNodes[0].childNodes[0].setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", settings.icons[i].icon);
+		updateIcon(i);
 	}
+}
+function updateIcon(index) {
+	// Set link
+	icons.elements[index].href = settings.icons[index].link;
+	
+	// Get icon color working
+	icons.elements[index].className = "icon icon" + index;
+	customStyles.cssRules[index].style.backgroundColor = settings.icons[index].highlight;
+	customStyles.cssRules[index].style.fill = settings.icons[index].highlight;
+	
+	// Set icon
+	icons.elements[index].childNodes[0].childNodes[0].setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", settings.icons[index].icon);
 }
 function updateClock() {
 	var now = new Date();
@@ -670,7 +686,7 @@ function doSearch(newtab = false) {
 function transitionTo(url) {
 	if (!settings.transitions) location.assign(url);
 	
-	window.setTimeout(window.location.assign, 500, url);
+	window.setTimeout(()=>{location.assign(url);}, 500);
 	fadeout.classList.add("on");
 }
 
