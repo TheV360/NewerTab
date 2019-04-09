@@ -280,6 +280,7 @@ function setupElementContextMenus() {
 							{
 								label: "Custom CSS",
 								type: "textarea",
+								value: settings.css,
 								callback: (event)=>{
 									var lines = event.target.value.split("\n");
 									var result = "";
