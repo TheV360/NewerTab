@@ -260,7 +260,7 @@ div#popup {
 			width: 2rem;
 			height: 2rem;
 			
-			background-image: url("img/popup.svg#cross-off");
+			background-image: url("../img/popup.svg#cross-off");
 			background-color: transparent;
 			background-repeat: no-repeat;
 			background-size: cover;
@@ -269,7 +269,7 @@ div#popup {
 			font-size: inherit;
 			
 			&:hover, &:focus {
-				background-image: url("img/popup.svg#cross-on");
+				background-image: url("../img/popup.svg#cross-on");
 				background-color: #cfcfcf;
 			}
 		}
@@ -347,11 +347,11 @@ div#popup {
 			background-repeat: no-repeat;
 			
 			&:checked {
-				background-image: url("img/popup.svg#check-off");
+				background-image: url("../img/popup.svg#check-off");
 			}
 			
 			&:checked:hover, &:checked:focus {
-				background-image: url("img/popup.svg#check-on");
+				background-image: url("../img/popup.svg#check-on");
 			}
 		}
 		
@@ -362,17 +362,17 @@ div#popup {
 			
 			padding-right: 2rem;
 			
-			background-image: url("img/popup.svg#arrow-down-off");
+			background-image: url("../img/popup.svg#arrow-down-off");
 			background-position: calc(100% - .5rem) 0;
 			background-size: contain;
 			background-repeat: no-repeat;
 			
 			&:hover {
-				background-image: url("img/popup.svg#arrow-down-on");
+				background-image: url("../img/popup.svg#arrow-down-on");
 			}
 			
 			&:focus {
-				background-image: url("img/popup.svg#arrow-up-on");
+				background-image: url("../img/popup.svg#arrow-up-on");
 			}
 		}
 		
