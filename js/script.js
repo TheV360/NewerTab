@@ -113,6 +113,15 @@ function setup() {
 	updateClock();
 	updateIcons();
 	
+	if (document.querySelector("style.darkreader")) {
+		makePopup("Dark Reader Support", [
+			{
+				type: "notice",
+				value: "Hey! This site looks horrible with Dark Reader on, so it would be best to disable it. Thanks for using NewerTab!"
+			}
+		]);
+	}
+	
 	setup = undefined;
 }
 
@@ -299,6 +308,7 @@ function setupElementContextMenus() {
 									}
 									
 									settings.css = result;
+									updateCSS();
 									
 									// TODO: https://stackoverflow.com/a/11591793
 								}
@@ -343,15 +353,6 @@ function setupElementContextMenus() {
 						var tmp = old;
 						
 						makePopup("JSON Settings", [
-							{
-								label: "Allow tabbing in &lt;textarea&gt;s",
-								type: "checkbox",
-								checked: settings.textareatab,
-								callback: (event)=>{
-									settings.textareatab = !settings.textareatab;
-									event.target.checked = settings.textareatab;
-								}
-							},
 							{
 								label: "Data",
 								type: "textarea",
@@ -564,38 +565,16 @@ function setupCSS() {
 	// 6: background
 	// 7+: your CSS.
 	customStyles = document.getElementById("custom-styles").sheet;
-	for (var i = customStyles.cssRules.length - 1; i >= 0; i--)
-		customStyles.deleteRule(i);
+	
+	while (customStyles.cssRules.length > 0)
+		customStyles.deleteRule(0);
+	
 	for (var i = 0; i < 6; i++)
 		customStyles.insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ":focus, a.icon.icon" + i + ".contextopen {}", i);
 	customStyles.insertRule("body {}", 6);
 	
 	// hopefully this is enough.
-	if (settings.css.length) {
-		var cssRules = settings.css.split("}");
-		try {
-			for (var i = 0; i < cssRules.length; i++) {
-				cssRules[i] = cssRules[i].trim();
-				
-				if (cssRules[i].startsWith(":root")) {
-					customStyles.insertRule("html" + cssRules[i] + "}", 7 + i);
-				} else {
-					customStyles.insertRule(":root " + cssRules[i] + "}", 7 + i);
-				}
-			}
-		} catch (e) {
-			console.log("Custom CSS error! " + e);
-		}
-	}
-	
-	if (document.querySelector("style.darkreader")) {
-		makePopup("Dark Reader Support", [
-			{
-				type: "notice",
-				value: "Hey! This site looks horrible with Dark Reader on, so it would be best to disable it. Thanks for using NewerTab!"
-			}
-		]);
-	}
+	updateCSS();
 }
 
 function updateBackground() {
@@ -657,6 +636,28 @@ function updateIcon(index) {
 	
 	// Set icon
 	icons.elements[index].childNodes[0].childNodes[0].setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", settings.icons[index].icon);
+}
+
+function updateCSS() {
+	while (customStyles.cssRules.length > 7) {
+		customStyles.deleteRule(customStyles.cssRules.length - 1);
+	}
+	
+	if (settings.css.length) {
+		var cssRules = settings.css.split("}");
+		
+		for (var i = 0; i < cssRules.length; i++) {
+			cssRules[i] = cssRules[i].trim();
+			
+			if (!cssRules[i].length) continue;
+			
+			if (cssRules[i].startsWith(":root")) {
+				customStyles.insertRule("html" + cssRules[i] + "}", 7 + i);
+			} else {
+				customStyles.insertRule(":root " + cssRules[i] + "}", 7 + i);
+			}
+		}
+	}
 }
 function updateClock() {
 	var now = new Date();
@@ -881,9 +882,7 @@ function popupItem(item, index) {
 			if (item.readOnly)
 				input.readOnly = item.readOnly;
 			
-			if (settings.textareatab)
-				input.addEventListener("keydown", textAreaTabEvent);
-			
+			input.addEventListener("keydown", textAreaTabEvent);
 		} else if (item.type === "notice") {
 			input = document.createElement("p");
 			
@@ -930,8 +929,11 @@ function loadSecret(event, options) {
 		var secretScript = document.createElement("script");
 		
 		secretScript.type = "text/ecmascript";
-		secretScript.addEventListener("load", function(event) {startSecret(event, options);});
-		secretScript.src = "ignore.js";
+		secretScript.onload = function(event) {
+			startSecret(event, options);
+			secretScript.onload = null;
+		};
+		secretScript.src = "js/ignore.js";
 		
 		document.body.appendChild(secretScript);
 		secretLoad = true;
