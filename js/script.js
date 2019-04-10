@@ -584,7 +584,7 @@ function updateBackground() {
 	var style = "black";
 	
 	if (currentBackground.type === "image") {
-		style = "url(" + currentBackground.src + ")";
+		style = "url(\"" + currentBackground.src + "\")";
 		if (settings.quickblur) customStyles.cssRules[6].style.setProperty("--blur-image", style.replace(".", "b."));
 		
 		backgroundinfo = {
@@ -1011,7 +1011,7 @@ function getFromReddit(background) {
 		imageURL = decodeEntities(imageURL);
 		
 		console.log("Set URL to " + imageURL);
-		customStyles.cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
+		customStyles.cssRules[6].style.backgroundImage = "url(\"" + imageURL + "\")";
 	});
 }
 
@@ -1037,7 +1037,7 @@ function getFromTumblr(background) {
 			
 			imageURL = post.photos[Math.floor(Math.random() * post.photos.length)].original_size.url;
 			
-			customStyles.cssRules[6].style.backgroundImage = "url(" + imageURL + ")";
+			customStyles.cssRules[6].style.backgroundImage = "url(\"" + imageURL + "\")";
 		} else {
 			console.log("Error while retrieving posts for Tumblr user " + background.src + ". Couldn't find any posts.");
 		}
