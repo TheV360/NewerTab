@@ -31,7 +31,7 @@ You can customize most settings by right clicking them. Some features may requir
 ### Google Chrome-style search bar (rounded edges)
 
 ```css
-input#searchbox {
+:root input#searchbox {
 	padding: .5rem 1rem;
 	border-radius: 1rem;
 }
@@ -40,8 +40,8 @@ input#searchbox {
 ### No solid highlight color for search bar
 
 ```css
-input#searchbox:focus,
-input#searchbox.contextopen {
+:root input#searchbox:focus,
+:root input#searchbox.contextopen {
 	color: var(--text-color);
 	background-color: transparent;
 	--highlight-foreground-color: var(--alt-color);
@@ -52,11 +52,11 @@ input#searchbox.contextopen {
 ### Neat border for search bar
 
 ```css
-input#searchbox {
+:root input#searchbox {
 	border: 1px solid transparent;	
 }
-input#searchbox:focus,
-input#searchbox.contextopen {
+:root input#searchbox:focus,
+:root input#searchbox.contextopen {
 	border-color: var(--text-color);
 }
 ```
@@ -70,7 +70,7 @@ input#searchbox.contextopen {
 
 ### Kid's budget Android tablet UI
 ```css
-:root {
+html:root {
 	--border-radius: 50%;
 }
 ```

@@ -77,7 +77,7 @@ var secretContent;
 var secretLoad = false;
 
 // Style sheet stuff
-var customStyles;
+var internalStyles, customStylesElement;
 
 // Hacks
 var blurOverride = false;
@@ -129,6 +129,8 @@ function setupElementReferences() {
 	background = {
 		element: document.body //hmm
 	}
+	
+	customStylesElement = document.getElementById("custom-styles");
 	
 	fadeout = document.getElementById("fadeout");
 	
@@ -284,33 +286,16 @@ function setupElementContextMenus() {
 							},
 							{
 								type: "notice",
-								value: "Advanced CSS settings below! Do not edit if you don't know what you're doing! Also, sorry about everything being on one line. I'm working on fixing that."
+								value: "Advanced CSS settings below! Do not edit if you don't know what you're doing! Also, put <code>:root</code> in front of selectors to have them more easily override NewerTab's default styles."
 							},
 							{
 								label: "Custom CSS",
 								type: "textarea",
 								value: settings.css,
+								height: "8em",
 								callback: (event)=>{
-									var lines = event.target.value.split("\n");
-									var result = "";
-									
-									for (var i = 0; i < lines.length; i++)
-									{
-										// Make sure there's a real character at the end of each line.
-										lines[i] = lines[i].trim();
-										
-										// Now crunch it down to a single line.
-										if (i > 0) {
-											result += " " + lines[i];
-										} else {
-											result += lines[i];
-										}
-									}
-									
-									settings.css = result;
-									updateCSS();
-									
-									// TODO: https://stackoverflow.com/a/11591793
+									settings.css = event.target.value;
+									updateCustomCSS();
 								}
 							}
 						]);
@@ -559,22 +544,24 @@ function setupElementContextMenus() {
 		return false;
 	});	
 }
-function setupCSS() {
+function updateCSS() {
 	// CSS Rule map:
-	// 0 - 5: icons
-	// 6: background
-	// 7+: your CSS.
-	customStyles = document.getElementById("custom-styles").sheet;
+	// 	Custom Styles:
+	// 		0 - NaN: All your styles.
+	// 	Internal Styles:
+	// 		0: Background
+	// 		1+: Icons
+	internalStyles = document.getElementById("internal-styles").sheet;
 	
-	while (customStyles.cssRules.length > 0)
-		customStyles.deleteRule(0);
+	while (internalStyles.cssRules.length > 0)
+		internalStyles.deleteRule(0);
 	
+	internalStyles.insertRule("body {}", 0);
 	for (var i = 0; i < 6; i++)
-		customStyles.insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ":focus, a.icon.icon" + i + ".contextopen {}", i);
-	customStyles.insertRule("body {}", 6);
+		internalStyles.insertRule("a.icon.icon" + i + ":hover, a.icon.icon" + i + ":focus, a.icon.icon" + i + ".contextopen {}", i + 1);
 	
 	// hopefully this is enough.
-	updateCSS();
+	updateCustomCSS();
 }
 
 function updateBackground() {
@@ -585,7 +572,15 @@ function updateBackground() {
 	
 	if (currentBackground.type === "image") {
 		style = "url(\"" + currentBackground.src + "\")";
-		if (settings.quickblur) customStyles.cssRules[6].style.setProperty("--blur-image", style.replace(".", "b."));
+		if (settings.quickblur) internalStyles.cssRules[0].style.setProperty("--blur-image", "url(\"../" + currentBackground.src.replace(".", "b.") + "\")");
+		// Want to know why there's a ../ in there? Me too! It only works when that's there because of how CSS variables deal with URL values.
+		// URL values are most likely internally stored as strings, until they're used like: `background-image: var(--blur-image);`.
+		// The browser then actually searches out and finds the file.
+		// I **think** this is to stop malicious people from loading a bunch of content you don't need.
+		// Anyway, with my folder structure, the CSS that uses my CSS variable is in /css/. I assumed it would automatically know "we are in the root", but no.
+		// It tried looking in /css/js/.
+		//
+		// Can I quit web development please?
 		
 		backgroundinfo = {
 			author: currentBackground.author,
@@ -618,7 +613,7 @@ function updateBackground() {
 		getFromTumblr(currentBackground);
 	}
 	
-	customStyles.cssRules[6].style.backgroundImage = style;
+	internalStyles.cssRules[0].style.backgroundImage = style;
 }
 function updateIcons() {
 	for (var i = 0; i < icons.elements.length; i++) {
@@ -631,32 +626,30 @@ function updateIcon(index) {
 	
 	// Get icon color working
 	icons.elements[index].className = "icon icon" + index;
-	customStyles.cssRules[index].style.backgroundColor = settings.icons[index].highlight;
-	customStyles.cssRules[index].style.fill = settings.icons[index].highlight;
+	internalStyles.cssRules[index + 1].style.backgroundColor = settings.icons[index].highlight;
+	internalStyles.cssRules[index + 1].style.fill = settings.icons[index].highlight;
 	
 	// Set icon
 	icons.elements[index].childNodes[0].childNodes[0].setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", settings.icons[index].icon);
 }
 
-function updateCSS() {
-	while (customStyles.cssRules.length > 7) {
-		customStyles.deleteRule(customStyles.cssRules.length - 1);
-	}
-	
-	if (settings.css.length) {
-		var cssRules = settings.css.split("}");
+function updateCustomCSS() {
+	if (settings.css) {
+		// var cssRules = settings.css.split("}");
+		// 
+		// for (var i = 0; i < cssRules.length; i++) {
+		// 	cssRules[i] = cssRules[i].trim();
+		// 		
+		// 	if (!cssRules[i]) continue;
+		// 	
+		// 	if (cssRules[i].startsWith(":root")) {
+		// 		customStyles.insertRule("html" + cssRules[i] + "}", 7 + i);
+		// 	} else {
+		// 		customStyles.insertRule(":root " + cssRules[i] + "}", 7 + i);
+		// 	}
+		// }
 		
-		for (var i = 0; i < cssRules.length; i++) {
-			cssRules[i] = cssRules[i].trim();
-			
-			if (!cssRules[i].length) continue;
-			
-			if (cssRules[i].startsWith(":root")) {
-				customStyles.insertRule("html" + cssRules[i] + "}", 7 + i);
-			} else {
-				customStyles.insertRule(":root " + cssRules[i] + "}", 7 + i);
-			}
-		}
+		customStylesElement.innerHTML = settings.css;
 	}
 }
 function updateClock() {
@@ -714,7 +707,7 @@ function updateClock() {
 }
 
 function doSearch(newtab = false) {
-	if (search.box.value.length) {
+	if (search.box.value) {
 		if (newtab) {
 			window.open(settings.search.provider.replace("%s", encodeURIComponent(search.box.value)));
 		} else {
@@ -737,12 +730,12 @@ function saveSettings() {
 function context(items = [{name: "No options?", callback: function() {}}], options) {
 	if (options.origin) options.origin.classList.add("contextopen");
 	
+	// Let's make a context menu!
 	var contextlist = document.createElement("ul");
 	
+	// It should look like a context menu.
 	contextlist.classList.add("contextlist");
 	contextlist.tabIndex = 100;
-	
-	if (options.noAnimations) contextlist.classList.add("noanimations");
 	
 	if (options.width) contextlist.style.width = options.width;
 	if (options.height) contextlist.style.height = options.height;
@@ -786,6 +779,9 @@ function contextOption(item, options) {
 	var callback;
 	
 	if (item.callback) {
+		// If the option has a callback, do this.
+		// This makes options you can click and have something happen.
+		
 		callback = item.callback;
 		
 		contextoption = document.createElement("li");
@@ -796,6 +792,9 @@ function contextOption(item, options) {
 		
 		if (item.class) contextoption.classList.add(item.class);
 	} else if (item.name) {
+		// If the option does not have a callback, but does have a name, do this.
+		// This makes greyed-out options, such as the "Secret Bonus Menu!" option that shows up.
+		
 		contextoption = document.createElement("li");
 		contextoption.innerHTML = item.name;
 		
@@ -803,6 +802,9 @@ function contextOption(item, options) {
 		
 		if (item.class) contextoption.classList.add(item.class);
 	} else {
+		// If the option doesn't have anything of use, do this.
+		// This makes the short dividers that show up frequently.
+		
 		contextoption = document.createElement("hr");
 	}
 	
@@ -821,6 +823,7 @@ function makePopup(title, items = [{name: "nothing"}]) {
 	popup.close.focus();
 }
 function popupItem(item, index) {
+	// A set <div> contains both the label and input elements.
 	var set = document.createElement("div");
 	var label, input;
 	var option;
@@ -828,6 +831,7 @@ function popupItem(item, index) {
 	
 	set.classList.add("popupset");
 	
+	// This makes the <label> element and properly links it to the input element.
 	if (item.label) {
 		label = document.createElement("label");
 		label.htmlFor = "popupoption" + index;
@@ -835,6 +839,7 @@ function popupItem(item, index) {
 		label.innerHTML = item.label;
 	}
 	
+	// This makes the input element. It doesn't have to be an <input>.
 	if (item.type) {
 		if (item.type === "select") {
 			input = document.createElement("select");
@@ -909,15 +914,20 @@ function popupItem(item, index) {
 		input.id = "popupoption" + index;
 		input.tabIndex = 200 + index;
 		
+		if (item.width ) input.style.width  = item.width ;
+		if (item.height) input.style.height = item.height;
+		
 		if (item.callback) {
 			callback = item.callback;
 			input.addEventListener("change", function(event) {callback(event);});
 		}
 	}
 	
+	// Add both the label and/or input to the set <div>.
 	if (label) label = set.appendChild(label);
 	if (input) input = set.appendChild(input);
 	
+	// If it's a checkbox, swap the <label> and <input>.
 	if (item.type === "checkbox")
 		label = set.appendChild(label);
 	
@@ -1010,8 +1020,8 @@ function getFromReddit(background) {
 		
 		imageURL = decodeEntities(imageURL);
 		
-		console.log("Set URL to " + imageURL);
-		customStyles.cssRules[6].style.backgroundImage = "url(\"" + imageURL + "\")";
+		// console.log("Set URL to " + imageURL);
+		internalStyles.cssRules[0].style.backgroundImage = "url(\"" + imageURL + "\")";
 	});
 }
 
@@ -1037,7 +1047,7 @@ function getFromTumblr(background) {
 			
 			imageURL = post.photos[Math.floor(Math.random() * post.photos.length)].original_size.url;
 			
-			customStyles.cssRules[6].style.backgroundImage = "url(\"" + imageURL + "\")";
+			internalStyles.cssRules[0].style.backgroundImage = "url(\"" + imageURL + "\")";
 		} else {
 			console.log("Error while retrieving posts for Tumblr user " + background.src + ". Couldn't find any posts.");
 		}

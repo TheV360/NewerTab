@@ -613,10 +613,10 @@ ul.contextlist {
 	
 	overflow: auto;
 	
-	animation: fadeIn var(--animation-time) var(--animation-function);
+	animation: none;
 	
-	&.noanimations {
-		animation: none;
+	.animations & {
+		animation: fadeIn var(--animation-time) var(--animation-function);
 	}
 		
 	> :not(:last-child) {
