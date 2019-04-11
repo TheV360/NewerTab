@@ -1,6 +1,6 @@
 "use strict";
 
-const version = "0.7.3";
+const version = "0.8.0";
 const date = {
 	day: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 	month: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -101,7 +101,7 @@ function setup() {
 	setupElementContextMenus();
 	
 	// Set up "dynamic" CSS & custom CSS
-	setupCSS();
+	updateCSS();
 	
 	// Focus search box if you selected that option.
 	if (settings.search && settings.search.focus) {
