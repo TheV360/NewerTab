@@ -288,6 +288,10 @@ div#popup {
 			margin-bottom: .5rem;
 		}
 		
+		p {
+			padding: 0 .5rem;
+		}
+		
 		label {
 			display: inline-block;
 			
@@ -326,6 +330,10 @@ div#popup {
 				&:disabled {
 					background-color: #cfcfcf;
 				}
+			}
+				
+			&:disabled {
+				border-color: #cfcfcf;
 			}
 		}
 		

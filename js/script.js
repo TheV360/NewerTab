@@ -31,18 +31,17 @@ const backgroundsets = [
 var storage = window.localStorage;
 var settings = {};
 
-window.addEventListener("DOMContentLoaded", setup);
-
 function loadSettings() {
 	var validSettings = false;
 	
 	if (storage.getItem("settings")) {
 		try {
 			settings = JSON.parse(storage.getItem("settings"));
-			if (settings.version != version)
+			if (settings.version !== version) {
 				console.log("Settings is out of date. Here's old settings, just so you can copy it:\n\n" + JSON.stringify(settings));
-		 	else
+			} else {
 				validSettings = true;
+			}
 		} catch(error) {
 			console.log("Settings item is missing or corrupt.\n" + error);
 		}
@@ -57,16 +56,14 @@ function loadSettings() {
 			saveSettings();
 			
 			document.body.classList.remove("loading");
-			// additional();
 		});
-	// } else {
-	// 	additional();
 	}
 	
 	return validSettings;
 }
 
 loadSettings();
+setup();
 
 // Normal NewerTab stuff
 var background, backgroundinfo, popup, clock, search, icons;
@@ -191,7 +188,7 @@ function setupElementEventListeners() {
 	// My attempt at a closure.
 	function makeIconHandler(index) {
 		return (e)=>{
-			if (e.button == 0 && settings.transitions) {
+			if (e.button === 0 && settings.transitions) {
 				transitionTo(icons.elements[index].href);
 				e.preventDefault();
 			}
@@ -264,6 +261,8 @@ function setupElementContextMenus() {
 								],
 								callback: (event)=>{
 									settings.backgrounds = backgroundsets[event.target.value];
+									
+									if (event.target.value > 1) settings.quickblur = false;
 									
 									updateBackground();
 								}
@@ -395,8 +394,7 @@ function setupElementContextMenus() {
 				}
 			];
 			
-			if (secretLoad)
-				itemList[3].callback = startSecret;
+			if (secretLoad) itemList[3].callback = startSecret;
 			
 			context(itemList, {x: event.clientX, y: event.clientY, origin: secretContent});
 			
@@ -506,7 +504,8 @@ function setupElementContextMenus() {
 					
 					makePopup("Icon settings", [
 						{
-							label: "Editing icon #" + (iconIndex + 1)
+							type: "notice",
+							value: "Editing icon #" + (iconIndex + 1)
 						},
 						{
 							label: "Link",
@@ -656,49 +655,56 @@ function updateClock() {
 	var now = new Date();
 	
 	// Hour
-	if (settings.clock.military)
+	if (settings.clock.military) {
 		clock.hour.innerHTML = now.getHours();
-	else
+	} else {
 		clock.hour.innerHTML = mod((now.getHours() - 1), 12) + 1;
+	}
 	
 	// Blinking colon
-	if (now.getSeconds() % 2 > 0 && !settings.clock.seconds)
+	if (now.getSeconds() % 2 > 0 && !settings.clock.seconds) {
 		clock.blink.className = "off";
-	else
+	} else {
 		clock.blink.className = "on";
+	}
 	
 	// Minute
 	clock.minute.innerHTML = ("0" + now.getMinutes()).slice(-2);
 	
 	// Second
-	if (settings.clock.seconds)
+	if (settings.clock.seconds) {
 		clock.second.innerHTML = ":" + ("0" + now.getSeconds()).slice(-2);
-	else
+	} else {
 		clock.second.innerHTML = "";
+	}
 	
 	// Suffix
-	if (settings.clock.military)
+	if (settings.clock.military) {
 		clock.suffix.innerHTML = "";
-	else
-		if (now.getHours() < 12)
+	} else {
+		if (now.getHours() < 12) {
 			clock.suffix.innerHTML = " AM";
-		else
+		} else {
 			clock.suffix.innerHTML = " PM";
+		}
+	}
 	
 	// Date
-	if (settings.search.date != "none") {
-		if (!search.box.classList.contains("date"))
+	if (settings.search.date !== "none") {
+		if (!search.box.classList.contains("date")) {
 			search.box.classList.add("date");
+		}
 		search.box.title = "Click to Search";
 		
-		if (settings.search.date == "long") {
+		if (settings.search.date === "long") {
 			search.box.placeholder = date.day[now.getDay()] + ", " + date.month[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear();
 		} else {
 			search.box.placeholder = now.getFullYear() + "/" + (now.getMonth() + 1) + "/" + now.getDate();
 		}
 	} else {
-		if (search.box.classList.contains("date"))
+		if (search.box.classList.contains("date")) {
 			search.box.classList.remove("date");
+		}
 		search.box.title = "";
 		search.box.placeholder = "Search";
 	}
@@ -752,11 +758,10 @@ function context(items = [{name: "No options?", callback: function() {}}], optio
 		if (blurOverride) {
 			deletThis.focus();
 		} else {
-			while (deletThis.parentNode != document.body)
+			while (deletThis.parentNode !== document.body)
 				deletThis = deletThis.parentNode;
 			
-			if (options.origin)
-				options.origin.classList.remove("contextopen");
+			if (options.origin) options.origin.classList.remove("contextopen");
 			
 			deletThis.remove();
 		}
@@ -820,7 +825,14 @@ function makePopup(title, items = [{name: "nothing"}]) {
 	}
 	
 	popup.parent.classList.add("show");
-	popup.close.focus();
+	
+	if (popup.content.childNodes.length) {
+		// If there's at least one popupItem, focus it.
+		popup.content.childNodes[0].childNodes[0].focus();
+	} else {
+		// ???
+		popup.close.focus();
+	}
 }
 function popupItem(item, index) {
 	// A set <div> contains both the label and input elements.
@@ -851,7 +863,7 @@ function popupItem(item, index) {
 					if (item.options[i].label)
 						option.innerHTML = item.options[i].label;
 					
-					if (item.options[i].value != undefined)
+					if (item.options[i].value !== undefined)
 						option.value = item.options[i].value;
 					
 					if (item.options[i].default)
@@ -878,41 +890,28 @@ function popupItem(item, index) {
 			input = document.createElement("textarea");
 			input.spellcheck = false;
 			
-			if (item.value)
-				input.innerHTML = item.value;
-			
-			if (item.placeholder)
-				input.placeholder = item.placeholder;
-			
-			if (item.readOnly)
-				input.readOnly = item.readOnly;
+			if (item.value) input.innerHTML = item.value;
+			if (item.placeholder) input.placeholder = item.placeholder;
+			if (item.readOnly) input.readOnly = item.readOnly;
 			
 			input.addEventListener("keydown", textAreaTabEvent);
 		} else if (item.type === "notice") {
 			input = document.createElement("p");
 			
-			if (item.value)
-				input.innerHTML = item.value;
+			if (item.value) input.innerHTML = item.value;
 		} else {
 			input = document.createElement("input");
 			
 			input.type = item.type;
 			
-			if (item.value != undefined)
-				input.value = item.value;
-			
-			if (item.checked)
-				input.checked = true;
-		
-			if (item.disabled)
-				input.disabled = true;
-			
-			if (item.placeholder)
-				input.placeholder = item.placeholder;
+			if (item.value !== undefined) input.value = item.value;
+			if (item.checked) input.checked = true;
+			if (item.disabled) input.disabled = true;
+			if (item.placeholder) input.placeholder = item.placeholder;
 		}
 		
 		input.id = "popupoption" + index;
-		input.tabIndex = 200 + index;
+		input.tabIndex = 201 + index;
 		
 		if (item.width ) input.style.width  = item.width ;
 		if (item.height) input.style.height = item.height;
@@ -964,16 +963,18 @@ function getFromReddit(background) {
 		
 		// Random post offset
 		
-		if (background.offset)
+		if (background.offset) {
 			postIndex = Math.min(redditJSON.data.children.length, background.offset);
+		}
 		
-		if (background.offsetrandom)
+		if (background.offsetrandom) {
 			postIndex += randomInt(background.offsetrandom);
+		}
 		
 		post = redditJSON.data.children[postIndex].data;
 		
 		// Get a post that matches the criteria
-		while (post.post_hint != "image" || (post.over_18 && !background.nsfw) || (post.spoiler && !background.spoiler) || (!post.preview.enabled && background.previews)) {
+		while (post.post_hint !== "image" || (post.over_18 && !background.nsfw) || (post.spoiler && !background.spoiler) || (!post.preview.enabled && background.previews)) {
 			postIndex++;
 			
 			if (redditJSON.data.children[postIndex])
@@ -1007,10 +1008,11 @@ function getFromReddit(background) {
 		} else {
 			console.log("Warning while retrieving subreddit " + background.src + ". Post's preview was disabled. This may lead to ridiculously big images being loaded and slow loading.");
 			
-			if (background.previews)
+			if (background.previews) {
 				return;
-			else
+			} else {
 				imageURL = post.url;
+			}
 		}
 		
 		backgroundinfo = {
@@ -1035,8 +1037,9 @@ function getFromTumblr(background) {
 		var imageURL;
 		
 		if (tumblrJSON.response.posts.length) {
-			if (background.offset)
+			if (background.offset) {
 				postIndex = Math.min(tumblrJSON.response.posts.length, background.offset);
+			}
 			
 			post = tumblrJSON.response.posts[postIndex];
 			
@@ -1057,9 +1060,10 @@ function getFromTumblr(background) {
 function getParentWithTagName(element, name) {
 	var node = element;
 	name = name.toUpperCase();
-	while (node.parentNode != null) {
-		if (node.tagName === name)
+	while (node.parentNode !== null) {
+		if (node.tagName === name) {
 			return node;
+		}
 		node = node.parentNode;
 	}
 	console.log("Couldn't find parent with name " + name + "!");
@@ -1068,7 +1072,7 @@ function getParentWithTagName(element, name) {
 
 function textAreaTabEvent(e) {
 	var t = e.target;
-	if (e.keyCode == 9) {
+	if (e.keyCode === 9) {
 		var s = t.selectionStart;
 		
 		t.value = t.value.substring(0, t.selectionStart) + "\t" + t.value.substring(t.selectionEnd);
