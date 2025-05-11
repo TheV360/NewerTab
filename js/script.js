@@ -31,7 +31,7 @@ const backgroundsets = [
 var storage = window.localStorage;
 var settings = {};
 
-function loadSettings() {
+function loadSettings(andThen) {
 	var validSettings = false;
 	
 	if (storage.getItem("settings")) {
@@ -56,14 +56,16 @@ function loadSettings() {
 			saveSettings();
 			
 			document.body.classList.remove("loading");
+			andThen();
 		});
+	} else {
+		andThen();
 	}
 	
 	return validSettings;
 }
 
-loadSettings();
-setup();
+loadSettings(setup);
 
 // Normal NewerTab stuff
 var background, backgroundinfo, popup, clock, search, icons;
